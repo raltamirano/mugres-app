@@ -1,11 +1,11 @@
 package com.raltamirano.midipedalboard;
 
+import com.raltamirano.midipedalboard.model.Part;
 import com.raltamirano.midipedalboard.model.Pattern;
 import com.raltamirano.midipedalboard.model.Song;
 import lombok.NonNull;
 
 import javax.sound.midi.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +17,10 @@ public class Orchestrator {
 
     private Pattern playingPattern;
     private Pattern nextPattern;
+    private Part grooveSectionA;
+    private Part grooveSectionB;
+    private Part fill;
+    private boolean playingEndOfPattern = false;
 
     public Orchestrator(@NonNull final Song song,
                         @NonNull final Receiver outputPort) {
@@ -30,8 +34,8 @@ public class Orchestrator {
             final Sequencer aSequencer = MidiSystem.getSequencer(false);
             aSequencer.getTransmitter().setReceiver(outputPort);
             aSequencer.addMetaEventListener(meta -> {
-                if (meta.getType() == 47)
-                    playPattern();
+                if (meta.getType() == END_OF_TRACK)
+                    playNextPart();
             });
 
             aSequencer.open();
@@ -41,25 +45,57 @@ public class Orchestrator {
         }
     }
 
-    private void playPattern() {
-        final boolean repeating = this.playingPattern != null && this.nextPattern == null;
+    private void playNextPart() {
+        final boolean switchPattern = this.playingPattern == null || this.nextPattern != null;
+
+        Sequence sequenceToPlay = null;
+        if (playingEndOfPattern) {
+            if (switchPattern)
+                switchToNextPattern();
+            sequenceToPlay = grooveSectionA.getSequence();
+        } else {
+            sequenceToPlay = switchPattern ? fill.getSequence() : grooveSectionB.getSequence();
+        }
+
+        playingEndOfPattern = !playingEndOfPattern;
+
+        try {
+            sequencer.setSequence(sequenceToPlay);
+            sequencer.setTempoInBPM(playingPattern.getTempo() != 0 ? playingPattern.getTempo() : song.getTempo());
+            sequencer.setTickPosition(0);
+            sequencer.start();
+        } catch (final InvalidMidiDataException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void switchToNextPattern() {
         final Pattern patternToPlay = this.nextPattern != null ?
                 this.nextPattern : this.playingPattern;
 
         this.playingPattern = patternToPlay;
         this.nextPattern = null;
 
-        if (patternToPlay == null)
+        if (playingPattern == null)
             return;
 
-        try {
-            if (!repeating)
-                sequencer.setSequence(patternToPlay.getGrooves().get(0).getSequence());
-            sequencer.setTickPosition(0);
-            sequencer.start();
-        } catch (final InvalidMidiDataException e) {
-            throw new RuntimeException(e);
-        }
+        fill = chooseFill();
+
+        // Split groove at fill's length
+        final Part groove = chooseGroove();
+        final Part[] grooveSections = groove.split(fill);
+        grooveSectionA = grooveSections[0];
+        grooveSectionB = grooveSections[1];
+    }
+
+    private Part chooseGroove() {
+        // TODO: Honor playingPattern.getGroovesMode()!
+        return playingPattern.getGrooves().get(0);
+    }
+
+    private Part chooseFill() {
+        // TODO: Honor playingPattern.getFillsMode()!
+        return playingPattern.getFills().get(0);
     }
 
     public Orchestrator play(final String pattern) {
@@ -70,8 +106,10 @@ public class Orchestrator {
 
         this.nextPattern = song.getPattern(pattern);
 
-        if (!sequencer.isRunning())
-            playPattern();
+        if (!sequencer.isRunning()) {
+            playingEndOfPattern = true;
+            playNextPart();
+        }
 
         return this;
     }
@@ -85,4 +123,6 @@ public class Orchestrator {
 
         return this;
     }
+
+    private static final int END_OF_TRACK = 0x2F;
 }

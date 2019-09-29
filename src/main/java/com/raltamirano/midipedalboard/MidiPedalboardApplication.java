@@ -37,7 +37,7 @@ public class MidiPedalboardApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		outputPort = getOutputPort();
-		final Song song = new Song("Demo 1", 110);
+		final Song song = new Song("Demo 1", 90);
 
 		song.createPattern("Pattern 1")
 				.appendGroove(new File(BASE_DIR + "groove1.mid"))
