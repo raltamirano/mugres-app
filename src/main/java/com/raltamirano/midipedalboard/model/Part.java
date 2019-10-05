@@ -55,7 +55,7 @@ public class Part {
             final Track sourceTrack = sequence.getTracks()[0];
             for (int index = 0; index < sourceTrack.size(); index++) {
                 final MidiEvent event = sourceTrack.get(index);
-                if (event.getTick() <= fixedSplitLength)
+                if (event.getTick() < fixedSplitLength)
                     sequence1.getTracks()[0].add(event);
                 else {
                     final MidiEvent newEvent = new MidiEvent(event.getMessage(), event.getTick() - fixedSplitLength);
@@ -63,8 +63,8 @@ public class Part {
                 }
             }
 
-            sequence1.getTracks()[0].get(sequence1.getTracks()[0].size()-1).setTick(fixedSplitLength);
-            sequence2.getTracks()[0].get(sequence2.getTracks()[0].size()-1).setTick(fixedAnotherPartLength);
+            setSequenceLength(sequence1, fixedSplitLength);
+            setSequenceLength(sequence2, fixedAnotherPartLength);
 
             return new Part[] {
                     new Part(name + " 1", sequence1),
@@ -73,6 +73,10 @@ public class Part {
         } catch (final Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    public static void setSequenceLength(final Sequence sequence, final long lengthInTicks) {
+        sequence.getTracks()[0].get(sequence.getTracks()[0].size()-1).setTick(lengthInTicks);
     }
 
     private long nearestMultiple(int multiplier, long value) {

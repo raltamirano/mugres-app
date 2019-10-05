@@ -9,6 +9,8 @@ import javax.sound.midi.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.raltamirano.midipedalboard.model.Part.setSequenceLength;
+
 public class Orchestrator {
     private final Song song;
     private final Receiver outputPort;
@@ -84,8 +86,12 @@ public class Orchestrator {
         // Split groove at fill's length
         final Part groove = chooseGroove();
         final Part[] grooveSections = groove.split(fill);
+
         grooveSectionA = grooveSections[0];
         grooveSectionB = grooveSections[1];
+
+        // Make groove's section B and the fill the same length for a more accurate loop
+        setSequenceLength(fill.getSequence(), grooveSectionB.getSequence().getTickLength());
     }
 
     private Part chooseGroove() {
