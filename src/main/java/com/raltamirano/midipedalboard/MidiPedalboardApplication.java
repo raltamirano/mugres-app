@@ -8,7 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.sound.midi.*;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 /**
  * <p>MIDI Pedalboard application.</p>
@@ -26,8 +28,6 @@ import java.util.Scanner;
 public class MidiPedalboardApplication implements CommandLineRunner {
 	private static final String BASE_DIR = System.getProperty("mp.midiFilesBaseDir");
 
-	private Transmitter inputPort;
-	private Receiver outputPort;
 	private Orchestrator orchestrator;
 
 	public static void main(String[] args) {
@@ -36,8 +36,11 @@ public class MidiPedalboardApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		outputPort = getOutputPort();
-		final Song song = new Song("Demo 1", 90);
+		Transmitter inputPort = getInputPort();
+		inputPort.setReceiver(createCommandListener());
+
+		Receiver outputPort = getOutputPort();
+		final Song song = new Song("Demo 1", 124);
 
 		song.createPattern("Pattern 1")
 				.appendGroove(new File(BASE_DIR + "groove1.mid"))
@@ -76,29 +79,77 @@ public class MidiPedalboardApplication implements CommandLineRunner {
 		System.exit(0);
 	}
 
+	private Receiver createCommandListener() {
+		return new Receiver() {
+			@Override
+			public void send(MidiMessage message, long timeStamp) {
+				if (message instanceof ShortMessage) {
+					final ShortMessage sm = (ShortMessage) message;
+					System.out.println("MIDI message = " + sm.getData1());
+					if (sm.getCommand() == 0x90) {
+						switch (sm.getData1()) {
+							case 60:
+							case 61:
+							case 62:
+							case 63:
+								orchestrator.play("Pattern " + (sm.getData1() - 59));
+								break;
+							case 64:
+								orchestrator.stop();
+						}
+					}
+				}
+			}
+
+			@Override
+			public void close() {
+			}
+		};
+	}
+
 	private Transmitter getInputPort() {
-		try {
-			final MidiDevice midiDevice = MidiSystem.getMidiDevice(
-					Arrays.stream(MidiSystem.getMidiDeviceInfo()).filter(
-							d -> d.getName().equals(System.getProperty("mp.inputPort")))
-							.findFirst().get());
-			midiDevice.open();
-			return midiDevice.getTransmitter();
-		} catch (final MidiUnavailableException e) {
-			throw new RuntimeException(e);
+		final String portName = System.getProperty("mp.inputPort");
+		final List<MidiDevice.Info> candidates = Arrays.stream(MidiSystem.getMidiDeviceInfo())
+				.filter(d -> d.getName().equals(portName)).collect(Collectors.toList());
+
+		MidiDevice midiDevice = null;
+		boolean open = false;
+		for(MidiDevice.Info candidate : candidates) {
+			try {
+				open = false;
+				midiDevice = MidiSystem.getMidiDevice(candidate);
+				midiDevice.open();
+				open = true;
+				return midiDevice.getTransmitter();
+			} catch (Exception e) {
+				if (midiDevice != null && open)
+					midiDevice.close();
+			}
 		}
+
+		throw new RuntimeException("Invalid MIDI input port: " + portName);
 	}
 
 	private Receiver getOutputPort() {
-		try {
-			final MidiDevice midiDevice = MidiSystem.getMidiDevice(
-					Arrays.stream(MidiSystem.getMidiDeviceInfo()).filter(
-							d -> d.getName().equals(System.getProperty("mp.outputPort")))
-							.findFirst().get());
-			midiDevice.open();
-			return midiDevice.getReceiver();
-		} catch (final MidiUnavailableException e) {
-			throw new RuntimeException(e);
+		final String portName = System.getProperty("mp.outputPort");
+		final List<MidiDevice.Info> candidates = Arrays.stream(MidiSystem.getMidiDeviceInfo())
+				.filter(d -> d.getName().equals(portName)).collect(Collectors.toList());
+
+		MidiDevice midiDevice = null;
+		boolean open = false;
+		for(MidiDevice.Info candidate : candidates) {
+			try {
+				open = false;
+				midiDevice = MidiSystem.getMidiDevice(candidate);
+				midiDevice.open();
+				open = true;
+				return midiDevice.getReceiver();
+			} catch (Exception e) {
+				if (midiDevice != null && open)
+					midiDevice.close();
+			}
 		}
+
+		throw new RuntimeException("Invalid MIDI output port: " + portName);
 	}
 }
