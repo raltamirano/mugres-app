@@ -59,7 +59,11 @@ public class Orchestrator {
             sequenceToPlay = switchPattern ? fill.getSequence() : grooveSectionB.getSequence();
         }
 
-        playingEndOfPattern = !playingEndOfPattern;
+        final boolean splitGroove = this.grooveSectionB != null;
+        if (splitGroove)
+            playingEndOfPattern = !playingEndOfPattern;
+        else
+            playingEndOfPattern = true;
 
         try {
             sequencer.setSequence(sequenceToPlay);
@@ -83,23 +87,37 @@ public class Orchestrator {
 
         // Split groove at fill's length
         final Part groove = chooseGroove();
-        final Part[] grooveSections = groove.split(fill);
 
-        grooveSectionA = grooveSections[0];
-        grooveSectionB = grooveSections[1];
+        if (fill != null) {
+            final Part[] grooveSections = groove.split(fill);
+            grooveSectionA = grooveSections[0];
+            grooveSectionB = grooveSections[1];
 
-        // Make groove's section B and the fill the same length for a more accurate loop
-        setSequenceLength(fill.getSequence(), grooveSectionB.getSequence().getTickLength());
+            // Make groove's section B and the fill the same length for a more accurate loop
+            setSequenceLength(fill.getSequence(), grooveSectionB.getSequence().getTickLength());
+        } else {
+            groove.fixLength();
+            grooveSectionA = groove;
+            grooveSectionB = null;
+        }
     }
 
     private Part chooseGroove() {
+        if (playingPattern.getGrooves().isEmpty())
+            throw new RuntimeException("No grooves defined for pattern: " + playingPattern.getName());
+
         // TODO: Honor playingPattern.getGroovesMode()!
-        return playingPattern.getGrooves().get(0);
+        final Part part = playingPattern.getGrooves().get(0);
+        return part; //.asClone();
     }
 
     private Part chooseFill() {
+        if (playingPattern.getFills().isEmpty())
+            return null;
+
         // TODO: Honor playingPattern.getFillsMode()!
-        return playingPattern.getFills().get(0);
+        final Part part = playingPattern.getFills().get(0);
+        return part; //.asClone();
     }
 
     public void play(final String pattern) {

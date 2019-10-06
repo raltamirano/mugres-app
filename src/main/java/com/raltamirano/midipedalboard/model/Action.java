@@ -64,6 +64,18 @@ public class Action {
         }
     }
 
+    public Action then(final Action next) {
+        final Action newAction = new Action();
+
+        for(int index = 0; index < steps.size(); index++)
+            newAction.addStep(steps.get(index).command, steps.get(index).parameters);
+
+        for(int index = 0; index < next.steps.size(); index++)
+            newAction.addStep(next.steps.get(index).command, next.steps.get(index).parameters);
+
+        return newAction;
+    }
+
     @Data
     class Step {
         @NonNull

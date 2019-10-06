@@ -41,6 +41,18 @@ public class Part {
         }
     }
 
+    public Part asClone() {
+        try {
+            final Sequence cloned = new Sequence(sequence.getDivisionType(), sequence.getResolution(), 1);
+            final Track sourceTrack = sequence.getTracks()[0];
+            for (int index = 0; index < sourceTrack.size(); index++)
+                cloned.getTracks()[0].add(sourceTrack.get(index));
+            return new Part(name, cloned);
+        } catch (final Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
+
     public Part[] split(@NonNull final Part anotherPart) {
         if (anotherPart.getSequence().getTickLength() > sequence.getTickLength())
             throw new IllegalArgumentException("Split point is longer than this part!");
@@ -73,6 +85,11 @@ public class Part {
         } catch (final Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    public void fixLength() {
+        final long fixedTotalLength = nearestMultiple(sequence.getResolution(), sequence.getTickLength());
+        setSequenceLength(sequence, fixedTotalLength);
     }
 
     public static void setSequenceLength(final Sequence sequence, final long lengthInTicks) {

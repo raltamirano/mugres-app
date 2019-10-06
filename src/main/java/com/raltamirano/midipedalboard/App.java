@@ -3,6 +3,7 @@ package com.raltamirano.midipedalboard;
 import com.raltamirano.midipedalboard.commands.NoOp;
 import com.raltamirano.midipedalboard.commands.Play;
 import com.raltamirano.midipedalboard.commands.Stop;
+import com.raltamirano.midipedalboard.commands.Wait;
 import com.raltamirano.midipedalboard.model.Action;
 import com.raltamirano.midipedalboard.model.Song;
 import com.raltamirano.midipedalboard.orchestration.Command;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.raltamirano.midipedalboard.commands.Wait.HALF_SECOND;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 
 /**
@@ -45,7 +47,10 @@ public class App implements CommandLineRunner {
 		inputPort.setReceiver(createCommandListener());
 
 		Receiver outputPort = getOutputPort();
-		song = new Song("Demo 1", 124);
+		song = new Song("Demo 1", 90);
+
+		song.createPattern("Intro")
+				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));
 
 		song.createPattern("Pattern 1")
 				.appendGroove(new File(BASE_DIR + "groove1.mid"))
@@ -57,9 +62,11 @@ public class App implements CommandLineRunner {
 					.appendFill(new File(BASE_DIR + "groove2-fill1.mid"))
 					.appendFill(new File(BASE_DIR + "groove2-fill2.mid"));
 
-		song.setAction(1, playPattern("Pattern 1"));
-		song.setAction(2, playPattern("Pattern 2"));
-		song.setAction(3, NOOP);
+		song.setAction(1, playPattern("Intro")
+									.then(waitFor(HALF_SECOND))
+									.then(playPattern("Pattern 1")));
+		song.setAction(2, playPattern("Pattern 1"));
+		song.setAction(3, playPattern("Pattern 2"));
 		song.setAction(4, NOOP);
 		song.setAction(5, STOP);
 
@@ -93,6 +100,11 @@ public class App implements CommandLineRunner {
 	private Action playPattern(final String pattern) {
 		return Action.of(COMMANDS.get(Play.NAME),
 				"pattern", pattern);
+	}
+
+	private Action waitFor(final long millis) {
+		return Action.of(COMMANDS.get(Wait.NAME),
+				"millis", millis);
 	}
 
 	private Receiver createCommandListener() {
@@ -181,6 +193,7 @@ public class App implements CommandLineRunner {
 		addCommand(new NoOp());
 		addCommand(new Stop());
 		addCommand(new Play());
+		addCommand(new Wait());
 	}
 
 	private static final Action NOOP = Action.of(COMMANDS.get(NoOp.NAME));
