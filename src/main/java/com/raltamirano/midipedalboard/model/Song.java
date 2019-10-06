@@ -3,7 +3,6 @@ package com.raltamirano.midipedalboard.model;
 import lombok.Data;
 import lombok.NonNull;
 
-import javax.sound.midi.Sequence;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +16,8 @@ public class Song {
     private int tempo;
     @NonNull
     private Map<String, Pattern> patterns = new HashMap<>();
+    @NonNull
+    private final Map<Integer, Action> actions = new HashMap<>();
 
     @NonNull
     public Pattern createPattern(@NonNull final String name) {
@@ -50,5 +51,18 @@ public class Song {
             throw new IllegalArgumentException("Unknown pattern: " + name);
 
         return pattern;
+    }
+
+    @NonNull public Song setAction(final int pedal, @NonNull final Action action) {
+        if (pedal <= 0)
+            throw new IllegalArgumentException("Invalid pedal number: " + pedal);
+
+        actions.put(pedal, action);
+
+        return this;
+    }
+
+    public Action getAction(final int pedal) {
+        return actions.get(pedal);
     }
 }

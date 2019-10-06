@@ -1,4 +1,4 @@
-package com.raltamirano.midipedalboard;
+package com.raltamirano.midipedalboard.orchestration;
 
 import com.raltamirano.midipedalboard.model.Part;
 import com.raltamirano.midipedalboard.model.Pattern;
@@ -50,7 +50,7 @@ public class Orchestrator {
     private void playNextPart() {
         final boolean switchPattern = this.playingPattern == null || this.nextPattern != null;
 
-        Sequence sequenceToPlay = null;
+        Sequence sequenceToPlay;
         if (playingEndOfPattern) {
             if (switchPattern)
                 switchToNextPattern();
@@ -72,10 +72,8 @@ public class Orchestrator {
     }
 
     private void switchToNextPattern() {
-        final Pattern patternToPlay = this.nextPattern != null ?
+        this.playingPattern = this.nextPattern != null ?
                 this.nextPattern : this.playingPattern;
-
-        this.playingPattern = patternToPlay;
         this.nextPattern = null;
 
         if (playingPattern == null)
@@ -104,10 +102,10 @@ public class Orchestrator {
         return playingPattern.getFills().get(0);
     }
 
-    public Orchestrator play(final String pattern) {
+    public void play(final String pattern) {
         if (playingPattern != null && pattern.equals(playingPattern.getName())) {
             this.nextPattern = null;
-            return this;
+            return;
         }
 
         this.nextPattern = song.getPattern(pattern);
@@ -116,18 +114,14 @@ public class Orchestrator {
             playingEndOfPattern = true;
             playNextPart();
         }
-
-        return this;
     }
 
-    public Orchestrator stop() {
+    public void stop() {
         if (sequencer.isRunning())
             sequencer.stop();
 
         this.playingPattern = null;
         this.nextPattern = null;
-
-        return this;
     }
 
     private static final int END_OF_TRACK = 0x2F;
