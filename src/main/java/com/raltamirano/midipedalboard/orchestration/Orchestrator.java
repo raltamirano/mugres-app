@@ -23,6 +23,7 @@ public class Orchestrator {
     private Part grooveSectionB;
     private Part fill;
     private boolean playingEndOfPattern = false;
+    private boolean finish = false;
 
     public Orchestrator(@NonNull final Song song,
                         @NonNull final Receiver outputPort) {
@@ -52,11 +53,16 @@ public class Orchestrator {
 
         Sequence sequenceToPlay;
         if (playingEndOfPattern) {
+            if (finish) {
+                stop();
+                return;
+            }
+
             if (switchPattern)
                 switchToNextPattern();
             sequenceToPlay = grooveSectionA.getSequence();
         } else {
-            sequenceToPlay = switchPattern ? fill.getSequence() : grooveSectionB.getSequence();
+            sequenceToPlay = switchPattern || finish ? fill.getSequence() : grooveSectionB.getSequence();
         }
 
         final boolean splitGroove = this.grooveSectionB != null;
@@ -134,12 +140,17 @@ public class Orchestrator {
         }
     }
 
+    public void finish() {
+        finish = true;
+    }
+
     public void stop() {
         if (sequencer.isRunning())
             sequencer.stop();
 
-        this.playingPattern = null;
-        this.nextPattern = null;
+        playingPattern = null;
+        nextPattern = null;
+        finish = false;
     }
 
     private static final int END_OF_TRACK = 0x2F;

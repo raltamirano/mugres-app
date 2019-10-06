@@ -1,9 +1,6 @@
 package com.raltamirano.midipedalboard;
 
-import com.raltamirano.midipedalboard.commands.NoOp;
-import com.raltamirano.midipedalboard.commands.Play;
-import com.raltamirano.midipedalboard.commands.Stop;
-import com.raltamirano.midipedalboard.commands.Wait;
+import com.raltamirano.midipedalboard.commands.*;
 import com.raltamirano.midipedalboard.model.Action;
 import com.raltamirano.midipedalboard.model.Song;
 import com.raltamirano.midipedalboard.orchestration.Command;
@@ -67,7 +64,7 @@ public class App implements CommandLineRunner {
 									.then(playPattern("Pattern 1")));
 		song.setAction(2, playPattern("Pattern 1"));
 		song.setAction(3, playPattern("Pattern 2"));
-		song.setAction(4, NOOP);
+		song.setAction(4, FINISH);
 		song.setAction(5, STOP);
 
 		orchestrator = new Orchestrator(song, outputPort);
@@ -192,12 +189,14 @@ public class App implements CommandLineRunner {
 	static {
 		addCommand(new NoOp());
 		addCommand(new Stop());
+		addCommand(new Finish());
 		addCommand(new Play());
 		addCommand(new Wait());
 	}
 
 	private static final Action NOOP = Action.of(COMMANDS.get(NoOp.NAME));
 	private static final Action STOP = Action.of(COMMANDS.get(Stop.NAME));
+	private static final Action FINISH = Action.of(COMMANDS.get(Finish.NAME));
 
 	private static void addCommand(final Command command) {
 		final String commandName = command.getName();
