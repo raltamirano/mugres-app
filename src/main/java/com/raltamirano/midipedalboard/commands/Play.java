@@ -1,7 +1,7 @@
 package com.raltamirano.midipedalboard.commands;
 
+import com.raltamirano.midipedalboard.Pedalboard;
 import com.raltamirano.midipedalboard.orchestration.Command;
-import com.raltamirano.midipedalboard.orchestration.Orchestrator;
 
 import java.util.Map;
 
@@ -12,9 +12,9 @@ public class Play implements Command {
     }
 
     @Override
-    public void execute(final Orchestrator orchestrator,
+    public void execute(final Pedalboard pedalboard,
                         final Map<String, Object> parameters) {
-        orchestrator.play((String)parameters.get("pattern"));
+        pedalboard.getOrchestrator().play((String)parameters.get("pattern"));
     }
 
     public static final String NAME = "Play";

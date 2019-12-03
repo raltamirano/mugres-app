@@ -1,5 +1,7 @@
 package com.raltamirano.midipedalboard.orchestration;
 
+import com.raltamirano.midipedalboard.Pedalboard;
+
 import java.util.Map;
 
 /** Command. */
@@ -8,6 +10,6 @@ public interface Command {
     String getName();
 
     /** Executes this command. */
-    void execute(final Orchestrator orchestrator,
+    void execute(final Pedalboard pedalboard,
                  final Map<String, Object> parameters);
 }

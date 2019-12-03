@@ -1,20 +1,18 @@
 package com.raltamirano.midipedalboard;
 
 import com.raltamirano.midipedalboard.commands.*;
+import com.raltamirano.midipedalboard.filters.Octave;
 import com.raltamirano.midipedalboard.model.Action;
-import com.raltamirano.midipedalboard.model.Song;
-import com.raltamirano.midipedalboard.orchestration.Command;
-import com.raltamirano.midipedalboard.orchestration.Orchestrator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.sound.midi.*;
-import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import static com.raltamirano.midipedalboard.commands.Wait.HALF_SECOND;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 
 /**
@@ -31,8 +29,7 @@ import static javax.sound.midi.ShortMessage.NOTE_ON;
  */
 @SpringBootApplication
 public class App implements CommandLineRunner {
-	private Song song;
-	private Orchestrator orchestrator;
+	private Pedalboard pedalboard = null;
 
 	public static void main(String[] args) {
 		SpringApplication.run(App.class, args);
@@ -40,34 +37,41 @@ public class App implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		Transmitter inputPort = getInputPort();
-		inputPort.setReceiver(createCommandListener());
+		final Transmitter inputPort = createInputPort();
+		final Receiver outputPort = createOutputPort();
 
-		Receiver outputPort = getOutputPort();
-		song = new Song("Demo 1", 90);
+		pedalboard = new Pedalboard(outputPort);
 
-		song.createPattern("Intro")
-				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));
+		// Actions for every pedal
+		pedalboard.getSong().setAction(1, playNote(60, 100, 1, 500));
+		pedalboard.getSong().setAction(2, playNote(63, 100, 1, 500));
+		pedalboard.getSong().setAction(3, playNote(65, 100, 1, 500));
+		pedalboard.getSong().setAction(4, playNote(67, 100, 1, 500));
+		pedalboard.getSong().setAction(5, playNote(70, 100, 1, 500));
 
-		song.createPattern("Pattern 1")
-				.appendGroove(new File(BASE_DIR + "groove1.mid"))
-					.appendFill(new File(BASE_DIR + "groove1-fill1.mid"))
-					.appendFill(new File(BASE_DIR + "groove1-fill2.mid"));
+		// Configure output sink filters
+		pedalboard.getSink().addBeforeOutput(new Octave(-2));
 
-		song.createPattern("Pattern 2")
-				.appendGroove(new File(BASE_DIR + "groove2.mid"))
-					.appendFill(new File(BASE_DIR + "groove2-fill1.mid"))
-					.appendFill(new File(BASE_DIR + "groove2-fill2.mid"));
-
-		song.setAction(1, playPattern("Intro")
-									.then(waitFor(HALF_SECOND))
-									.then(playPattern("Pattern 1")));
-		song.setAction(2, playPattern("Pattern 1"));
-		song.setAction(3, playPattern("Pattern 2"));
-		song.setAction(4, FINISH);
-		song.setAction(5, STOP);
-
-		orchestrator = new Orchestrator(song, outputPort);
+//		pedalboard.getSong().createPattern("Intro")
+//				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));
+//
+//		pedalboard.getSong().createPattern("Pattern 1")
+//				.appendGroove(new File(BASE_DIR + "groove1.mid"))
+//					.appendFill(new File(BASE_DIR + "groove1-fill1.mid"))
+//					.appendFill(new File(BASE_DIR + "groove1-fill2.mid"));
+//
+//		pedalboard.getSong().createPattern("Pattern 2")
+//				.appendGroove(new File(BASE_DIR + "groove2.mid"))
+//					.appendFill(new File(BASE_DIR + "groove2-fill1.mid"))
+//					.appendFill(new File(BASE_DIR + "groove2-fill2.mid"));
+//
+//		pedalboard.getSong().setAction(1, playPattern("Intro")
+//									.then(waitFor(HALF_SECOND))
+//									.then(playPattern("Pattern 1")));
+//		pedalboard.getSong().setAction(2, playPattern("Pattern 1"));
+//		pedalboard.getSong().setAction(3, playPattern("Pattern 2"));
+//		pedalboard.getSong().setAction(4, FINISH);
+//		pedalboard.getSong().setAction(5, STOP);
 
 		final Scanner scanner = new Scanner(System.in);
 		char c = scanner.next().charAt(0);
@@ -78,7 +82,7 @@ public class App implements CommandLineRunner {
 				case '3':
 				case '4':
 				case '5':
-					onPedal(Integer.parseInt(String.valueOf(c)));
+					pedalboard.pedal(Integer.parseInt(String.valueOf(c)));
 				default:
 					break;
 			}
@@ -88,19 +92,22 @@ public class App implements CommandLineRunner {
 		System.exit(0);
 	}
 
-	private void onPedal(final int pedal) {
-		final Action action = song.getAction(pedal);
-		if (action != null)
-			action.execute(orchestrator);
-	}
-
 	private Action playPattern(final String pattern) {
-		return Action.of(COMMANDS.get(Play.NAME),
+		return Action.of(pedalboard.getCommands().get(Play.NAME),
 				"pattern", pattern);
 	}
 
+	private Action playNote(final int note, final int velocity,
+							final int channel, final int duration) {
+		return Action.of(pedalboard.getCommands().get(Note.NAME),
+				"note", note,
+				"velocity", velocity,
+				"channel", channel,
+				"duration", duration);
+	}
+
 	private Action waitFor(final long millis) {
-		return Action.of(COMMANDS.get(Wait.NAME),
+		return Action.of(pedalboard.getCommands().get(Wait.NAME),
 				"millis", millis);
 	}
 
@@ -113,19 +120,19 @@ public class App implements CommandLineRunner {
 					if (sm.getCommand() == NOTE_ON) {
 						switch (sm.getData1()) {
 							case 60:
-								onPedal(1);
+								pedalboard.pedal(1);
 								break;
 							case 61:
-								onPedal(2);
+								pedalboard.pedal(2);
 								break;
 							case 62:
-								onPedal(3);
+								pedalboard.pedal(3);
 								break;
 							case 63:
-								onPedal(4);
+								pedalboard.pedal(4);
 								break;
 							case 64:
-								onPedal(5);
+								pedalboard.pedal(5);
 								break;
 						}
 					}
@@ -138,7 +145,7 @@ public class App implements CommandLineRunner {
 		};
 	}
 
-	private Transmitter getInputPort() {
+	private Transmitter createInputPort() {
 		final String portName = System.getProperty("mp.inputPort");
 		final List<MidiDevice.Info> candidates = Arrays.stream(MidiSystem.getMidiDeviceInfo())
 				.filter(d -> d.getName().equals(portName)).collect(Collectors.toList());
@@ -151,7 +158,9 @@ public class App implements CommandLineRunner {
 				midiDevice = MidiSystem.getMidiDevice(candidate);
 				midiDevice.open();
 				open = true;
-				return midiDevice.getTransmitter();
+				final Transmitter transmitter = midiDevice.getTransmitter();
+				transmitter.setReceiver(createCommandListener());
+				return transmitter;
 			} catch (Exception e) {
 				if (midiDevice != null && open)
 					midiDevice.close();
@@ -161,7 +170,7 @@ public class App implements CommandLineRunner {
 		throw new RuntimeException("Invalid MIDI input port: " + portName);
 	}
 
-	private Receiver getOutputPort() {
+	private Receiver createOutputPort() {
 		final String portName = System.getProperty("mp.outputPort");
 		final List<MidiDevice.Info> candidates = Arrays.stream(MidiSystem.getMidiDeviceInfo())
 				.filter(d -> d.getName().equals(portName)).collect(Collectors.toList());
@@ -184,26 +193,8 @@ public class App implements CommandLineRunner {
 		throw new RuntimeException("Invalid MIDI output port: " + portName);
 	}
 
-	private static final Map<String, Command> COMMANDS = new HashMap<>();
-
-	static {
-		addCommand(new NoOp());
-		addCommand(new Stop());
-		addCommand(new Finish());
-		addCommand(new Play());
-		addCommand(new Wait());
-	}
-
-	private static final Action NOOP = Action.of(COMMANDS.get(NoOp.NAME));
-	private static final Action STOP = Action.of(COMMANDS.get(Stop.NAME));
-	private static final Action FINISH = Action.of(COMMANDS.get(Finish.NAME));
-
-	private static void addCommand(final Command command) {
-		final String commandName = command.getName();
-		if (COMMANDS.containsKey(commandName))
-			throw new RuntimeException("Already registered command: " + commandName);
-		COMMANDS.put(commandName, command);
-	}
-
+//	private static final Action NOOP = Action.of(COMMANDS.get(NoOp.NAME));
+//	private static final Action STOP = Action.of(COMMANDS.get(Stop.NAME));
+//	private static final Action FINISH = Action.of(COMMANDS.get(Finish.NAME));
 	private static final String BASE_DIR = System.getProperty("mp.midiFilesBaseDir");
 }

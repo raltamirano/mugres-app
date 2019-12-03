@@ -1,7 +1,7 @@
 package com.raltamirano.midipedalboard.model;
 
+import com.raltamirano.midipedalboard.Pedalboard;
 import com.raltamirano.midipedalboard.orchestration.Command;
-import com.raltamirano.midipedalboard.orchestration.Orchestrator;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -57,10 +57,23 @@ public class Action {
         return of(command, parameters);
     }
 
-    public void execute(final Orchestrator orchestrator) {
+    public static Action of(final Command command,
+                            final String parameter1, final Object value1,
+                            final String parameter2, final Object value2,
+                            final String parameter3, final Object value3,
+                            final String parameter4, final Object value4) {
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put(parameter1, value1);
+        parameters.put(parameter2, value2);
+        parameters.put(parameter3, value3);
+        parameters.put(parameter4, value4);
+        return of(command, parameters);
+    }
+
+    public void execute(final Pedalboard pedalboard) {
         for(int index = 0; index < steps.size(); index++) {
             final Step step = steps.get(index);
-            step.getCommand().execute(orchestrator, step.getParameters());
+            step.getCommand().execute(pedalboard, step.getParameters());
         }
     }
 
