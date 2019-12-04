@@ -20,12 +20,7 @@ public class Note implements Command {
         final int duration = (Integer)parameters.get("duration");
 
         pedalboard.noteOn(note, velocity, channel);
-        try {
-            Thread.sleep(duration);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        pedalboard.noteOff(note, velocity, channel);
+        pedalboard.noteOff(note, velocity, channel, duration);
     }
 
     public static final String NAME = "Note";

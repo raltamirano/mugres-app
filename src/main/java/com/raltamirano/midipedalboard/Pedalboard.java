@@ -15,8 +15,10 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
@@ -25,9 +27,6 @@ public class Pedalboard {
     @NonNull
     @Getter
     private Song song;
-
-    @NonNull
-    private Receiver outputPort;
 
     @NonNull
     @Getter
@@ -39,17 +38,16 @@ public class Pedalboard {
 
     @NonNull
     @Getter
-    private final Sink sink;
+    private final Processor processor;
 
     public Pedalboard(final Receiver outputPort) {
         this(outputPort, new Song("Untitled", 120));
     }
 
     public Pedalboard(final Receiver outputPort, final Song song) {
-        this.outputPort = outputPort;
         this.song = song;
         this.orchestrator = new Orchestrator(song, outputPort);
-        this.sink = new Sink(this);
+        this.processor = new Processor(this, outputPort);
 
         initCommands();
     }
@@ -72,9 +70,15 @@ public class Pedalboard {
     }
 
     public void noteOn(final int note, final int velocity,
-                       final int channel) {
+                        final int channel) {
+        noteOn(note, velocity, channel, 0L);
+    }
+
+    public void noteOn(final int note, final int velocity,
+                       final int channel, final long delayInMillis) {
         try {
-            sink.put(new ShortMessage(NOTE_ON, channel, note, velocity));
+            final ShortMessage message = new ShortMessage(NOTE_ON, channel, note, velocity);
+            sendMidiMessage(message, delayInMillis);
         } catch (final InvalidMidiDataException e) {
             throw new RuntimeException(e);
         }
@@ -82,32 +86,71 @@ public class Pedalboard {
 
     public void noteOff(final int note, final int velocity,
                         final int channel) {
+        noteOff(note, velocity, channel, 0L);
+    }
+
+    public void noteOff(final int note, final int velocity,
+                        final int channel, final long delayInMillis) {
         try {
-            sink.put(new ShortMessage(NOTE_OFF, channel, note, velocity));
+            final ShortMessage message = new ShortMessage(NOTE_OFF, channel, note, velocity);
+            sendMidiMessage(message, delayInMillis);
         } catch (final InvalidMidiDataException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static class Sink {
-        private final Pedalboard pedalboard;
-        private final AbstractFilter chain;
+    public void sendMidiMessage(final MidiMessage message, final long delayInMillis) {
+        processor.process(message, delayInMillis);
+    }
 
-        public Sink(final Pedalboard pedalboard) {
+    public static class Processor {
+        private final Pedalboard pedalboard;
+        private final AbstractFilter filterChain;
+        private final PriorityQueue<Pair> queue = new PriorityQueue<>(Comparator.comparingLong(Pair::getTimestamp));
+        private final Thread worker = new Thread(() -> {
+            while(true)
+                try {
+                    if (!queue.isEmpty()) {
+                        if (queue.peek().timestamp <= System.currentTimeMillis()) {
+                            final Pair pair = queue.poll();
+                            getFilterChain().accept(getPedalboard(), pair.message);
+                        }
+                    }
+                } catch (final Throwable ignore) {
+                    // Do nothing!
+                } finally {
+                    try { Thread.sleep(5); } catch (final Throwable ignore) {}
+                }
+        });
+
+        public Processor(final Pedalboard pedalboard, final Receiver outputPort) {
             this.pedalboard = pedalboard;
-            chain = getDefaultOutputChain(pedalboard.outputPort);
+            filterChain = getDefaultOutputChain(outputPort);
+            worker.start();
+        }
+
+        private Pedalboard getPedalboard() {
+            return pedalboard;
+        }
+
+        private AbstractFilter getFilterChain() {
+            return filterChain;
         }
 
         private AbstractFilter getDefaultOutputChain(final Receiver receiver) {
             return new Input(new Output(receiver));
         }
 
-        public void put(final MidiMessage message) {
-            chain.accept(pedalboard, message);
+        public void process(final MidiMessage message, final long delayInMillis) {
+            if (delayInMillis == 0L)
+                filterChain.accept(pedalboard, message);
+            else
+                //throw new UnsupportedOperationException("Event scheduling not supported yet!");
+                queue.add(new Pair(System.currentTimeMillis() + delayInMillis, message));
         }
 
-        public Sink addBeforeOutput(final AbstractFilter filter) {
-            AbstractFilter next = chain;
+        public Processor addBeforeOutput(final AbstractFilter filter) {
+            AbstractFilter next = filterChain;
             while(!(next.getNext() instanceof Output))
                 next = next.getNext();
 
@@ -116,6 +159,24 @@ public class Pedalboard {
             filter.setNext(output);
 
             return this;
+        }
+
+        private class Pair {
+            private long timestamp;
+            private MidiMessage message;
+
+            public Pair(long timestamp, MidiMessage message) {
+                this.timestamp = timestamp;
+                this.message = message;
+            }
+
+            public long getTimestamp() {
+                return timestamp;
+            }
+
+            public MidiMessage getMessage() {
+                return message;
+            }
         }
     }
 }
