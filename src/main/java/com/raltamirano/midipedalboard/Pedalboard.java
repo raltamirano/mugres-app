@@ -3,6 +3,7 @@ package com.raltamirano.midipedalboard;
 import com.raltamirano.midipedalboard.commands.*;
 import com.raltamirano.midipedalboard.filters.AbstractFilter;
 import com.raltamirano.midipedalboard.filters.Input;
+import com.raltamirano.midipedalboard.filters.Octave;
 import com.raltamirano.midipedalboard.filters.Output;
 import com.raltamirano.midipedalboard.model.Action;
 import com.raltamirano.midipedalboard.model.Song;
@@ -149,16 +150,9 @@ public class Pedalboard {
                 queue.add(new Pair(System.currentTimeMillis() + delayInMillis, message));
         }
 
-        public Processor addBeforeOutput(final AbstractFilter filter) {
-            AbstractFilter next = filterChain;
-            while(!(next.getNext() instanceof Output))
-                next = next.getNext();
-
-            final Output output = (Output)next.getNext();
-            next.setNext(filter);
-            filter.setNext(output);
-
-            return this;
+        public void appendFilter(AbstractFilter filter) {
+            if (!filterChain.addBeforeOutput(filter))
+                throw new IllegalStateException("Internal filter chain misconfiguration!");
         }
 
         private class Pair {

@@ -9,11 +9,11 @@ import java.util.List;
 public abstract class AbstractFilter {
     private AbstractFilter next;
 
-    public AbstractFilter() {
+    AbstractFilter() {
         this(null);
     }
 
-    public AbstractFilter(final AbstractFilter next) {
+    AbstractFilter(final AbstractFilter next) {
         this.next = next;
     }
 
@@ -30,22 +30,38 @@ public abstract class AbstractFilter {
 
     public final void accept(final Pedalboard pedalboard,
                        final List<MidiMessage> messages) {
-        List<MidiMessage> output =
-                canHandle(pedalboard, messages) ?
-                handle(pedalboard, messages) : messages;
+        List<MidiMessage> output = doAccept(pedalboard, messages);
 
         AbstractFilter nextFilter = next;
         while (nextFilter != null) {
-            output = nextFilter.handle(pedalboard, output);
-            nextFilter = nextFilter.getNext();
+            output = nextFilter.doAccept(pedalboard, output);
+            nextFilter = nextFilter.next;
         }
     }
 
-    public AbstractFilter getNext() {
-        return next;
+    private List<MidiMessage> doAccept(final Pedalboard pedalboard,
+                                       final List<MidiMessage> messages) {
+        return canHandle(pedalboard, messages) ?
+                handle(pedalboard, messages) : messages;
     }
 
-    public void setNext(final AbstractFilter next) {
-        this.next = next;
+    public boolean addBeforeOutput(final AbstractFilter filter) {
+        if (this instanceof Output) {
+            filter.next = this;
+            return true;
+        } else {
+            AbstractFilter nextInChain = this;
+            while(nextInChain != null && !(nextInChain.next instanceof Output))
+                nextInChain = nextInChain.next;
+
+            if (nextInChain != null) {
+                final Output output = (Output) nextInChain.next;
+                nextInChain.next = filter;
+                filter.next = output;
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }
