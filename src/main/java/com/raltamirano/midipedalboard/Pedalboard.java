@@ -3,7 +3,6 @@ package com.raltamirano.midipedalboard;
 import com.raltamirano.midipedalboard.commands.*;
 import com.raltamirano.midipedalboard.filters.AbstractFilter;
 import com.raltamirano.midipedalboard.filters.Input;
-import com.raltamirano.midipedalboard.filters.Octave;
 import com.raltamirano.midipedalboard.filters.Output;
 import com.raltamirano.midipedalboard.model.Action;
 import com.raltamirano.midipedalboard.model.Song;
@@ -111,7 +110,7 @@ public class Pedalboard {
         private final Thread worker = new Thread(() -> {
             while(true)
                 try {
-                    if (!queue.isEmpty()) {
+                    while(!queue.isEmpty()) {
                         if (queue.peek().timestamp <= System.currentTimeMillis()) {
                             final Pair pair = queue.poll();
                             getFilterChain().accept(getPedalboard(), pair.message);
@@ -126,7 +125,7 @@ public class Pedalboard {
 
         public Processor(final Pedalboard pedalboard, final Receiver outputPort) {
             this.pedalboard = pedalboard;
-            filterChain = getDefaultOutputChain(outputPort);
+            filterChain = createDefaultFilterChain(outputPort);
             worker.start();
         }
 
@@ -138,7 +137,7 @@ public class Pedalboard {
             return filterChain;
         }
 
-        private AbstractFilter getDefaultOutputChain(final Receiver receiver) {
+        private AbstractFilter createDefaultFilterChain(final Receiver receiver) {
             return new Input(new Output(receiver));
         }
 
@@ -146,7 +145,6 @@ public class Pedalboard {
             if (delayInMillis == 0L)
                 filterChain.accept(pedalboard, message);
             else
-                //throw new UnsupportedOperationException("Event scheduling not supported yet!");
                 queue.add(new Pair(System.currentTimeMillis() + delayInMillis, message));
         }
 
