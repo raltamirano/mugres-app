@@ -15,7 +15,9 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
@@ -93,32 +95,37 @@ public class Pedalboard {
 
     public static class Processor {
         private final Pedalboard pedalboard;
-        private final AbstractFilter filterChain;
+        private Input input;
+        private Output output;
+        private AbstractFilter filterChain;
+        private final List<AbstractFilter> filters = new ArrayList<>();
 
         public Processor(final Pedalboard pedalboard, final Receiver outputPort) {
             this.pedalboard = pedalboard;
-            filterChain = createDefaultFilterChain(outputPort);
+
+            this.input = new Input();
+            this.output = new Output(outputPort);
+
+            updateFilterChain();
         }
 
-        private Pedalboard getPedalboard() {
-            return pedalboard;
-        }
-
-        private AbstractFilter getFilterChain() {
-            return filterChain;
-        }
-
-        private AbstractFilter createDefaultFilterChain(final Receiver receiver) {
-            return new Input(new Output(receiver));
+        private void updateFilterChain() {
+            filterChain = input;
+            AbstractFilter last = filterChain;
+            for(int index = 0; index < filters.size(); index++) {
+                last.setNext(filters.get(index));
+                last = filters.get(index);
+            }
+            last.setNext(output);
         }
 
         public void process(final MidiMessage message, final long timestamp) {
             filterChain.accept(pedalboard, message, timestamp);
         }
 
-        public void appendFilter(AbstractFilter filter) {
-            if (!filterChain.addBeforeOutput(filter))
-                throw new IllegalStateException("Internal filter chain misconfiguration!");
+        public void appendFilter(final AbstractFilter filter) {
+            filters.add(filter);
+            updateFilterChain();
         }
     }
 }

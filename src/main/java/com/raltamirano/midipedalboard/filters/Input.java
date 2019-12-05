@@ -4,6 +4,10 @@ import com.raltamirano.midipedalboard.Pedalboard;
 import com.raltamirano.midipedalboard.model.Events;
 
 public final class Input extends AbstractFilter {
+    public Input() {
+        super();
+    }
+
     public Input(final AbstractFilter next) {
         super(next);
     }

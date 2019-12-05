@@ -41,30 +41,14 @@ public abstract class AbstractFilter {
         }
     }
 
+    public void setNext(final AbstractFilter filter) {
+        this.next = filter;
+    }
+
     private Events doAccept(final Pedalboard pedalboard,
                                        final Events events) {
         return canHandle(pedalboard, events) ?
                 handle(pedalboard, events) : events;
-    }
-
-    public boolean addBeforeOutput(final AbstractFilter filter) {
-        if (this instanceof Output) {
-            filter.next = this;
-            return true;
-        } else {
-            AbstractFilter nextInChain = this;
-            while(nextInChain != null && !(nextInChain.next instanceof Output))
-                nextInChain = nextInChain.next;
-
-            if (nextInChain != null) {
-                final Output output = (Output) nextInChain.next;
-                nextInChain.next = filter;
-                filter.next = output;
-                return true;
-            } else {
-                return false;
-            }
-        }
     }
 
     protected ShortMessage shortMessage(final int command,
