@@ -1,10 +1,11 @@
 package com.raltamirano.midipedalboard.filters;
 
 import com.raltamirano.midipedalboard.Pedalboard;
+import com.raltamirano.midipedalboard.model.Events;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
-import java.util.Collections;
-import java.util.List;
+import javax.sound.midi.ShortMessage;
 
 public abstract class AbstractFilter {
     private AbstractFilter next;
@@ -18,19 +19,20 @@ public abstract class AbstractFilter {
     }
 
     protected abstract boolean canHandle(final Pedalboard pedalboard,
-                                         final List<MidiMessage> messages);
+                                         final Events events);
 
-    protected abstract List<MidiMessage> handle(final Pedalboard pedalboard,
-                                   final List<MidiMessage> messages);
+    protected abstract Events handle(final Pedalboard pedalboard,
+                                   final Events events);
 
     public final void accept(final Pedalboard pedalboard,
-                       final MidiMessage message) {
-        accept(pedalboard, Collections.singletonList(message));
+                             final MidiMessage message,
+                             final long timestamp) {
+        accept(pedalboard, Events.of(message, timestamp));
     }
 
     public final void accept(final Pedalboard pedalboard,
-                       final List<MidiMessage> messages) {
-        List<MidiMessage> output = doAccept(pedalboard, messages);
+                       final Events events) {
+        Events output = doAccept(pedalboard, events);
 
         AbstractFilter nextFilter = next;
         while (nextFilter != null) {
@@ -39,10 +41,10 @@ public abstract class AbstractFilter {
         }
     }
 
-    private List<MidiMessage> doAccept(final Pedalboard pedalboard,
-                                       final List<MidiMessage> messages) {
-        return canHandle(pedalboard, messages) ?
-                handle(pedalboard, messages) : messages;
+    private Events doAccept(final Pedalboard pedalboard,
+                                       final Events events) {
+        return canHandle(pedalboard, events) ?
+                handle(pedalboard, events) : events;
     }
 
     public boolean addBeforeOutput(final AbstractFilter filter) {
@@ -62,6 +64,17 @@ public abstract class AbstractFilter {
             } else {
                 return false;
             }
+        }
+    }
+
+    protected ShortMessage shortMessage(final int command,
+                                        final int channel,
+                                        final int data1,
+                                        final int data2) {
+        try {
+            return new ShortMessage(command, channel, data1, data2);
+        } catch (final InvalidMidiDataException e) {
+            throw new RuntimeException(e);
         }
     }
 }

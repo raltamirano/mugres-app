@@ -45,11 +45,11 @@ public class App implements CommandLineRunner {
 		pedalboard = new Pedalboard(outputPort);
 
 		// Actions for every pedal
-		pedalboard.getSong().setAction(1, playNote(60, 100, 1, 1000));
-		pedalboard.getSong().setAction(2, playNote(63, 100, 1, 1000));
-		pedalboard.getSong().setAction(3, playNote(65, 100, 1, 1000));
-		pedalboard.getSong().setAction(4, playNote(67, 100, 1, 1000));
-		pedalboard.getSong().setAction(5, playNote(70, 100, 1, 1000));
+		pedalboard.getSong().setAction(1, playNote(60, 100, 1, 500));
+		pedalboard.getSong().setAction(2, playNote(63, 100, 1, 500));
+		pedalboard.getSong().setAction(3, playNote(65, 100, 1, 500));
+		pedalboard.getSong().setAction(4, playNote(67, 100, 1, 500));
+		pedalboard.getSong().setAction(5, playNote(70, 100, 1, 500));
 
 		// Configure output sink filters
 		pedalboard.getProcessor().appendFilter(new Octave(-2));

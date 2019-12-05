@@ -15,10 +15,8 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
@@ -70,63 +68,36 @@ public class Pedalboard {
     }
 
     public void noteOn(final int note, final int velocity,
-                        final int channel) {
-        noteOn(note, velocity, channel, 0L);
-    }
-
-    public void noteOn(final int note, final int velocity,
-                       final int channel, final long delayInMillis) {
+                       final int channel, final long timestamp) {
         try {
             final ShortMessage message = new ShortMessage(NOTE_ON, channel, note, velocity);
-            sendMidiMessage(message, delayInMillis);
+            processMidiMessage(message, timestamp);
         } catch (final InvalidMidiDataException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void noteOff(final int note, final int velocity,
-                        final int channel) {
-        noteOff(note, velocity, channel, 0L);
-    }
-
-    public void noteOff(final int note, final int velocity,
-                        final int channel, final long delayInMillis) {
+                        final int channel, final long timestamp) {
         try {
             final ShortMessage message = new ShortMessage(NOTE_OFF, channel, note, velocity);
-            sendMidiMessage(message, delayInMillis);
+            processMidiMessage(message, timestamp);
         } catch (final InvalidMidiDataException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void sendMidiMessage(final MidiMessage message, final long delayInMillis) {
-        processor.process(message, delayInMillis);
+    private void processMidiMessage(final MidiMessage message, final long timestamp) {
+        processor.process(message, timestamp);
     }
 
     public static class Processor {
         private final Pedalboard pedalboard;
         private final AbstractFilter filterChain;
-        private final PriorityQueue<Pair> queue = new PriorityQueue<>(Comparator.comparingLong(Pair::getTimestamp));
-        private final Thread worker = new Thread(() -> {
-            while(true)
-                try {
-                    while(!queue.isEmpty()) {
-                        if (queue.peek().timestamp <= System.currentTimeMillis()) {
-                            final Pair pair = queue.poll();
-                            getFilterChain().accept(getPedalboard(), pair.message);
-                        }
-                    }
-                } catch (final Throwable ignore) {
-                    // Do nothing!
-                } finally {
-                    try { Thread.sleep(5); } catch (final Throwable ignore) {}
-                }
-        });
 
         public Processor(final Pedalboard pedalboard, final Receiver outputPort) {
             this.pedalboard = pedalboard;
             filterChain = createDefaultFilterChain(outputPort);
-            worker.start();
         }
 
         private Pedalboard getPedalboard() {
@@ -141,34 +112,13 @@ public class Pedalboard {
             return new Input(new Output(receiver));
         }
 
-        public void process(final MidiMessage message, final long delayInMillis) {
-            if (delayInMillis == 0L)
-                filterChain.accept(pedalboard, message);
-            else
-                queue.add(new Pair(System.currentTimeMillis() + delayInMillis, message));
+        public void process(final MidiMessage message, final long timestamp) {
+            filterChain.accept(pedalboard, message, timestamp);
         }
 
         public void appendFilter(AbstractFilter filter) {
             if (!filterChain.addBeforeOutput(filter))
                 throw new IllegalStateException("Internal filter chain misconfiguration!");
-        }
-
-        private class Pair {
-            private long timestamp;
-            private MidiMessage message;
-
-            public Pair(long timestamp, MidiMessage message) {
-                this.timestamp = timestamp;
-                this.message = message;
-            }
-
-            public long getTimestamp() {
-                return timestamp;
-            }
-
-            public MidiMessage getMessage() {
-                return message;
-            }
         }
     }
 }

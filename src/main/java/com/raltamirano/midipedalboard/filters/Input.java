@@ -1,9 +1,7 @@
 package com.raltamirano.midipedalboard.filters;
 
 import com.raltamirano.midipedalboard.Pedalboard;
-
-import javax.sound.midi.MidiMessage;
-import java.util.List;
+import com.raltamirano.midipedalboard.model.Events;
 
 public final class Input extends AbstractFilter {
     public Input(final AbstractFilter next) {
@@ -11,12 +9,12 @@ public final class Input extends AbstractFilter {
     }
 
     @Override
-    protected boolean canHandle(Pedalboard pedalboard, List<MidiMessage> messages) {
+    protected boolean canHandle(final Pedalboard pedalboard, final Events events) {
         return true;
     }
 
     @Override
-    protected List<MidiMessage> handle(Pedalboard pedalboard, List<MidiMessage> messages) {
-        return messages;
+    protected Events handle(final Pedalboard pedalboard, final Events events) {
+        return events;
     }
 }

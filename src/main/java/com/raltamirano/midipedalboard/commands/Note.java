@@ -19,8 +19,9 @@ public class Note implements Command {
         final int channel = (Integer)parameters.get("channel");
         final int duration = (Integer)parameters.get("duration");
 
-        pedalboard.noteOn(note, velocity, channel);
-        pedalboard.noteOff(note, velocity, channel, duration);
+        final long now = System.currentTimeMillis();
+        pedalboard.noteOn(note, velocity, channel, now);
+        pedalboard.noteOff(note, velocity, channel, now + duration);
     }
 
     public static final String NAME = "Note";
