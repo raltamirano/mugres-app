@@ -4,6 +4,7 @@ import com.raltamirano.midipedalboard.commands.Note;
 import com.raltamirano.midipedalboard.commands.Play;
 import com.raltamirano.midipedalboard.commands.Wait;
 import com.raltamirano.midipedalboard.filters.Octave;
+import com.raltamirano.midipedalboard.filters.Toggle;
 import com.raltamirano.midipedalboard.model.Action;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -51,8 +52,9 @@ public class App implements CommandLineRunner {
 		pedalboard.getSong().setAction(4, playNote(67, 100, 1, 500));
 		pedalboard.getSong().setAction(5, playNote(70, 100, 1, 500));
 
-		// Configure output sink filters
+		// Configure output processor filters
 		pedalboard.getProcessor().appendFilter(new Octave(-2));
+		pedalboard.getProcessor().appendFilter(new Toggle());
 
 //		pedalboard.getSong().createPattern("Intro")
 //				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));

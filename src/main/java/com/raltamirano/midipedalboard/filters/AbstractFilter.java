@@ -3,9 +3,7 @@ package com.raltamirano.midipedalboard.filters;
 import com.raltamirano.midipedalboard.Pedalboard;
 import com.raltamirano.midipedalboard.model.Events;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.ShortMessage;
 
 public abstract class AbstractFilter {
     private AbstractFilter next;
@@ -45,20 +43,13 @@ public abstract class AbstractFilter {
         this.next = filter;
     }
 
+    protected boolean isValidMidiNoteNumber(int noteNumber) {
+        return noteNumber >= 0 && noteNumber <= 127;
+    }
+
     private Events doAccept(final Pedalboard pedalboard,
                                        final Events events) {
         return canHandle(pedalboard, events) ?
                 handle(pedalboard, events) : events;
-    }
-
-    protected ShortMessage shortMessage(final int command,
-                                        final int channel,
-                                        final int data1,
-                                        final int data2) {
-        try {
-            return new ShortMessage(command, channel, data1, data2);
-        } catch (final InvalidMidiDataException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
