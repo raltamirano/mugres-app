@@ -3,6 +3,7 @@ package com.raltamirano.midipedalboard;
 import com.raltamirano.midipedalboard.commands.Note;
 import com.raltamirano.midipedalboard.commands.Play;
 import com.raltamirano.midipedalboard.commands.Wait;
+import com.raltamirano.midipedalboard.filters.Legato;
 import com.raltamirano.midipedalboard.filters.Octave;
 import com.raltamirano.midipedalboard.filters.Toggle;
 import com.raltamirano.midipedalboard.model.Action;
@@ -53,8 +54,9 @@ public class App implements CommandLineRunner {
 		pedalboard.getSong().setAction(5, playNote(70, 100, 1, 500));
 
 		// Configure output processor filters
+		pedalboard.getProcessor().appendFilter(new Legato());
+//		pedalboard.getProcessor().appendFilter(new Toggle());
 		pedalboard.getProcessor().appendFilter(new Octave(-2));
-		pedalboard.getProcessor().appendFilter(new Toggle());
 
 //		pedalboard.getSong().createPattern("Intro")
 //				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));
