@@ -56,7 +56,7 @@ public class Pitch {
 
     @Override
     public String toString() {
-        return String.format("%-4s [%03d]",
+        return String.format("[%-4s][%03d]",
                 String.format("%s%s", note.label(), octave),
                 midi);
     }

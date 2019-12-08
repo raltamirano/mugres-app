@@ -149,7 +149,7 @@ public class Events implements Iterable<Events.Event> {
 
         @Override
         public String toString() {
-            return String.format("[%-3s][%s]", isNoteOn() ? "ON" : "OFF", Pitch.of(getNote()));
+            return String.format("[%-3s]%s", isNoteOn() ? "ON" : "OFF", Pitch.of(getNote()));
         }
     }
 }
