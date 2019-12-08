@@ -110,8 +110,8 @@ public class Action {
         private boolean pedalDown;
         private long timestamp;
 
-        public static Context of(final int pedal, final boolean pedalDown) {
-            return new Context(pedal, pedalDown, System.currentTimeMillis());
+        public static Context of(final int pedal, final boolean pedalDown, final long timestamp) {
+            return new Context(pedal, pedalDown, timestamp);
         }
     }
 }

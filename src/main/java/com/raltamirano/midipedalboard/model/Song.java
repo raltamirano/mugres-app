@@ -1,6 +1,7 @@
 package com.raltamirano.midipedalboard.model;
 
 import com.raltamirano.midipedalboard.common.Key;
+import com.raltamirano.midipedalboard.common.TimeSignature;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -14,9 +15,11 @@ public class Song {
     @NonNull
     private String title;
     @NonNull
-    private int tempo;
+    private int tempo = 120;
     @NonNull
     private Key key = Key.C;
+    @NonNull
+    private TimeSignature timeSignature = TimeSignature.TS44;
     @NonNull
     private Map<String, Pattern> patterns = new HashMap<>();
     @NonNull

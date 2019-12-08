@@ -4,10 +4,7 @@ import com.raltamirano.midipedalboard.commands.Note;
 import com.raltamirano.midipedalboard.commands.Play;
 import com.raltamirano.midipedalboard.commands.Wait;
 import com.raltamirano.midipedalboard.common.Key;
-import com.raltamirano.midipedalboard.filters.Chord;
-import com.raltamirano.midipedalboard.filters.Legato;
-import com.raltamirano.midipedalboard.filters.Monitor;
-import com.raltamirano.midipedalboard.filters.Octave;
+import com.raltamirano.midipedalboard.filters.*;
 import com.raltamirano.midipedalboard.model.Action;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -60,10 +57,13 @@ public class App implements CommandLineRunner {
 		// Configure output processor filters
 		pedalboard.getProcessor().appendFilter(new Monitor("Input"));
 
-		pedalboard.getProcessor().appendFilter(new Legato());
+		//pedalboard.getProcessor().appendFilter(new Legato());
+//		pedalboard.getProcessor().appendFilter(new Toggle());
+
 		//pedalboard.getProcessor().appendFilter(new Octave(-1));
 		pedalboard.getProcessor().appendFilter(new Chord());
-//		pedalboard.getProcessor().appendFilter(new Toggle());
+		pedalboard.getProcessor().appendFilter(new Arp("1e3e1e3e23"));
+
 
 		pedalboard.getProcessor().appendFilter(new Monitor("Output"));
 

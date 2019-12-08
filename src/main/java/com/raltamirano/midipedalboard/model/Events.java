@@ -60,6 +60,10 @@ public class Events implements Iterable<Events.Event> {
         return eventList.size();
     }
 
+    public boolean isEmpty() {
+        return eventList.isEmpty();
+    }
+
     /** All events in this set are 'note events' (either NOTE_ON or NOTE_OFF ShortMessages) */
     public boolean noteEventsOnly() {
         return eventList.stream().allMatch(Event::isNoteEvent);
@@ -147,9 +151,37 @@ public class Events implements Iterable<Events.Event> {
             return getShortMessage().getData2();
         }
 
+        public Cloner clone() {
+            return new Cloner(this);
+        }
+
         @Override
         public String toString() {
             return String.format("[%-3s]%s", isNoteOn() ? "ON" : "OFF", Pitch.of(getNote()));
+        }
+
+        public static class Cloner {
+            private ShortMessage message;
+            private long timestamp;
+
+            private Cloner(final NoteEvent source) {
+                this.message = source.getShortMessage();
+                this.timestamp = source.getTimestamp();
+            }
+
+            public Cloner deltaTimestamp(final long delta) {
+                timestamp += delta;
+                return this;
+            }
+
+            public Cloner modifyTimestamp(final long newTimestamp) {
+                timestamp = newTimestamp;
+                return this;
+            }
+
+            public NoteEvent get() {
+                return new NoteEvent(message, timestamp);
+            }
         }
     }
 }

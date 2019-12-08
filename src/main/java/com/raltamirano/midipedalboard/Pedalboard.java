@@ -40,8 +40,12 @@ public class Pedalboard {
     @Getter
     private final Processor processor;
 
+    @NonNull
+    @Getter
+    private long lastEventTimestamp = Long.MIN_VALUE;
+
     public Pedalboard(final Receiver outputPort) {
-        this(outputPort, new Song("Untitled", 120));
+        this(outputPort, new Song("Untitled"));
     }
 
     public Pedalboard(final Receiver outputPort, final Song song) {
@@ -64,8 +68,10 @@ public class Pedalboard {
 
     /** Act upon a pedal being activated. */
     public void pedal(final int pedal, boolean down) {
+        lastEventTimestamp = System.currentTimeMillis();
+
         final Action action = song.getAction(pedal);
-        final Action.Context context = Action.Context.of(pedal, down);
+        final Action.Context context = Action.Context.of(pedal, down, lastEventTimestamp);
         if (action != null)
             action.execute(this, context);
     }
