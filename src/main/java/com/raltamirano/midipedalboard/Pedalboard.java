@@ -63,10 +63,11 @@ public class Pedalboard {
     }
 
     /** Act upon a pedal being activated. */
-    public void pedal(final int pedal) {
+    public void pedal(final int pedal, boolean down) {
         final Action action = song.getAction(pedal);
+        final Action.Context context = Action.Context.of(pedal, down);
         if (action != null)
-            action.execute(this);
+            action.execute(this, context);
     }
 
     public void noteOn(final int note, final int velocity,
@@ -79,10 +80,9 @@ public class Pedalboard {
         }
     }
 
-    public void noteOff(final int note, final int velocity,
-                        final int channel, final long timestamp) {
+    public void noteOff(final int note, final int channel, final long timestamp) {
         try {
-            final ShortMessage message = new ShortMessage(NOTE_OFF, channel, note, velocity);
+            final ShortMessage message = new ShortMessage(NOTE_OFF, channel, note, 0);
             processMidiMessage(message, timestamp);
         } catch (final InvalidMidiDataException e) {
             throw new RuntimeException(e);

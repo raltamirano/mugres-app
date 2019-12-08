@@ -32,10 +32,6 @@ public class Events implements Iterable<Events.Event> {
         return new Events();
     }
 
-    public static Events of(final MidiMessage message) {
-        return new Events().append(message, System.currentTimeMillis());
-    }
-
     public static Events of(final MidiMessage message,
                             final long timestamp) {
         return new Events().append(message, timestamp);

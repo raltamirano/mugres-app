@@ -1,6 +1,7 @@
 package com.raltamirano.midipedalboard.orchestration;
 
 import com.raltamirano.midipedalboard.Pedalboard;
+import com.raltamirano.midipedalboard.model.Action;
 
 import java.util.Map;
 
@@ -11,5 +12,6 @@ public interface Command {
 
     /** Executes this command. */
     void execute(final Pedalboard pedalboard,
+                 final Action.Context context,
                  final Map<String, Object> parameters);
 }

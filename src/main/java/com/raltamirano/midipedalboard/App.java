@@ -6,7 +6,6 @@ import com.raltamirano.midipedalboard.commands.Wait;
 import com.raltamirano.midipedalboard.common.Key;
 import com.raltamirano.midipedalboard.filters.Chord;
 import com.raltamirano.midipedalboard.filters.Legato;
-import com.raltamirano.midipedalboard.filters.Octave;
 import com.raltamirano.midipedalboard.model.Action;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 
 /**
@@ -49,11 +49,11 @@ public class App implements CommandLineRunner {
 		pedalboard.getSong().setKey(Key.CS);
 
 		// Actions for every pedal
-		pedalboard.getSong().setAction(1, playNote(61, 100, 1, 500));
-		pedalboard.getSong().setAction(2, playNote(63, 100, 1, 500));
-		pedalboard.getSong().setAction(3, playNote(65, 100, 1, 500));
-		pedalboard.getSong().setAction(4, playNote(66, 100, 1, 500));
-		pedalboard.getSong().setAction(5, playNote(68, 100, 1, 500));
+		pedalboard.getSong().setAction(1, playNote(61, 100, 1));
+		pedalboard.getSong().setAction(2, playNote(63, 100, 1));
+		pedalboard.getSong().setAction(3, playNote(65, 100, 1));
+		pedalboard.getSong().setAction(4, playNote(66, 100, 1));
+		pedalboard.getSong().setAction(5, playNote(68, 100, 1));
 
 		// Configure output processor filters
 		pedalboard.getProcessor().appendFilter(new Legato());
@@ -91,7 +91,7 @@ public class App implements CommandLineRunner {
 				case '3':
 				case '4':
 				case '5':
-					pedalboard.pedal(Integer.parseInt(String.valueOf(c)));
+					pedalboard.pedal(Integer.parseInt(String.valueOf(c)), true);
 				default:
 					break;
 			}
@@ -107,12 +107,11 @@ public class App implements CommandLineRunner {
 	}
 
 	private Action playNote(final int note, final int velocity,
-							final int channel, final int duration) {
+							final int channel) {
 		return Action.of(pedalboard.getCommands().get(Note.NAME),
 				"note", note,
 				"velocity", velocity,
-				"channel", channel,
-				"duration", duration);
+				"channel", channel);
 	}
 
 	private Action waitFor(final long millis) {
@@ -126,24 +125,10 @@ public class App implements CommandLineRunner {
 			public void send(MidiMessage message, long timeStamp) {
 				if (message instanceof ShortMessage) {
 					final ShortMessage sm = (ShortMessage) message;
-					if (sm.getCommand() == NOTE_ON) {
-						switch (sm.getData1()) {
-							case 60:
-								pedalboard.pedal(1);
-								break;
-							case 61:
-								pedalboard.pedal(2);
-								break;
-							case 62:
-								pedalboard.pedal(3);
-								break;
-							case 63:
-								pedalboard.pedal(4);
-								break;
-							case 64:
-								pedalboard.pedal(5);
-								break;
-						}
+					if (sm.getCommand() == NOTE_ON || sm.getCommand() == NOTE_OFF) {
+						final int pedalNumber = sm.getData1() - 59;
+						final boolean pedalDown = sm.getCommand() == NOTE_ON && sm.getData2() > 0;
+						pedalboard.pedal(pedalNumber, pedalDown);
 					}
 				}
 			}

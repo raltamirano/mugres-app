@@ -2,6 +2,7 @@ package com.raltamirano.midipedalboard.model;
 
 import com.raltamirano.midipedalboard.Pedalboard;
 import com.raltamirano.midipedalboard.orchestration.Command;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -70,10 +71,10 @@ public class Action {
         return of(command, parameters);
     }
 
-    public void execute(final Pedalboard pedalboard) {
+    public void execute(final Pedalboard pedalboard, final Action.Context context) {
         for(int index = 0; index < steps.size(); index++) {
             final Step step = steps.get(index);
-            step.getCommand().execute(pedalboard, step.getParameters());
+            step.getCommand().execute(pedalboard, context, step.getParameters());
         }
     }
 
@@ -99,6 +100,18 @@ public class Action {
         public Step(final Command command, final Map<String, Object> parameters) {
             this.command = command;
             this.parameters = parameters;
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class Context {
+        private int pedal;
+        private boolean pedalDown;
+        private long timestamp;
+
+        public static Context of(final int pedal, final boolean pedalDown) {
+            return new Context(pedal, pedalDown, System.currentTimeMillis());
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.raltamirano.midipedalboard.commands;
 
 import com.raltamirano.midipedalboard.Pedalboard;
+import com.raltamirano.midipedalboard.model.Action;
 import com.raltamirano.midipedalboard.orchestration.Command;
 
 import java.util.Map;
@@ -13,15 +14,16 @@ public class Note implements Command {
 
     @Override
     public void execute(final Pedalboard pedalboard,
+                        final Action.Context context,
                         final Map<String, Object> parameters) {
         final int note = (Integer)parameters.get("note");
         final int velocity = (Integer)parameters.get("velocity");
         final int channel = (Integer)parameters.get("channel");
-        final int duration = (Integer)parameters.get("duration");
 
-        final long now = System.currentTimeMillis();
-        pedalboard.noteOn(note, velocity, channel, now);
-        pedalboard.noteOff(note, velocity, channel, now + duration);
+        if (context.isPedalDown())
+            pedalboard.noteOn(note, velocity, channel, context.getTimestamp());
+        else
+            pedalboard.noteOff(note, channel, context.getTimestamp());
     }
 
     public static final String NAME = "Note";
