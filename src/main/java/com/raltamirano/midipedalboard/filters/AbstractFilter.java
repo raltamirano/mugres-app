@@ -43,10 +43,6 @@ public abstract class AbstractFilter {
         this.next = filter;
     }
 
-    protected boolean isValidMidiNoteNumber(int noteNumber) {
-        return noteNumber >= 0 && noteNumber <= 127;
-    }
-
     private Events doAccept(final Pedalboard pedalboard,
                                        final Events events) {
         return canHandle(pedalboard, events) ?

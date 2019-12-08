@@ -4,6 +4,8 @@ import com.raltamirano.midipedalboard.Pedalboard;
 import com.raltamirano.midipedalboard.model.Events;
 import com.raltamirano.midipedalboard.model.Events.NoteEvent;
 
+import static com.raltamirano.midipedalboard.common.Pitch.isValidMidiNoteNumber;
+
 public class Octave extends AbstractFilter {
     private final int octaveOffsetSemitones;
 

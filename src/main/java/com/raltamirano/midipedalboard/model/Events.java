@@ -1,5 +1,7 @@
 package com.raltamirano.midipedalboard.model;
 
+import com.raltamirano.midipedalboard.common.Pitch;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
@@ -56,6 +58,10 @@ public class Events implements Iterable<Events.Event> {
     @Override
     public Spliterator<Event> spliterator() {
         return eventList.spliterator();
+    }
+
+    public int count() {
+        return eventList.size();
     }
 
     /** All events in this set are 'note events' (either NOTE_ON or NOTE_OFF ShortMessages) */
@@ -143,6 +149,11 @@ public class Events implements Iterable<Events.Event> {
 
         public int getVelocity() {
             return getShortMessage().getData2();
+        }
+
+        @Override
+        public String toString() {
+            return String.format("[%-3s][%s]", isNoteOn() ? "ON" : "OFF", Pitch.of(getNote()));
         }
     }
 }

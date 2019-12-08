@@ -1,5 +1,6 @@
 package com.raltamirano.midipedalboard.model;
 
+import com.raltamirano.midipedalboard.common.Key;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -14,6 +15,8 @@ public class Song {
     private String title;
     @NonNull
     private int tempo;
+    @NonNull
+    private Key key = Key.C;
     @NonNull
     private Map<String, Pattern> patterns = new HashMap<>();
     @NonNull

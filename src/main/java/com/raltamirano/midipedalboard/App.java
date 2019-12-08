@@ -3,9 +3,10 @@ package com.raltamirano.midipedalboard;
 import com.raltamirano.midipedalboard.commands.Note;
 import com.raltamirano.midipedalboard.commands.Play;
 import com.raltamirano.midipedalboard.commands.Wait;
+import com.raltamirano.midipedalboard.common.Key;
+import com.raltamirano.midipedalboard.filters.Chord;
 import com.raltamirano.midipedalboard.filters.Legato;
 import com.raltamirano.midipedalboard.filters.Octave;
-import com.raltamirano.midipedalboard.filters.Toggle;
 import com.raltamirano.midipedalboard.model.Action;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -45,18 +46,20 @@ public class App implements CommandLineRunner {
 		final Receiver outputPort = createOutputPort();
 
 		pedalboard = new Pedalboard(outputPort);
+		pedalboard.getSong().setKey(Key.CS);
 
 		// Actions for every pedal
-		pedalboard.getSong().setAction(1, playNote(60, 100, 1, 500));
+		pedalboard.getSong().setAction(1, playNote(61, 100, 1, 500));
 		pedalboard.getSong().setAction(2, playNote(63, 100, 1, 500));
 		pedalboard.getSong().setAction(3, playNote(65, 100, 1, 500));
-		pedalboard.getSong().setAction(4, playNote(67, 100, 1, 500));
-		pedalboard.getSong().setAction(5, playNote(70, 100, 1, 500));
+		pedalboard.getSong().setAction(4, playNote(66, 100, 1, 500));
+		pedalboard.getSong().setAction(5, playNote(68, 100, 1, 500));
 
 		// Configure output processor filters
 		pedalboard.getProcessor().appendFilter(new Legato());
+		//pedalboard.getProcessor().appendFilter(new Octave(-1));
+		pedalboard.getProcessor().appendFilter(new Chord());
 //		pedalboard.getProcessor().appendFilter(new Toggle());
-		pedalboard.getProcessor().appendFilter(new Octave(-2));
 
 //		pedalboard.getSong().createPattern("Intro")
 //				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));
