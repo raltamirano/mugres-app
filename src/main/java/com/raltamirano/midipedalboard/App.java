@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import static com.raltamirano.midipedalboard.common.Value.WHOLE;
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 
@@ -57,14 +58,13 @@ public class App implements CommandLineRunner {
 		// Configure output processor filters
 		pedalboard.getProcessor().appendFilter(new Monitor("Input"));
 
-		//pedalboard.getProcessor().appendFilter(new Legato());
+//		pedalboard.getProcessor().appendFilter(new Legato());
 //		pedalboard.getProcessor().appendFilter(new Toggle());
+//		pedalboard.getProcessor().appendFilter(new Octave(-1));
+//		pedalboard.getProcessor().appendFilter(new Chord());
+//		pedalboard.getProcessor().appendFilter(new Arp("1e3e1e3e23"));
 
-		//pedalboard.getProcessor().appendFilter(new Octave(-1));
-		pedalboard.getProcessor().appendFilter(new Chord());
-		pedalboard.getProcessor().appendFilter(new Arp("1e3e1e3e23"));
-
-
+        pedalboard.getProcessor().appendFilter(new FixNoteLength(WHOLE));
 		pedalboard.getProcessor().appendFilter(new Monitor("Output"));
 
 //		pedalboard.getSong().createPattern("Intro")

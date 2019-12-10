@@ -179,6 +179,15 @@ public class Events implements Iterable<Events.Event> {
                 return this;
             }
 
+            public Cloner toNoteOff() {
+                try {
+                    message = new ShortMessage(NOTE_OFF, message.getChannel(), message.getData1(), 0);
+                } catch (final InvalidMidiDataException e) {
+                    throw new RuntimeException(e);
+                }
+                return this;
+            }
+
             public NoteEvent get() {
                 return new NoteEvent(message, timestamp);
             }
