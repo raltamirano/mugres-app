@@ -16,7 +16,8 @@ public class Play implements Command {
     public void execute(final Pedalboard pedalboard,
                         final Action.Context context,
                         final Map<String, Object> parameters) {
-        pedalboard.getOrchestrator().play((String)parameters.get("pattern"));
+        if (context.isPedalDown())
+            pedalboard.getOrchestrator().play((String)parameters.get("pattern"));
     }
 
     public static final String NAME = "Play";

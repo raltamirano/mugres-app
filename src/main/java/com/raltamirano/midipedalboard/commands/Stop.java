@@ -16,7 +16,8 @@ public class Stop implements Command {
     public void execute(final Pedalboard pedalboard,
                         final Action.Context context,
                         final Map<String, Object> parameters) {
-        pedalboard.getOrchestrator().stop();
+        if (context.isPedalDown())
+            pedalboard.getOrchestrator().stop();
     }
 
     public static final String NAME = "Stop";

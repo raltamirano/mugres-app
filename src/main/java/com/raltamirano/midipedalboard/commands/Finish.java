@@ -16,7 +16,8 @@ public class Finish implements Command {
     public void execute(final Pedalboard pedalboard,
                         final Action.Context context,
                         final Map<String, Object> parameters) {
-        pedalboard.getOrchestrator().finish();
+        if (context.isPedalDown())
+            pedalboard.getOrchestrator().finish();
     }
 
     public static final String NAME = "Finish";
