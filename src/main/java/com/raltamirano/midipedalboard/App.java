@@ -1,22 +1,24 @@
 package com.raltamirano.midipedalboard;
 
-import com.raltamirano.midipedalboard.commands.Note;
-import com.raltamirano.midipedalboard.commands.Play;
-import com.raltamirano.midipedalboard.commands.Wait;
+import com.raltamirano.midipedalboard.commands.*;
 import com.raltamirano.midipedalboard.common.Key;
-import com.raltamirano.midipedalboard.filters.*;
+import com.raltamirano.midipedalboard.filters.Chord;
+import com.raltamirano.midipedalboard.filters.FixNoteLength;
+import com.raltamirano.midipedalboard.filters.Monitor;
 import com.raltamirano.midipedalboard.model.Action;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.sound.midi.*;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import static com.raltamirano.midipedalboard.common.Value.WHOLE;
+import static com.raltamirano.midipedalboard.commands.Wait.HALF_SECOND;
+import static com.raltamirano.midipedalboard.common.Value.*;
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 
@@ -46,47 +48,9 @@ public class App implements CommandLineRunner {
 		final Receiver outputPort = createOutputPort();
 
 		pedalboard = new Pedalboard(outputPort);
-		pedalboard.getSong().setKey(Key.CS);
 
-		// Actions for every pedal
-		pedalboard.getSong().setAction(1, playNote(61, 100, 1));
-		pedalboard.getSong().setAction(2, playNote(63, 100, 1));
-		pedalboard.getSong().setAction(3, playNote(65, 100, 1));
-		pedalboard.getSong().setAction(4, playNote(66, 100, 1));
-		pedalboard.getSong().setAction(5, playNote(68, 100, 1));
-
-		// Configure output processor filters
-		pedalboard.getProcessor().appendFilter(new Monitor("Input"));
-
-//		pedalboard.getProcessor().appendFilter(new Legato());
-//		pedalboard.getProcessor().appendFilter(new Toggle());
-//		pedalboard.getProcessor().appendFilter(new Octave(-1));
-//		pedalboard.getProcessor().appendFilter(new Chord());
-//		pedalboard.getProcessor().appendFilter(new Arp("1e3e1e3e23"));
-
-        pedalboard.getProcessor().appendFilter(new FixNoteLength(WHOLE));
-		pedalboard.getProcessor().appendFilter(new Monitor("Output"));
-
-//		pedalboard.getSong().createPattern("Intro")
-//				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));
-//
-//		pedalboard.getSong().createPattern("Pattern 1")
-//				.appendGroove(new File(BASE_DIR + "groove1.mid"))
-//					.appendFill(new File(BASE_DIR + "groove1-fill1.mid"))
-//					.appendFill(new File(BASE_DIR + "groove1-fill2.mid"));
-//
-//		pedalboard.getSong().createPattern("Pattern 2")
-//				.appendGroove(new File(BASE_DIR + "groove2.mid"))
-//					.appendFill(new File(BASE_DIR + "groove2-fill1.mid"))
-//					.appendFill(new File(BASE_DIR + "groove2-fill2.mid"));
-//
-//		pedalboard.getSong().setAction(1, playPattern("Intro")
-//									.then(waitFor(HALF_SECOND))
-//									.then(playPattern("Pattern 1")));
-//		pedalboard.getSong().setAction(2, playPattern("Pattern 1"));
-//		pedalboard.getSong().setAction(3, playPattern("Pattern 2"));
-//		pedalboard.getSong().setAction(4, FINISH);
-//		pedalboard.getSong().setAction(5, STOP);
+		setUpMelodicInstrument();
+//		setUpDrums();
 
 		final Scanner scanner = new Scanner(System.in);
 		char c = scanner.next().charAt(0);
@@ -105,6 +69,51 @@ public class App implements CommandLineRunner {
 		}
 
 		System.exit(0);
+	}
+
+	private void setUpMelodicInstrument() {
+		pedalboard.getSong().setKey(Key.C);
+
+		// Actions for every pedal
+		pedalboard.getSong().setAction(1, playNote(60, 100, 1));
+		pedalboard.getSong().setAction(2, playNote(62, 100, 1));
+		pedalboard.getSong().setAction(3, playNote(64, 100, 1));
+		pedalboard.getSong().setAction(4, playNote(65, 100, 1));
+		pedalboard.getSong().setAction(5, playNote(67, 100, 1));
+
+		// Configure output processor filters
+		pedalboard.getProcessor().appendFilter(new Monitor("Input"));
+
+		pedalboard.getProcessor().appendFilter(new FixNoteLength(WHOLE));
+//		pedalboard.getProcessor().appendFilter(new Legato());
+//		pedalboard.getProcessor().appendFilter(new Toggle());
+//		pedalboard.getProcessor().appendFilter(new Octave(-1));
+		pedalboard.getProcessor().appendFilter(new Chord());
+//		pedalboard.getProcessor().appendFilter(new Arp("1232"));
+		pedalboard.getProcessor().appendFilter(new Monitor("Output"));
+	}
+
+	private void setUpDrums() {
+		pedalboard.getSong().createPattern("Intro")
+				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));
+
+		pedalboard.getSong().createPattern("Pattern 1")
+				.appendGroove(new File(BASE_DIR + "groove1.mid"))
+					.appendFill(new File(BASE_DIR + "groove1-fill1.mid"))
+					.appendFill(new File(BASE_DIR + "groove1-fill2.mid"));
+
+		pedalboard.getSong().createPattern("Pattern 2")
+				.appendGroove(new File(BASE_DIR + "groove2.mid"))
+					.appendFill(new File(BASE_DIR + "groove2-fill1.mid"))
+					.appendFill(new File(BASE_DIR + "groove2-fill2.mid"));
+
+		pedalboard.getSong().setAction(1, playPattern("Intro")
+									.then(waitFor(HALF_SECOND))
+									.then(playPattern("Pattern 1")));
+		pedalboard.getSong().setAction(2, playPattern("Pattern 1"));
+		pedalboard.getSong().setAction(3, playPattern("Pattern 2"));
+		pedalboard.getSong().setAction(4, Action.of(pedalboard.getCommands().get(Finish.NAME)));
+		pedalboard.getSong().setAction(5, Action.of(pedalboard.getCommands().get(Stop.NAME)));
 	}
 
 	private Action playPattern(final String pattern) {
@@ -193,8 +202,5 @@ public class App implements CommandLineRunner {
 		throw new RuntimeException("Invalid MIDI output port: " + portName);
 	}
 
-//	private static final Action NOOP = Action.of(COMMANDS.get(NoOp.NAME));
-//	private static final Action STOP = Action.of(COMMANDS.get(Stop.NAME));
-//	private static final Action FINISH = Action.of(COMMANDS.get(Finish.NAME));
 	private static final String BASE_DIR = System.getProperty("mp.midiFilesBaseDir");
 }
