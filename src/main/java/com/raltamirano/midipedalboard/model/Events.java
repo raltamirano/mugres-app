@@ -2,9 +2,7 @@ package com.raltamirano.midipedalboard.model;
 
 import com.raltamirano.midipedalboard.common.Pitch;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +10,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static javax.sound.midi.Sequence.PPQ;
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 
@@ -75,6 +74,27 @@ public class Events implements Iterable<Events.Event> {
                 .map(NoteEvent.class::cast)
                 .collect(Collectors.toList());
     }
+
+    public Sequence toSequence(final int tempo) {
+        try {
+            final Sequence sequence = new Sequence(PPQ, DEFAULT_RESOLUTION, 1);
+            if (count() > 0) {
+                final Track track = sequence.getTracks()[0];
+                final long startTime = eventList.get(0).timestamp;
+                final double msToTicksRatio = 60000.0 / tempo / DEFAULT_RESOLUTION;
+                for (int i = 0; i < eventList.size(); i++) {
+                    final Event event = eventList.get(i);
+                    final long tick = Math.round((event.timestamp - startTime) / msToTicksRatio);
+                    track.add(new MidiEvent(event.message, tick));
+                }
+            }
+            return sequence;
+        } catch (final InvalidMidiDataException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static final int DEFAULT_RESOLUTION = 480;
 
     public static class Event {
         private final long timestamp;

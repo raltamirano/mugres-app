@@ -22,7 +22,7 @@ public class Length {
     }
 
     public long toMillis(final int bpm) {
-        return (60000 / bpm / 16) * n;
+        return Math.round((60000.0 / bpm / 16.0) * n);
     }
 
     public Length plus(final Length other) {
