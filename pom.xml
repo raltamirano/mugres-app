@@ -51,4 +51,10 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>mugres-core</id>
+			<url>https://raw.github.com/raltamirano/mugres-core/mvn-repo/</url>
+		</repository>
+	</repositories>
 </project>
