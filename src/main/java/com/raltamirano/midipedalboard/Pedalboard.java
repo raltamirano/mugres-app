@@ -1,15 +1,16 @@
 package com.raltamirano.midipedalboard;
 
 import com.raltamirano.midipedalboard.commands.*;
-import com.raltamirano.midipedalboard.filters.AbstractFilter;
-import com.raltamirano.midipedalboard.filters.Input;
-import com.raltamirano.midipedalboard.filters.Output;
 import com.raltamirano.midipedalboard.model.Action;
 import com.raltamirano.midipedalboard.model.Song;
 import com.raltamirano.midipedalboard.orchestration.Command;
 import com.raltamirano.midipedalboard.orchestration.Orchestrator;
 import lombok.Getter;
 import lombok.NonNull;
+import mugres.core.common.Context;
+import mugres.core.filters.AbstractFilter;
+import mugres.core.filters.Input;
+import mugres.core.filters.Output;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
@@ -23,7 +24,7 @@ import java.util.Map;
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 
-public class Pedalboard {
+public class Pedalboard implements Context {
     @NonNull
     @Getter
     private Song song;

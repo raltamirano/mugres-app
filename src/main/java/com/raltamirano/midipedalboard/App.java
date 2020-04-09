@@ -1,11 +1,11 @@
 package com.raltamirano.midipedalboard;
 
 import com.raltamirano.midipedalboard.commands.*;
-import com.raltamirano.midipedalboard.common.Key;
-import com.raltamirano.midipedalboard.filters.Chord;
-import com.raltamirano.midipedalboard.filters.FixNoteLength;
-import com.raltamirano.midipedalboard.filters.Monitor;
 import com.raltamirano.midipedalboard.model.Action;
+import mugres.core.common.Key;
+import mugres.core.filters.Chord;
+import mugres.core.filters.FixNoteLength;
+import mugres.core.filters.Monitor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,7 +18,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static com.raltamirano.midipedalboard.commands.Wait.HALF_SECOND;
-import static com.raltamirano.midipedalboard.common.Value.*;
+import static mugres.core.common.Value.*;
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 

@@ -1,9 +1,10 @@
 package com.raltamirano.midipedalboard.model;
 
-import com.raltamirano.midipedalboard.common.Key;
-import com.raltamirano.midipedalboard.common.TimeSignature;
 import lombok.Data;
 import lombok.NonNull;
+import mugres.core.common.Context;
+import mugres.core.common.Key;
+import mugres.core.common.TimeSignature;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +12,9 @@ import java.util.Map;
 import static com.raltamirano.midipedalboard.model.Pattern.Mode.SEQUENCE;
 
 @Data
-public class Song {
+public class Song implements Context {
     @NonNull
     private String title;
-    @NonNull
     private int tempo = 120;
     @NonNull
     private Key key = Key.C;
