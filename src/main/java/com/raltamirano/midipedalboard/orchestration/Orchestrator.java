@@ -73,7 +73,9 @@ public class Orchestrator {
 
         try {
             sequencer.setSequence(sequenceToPlay);
-            sequencer.setTempoInBPM(playingPattern.getTempo() != 0 ? playingPattern.getTempo() : song.getTempo());
+            sequencer.setTempoInBPM(playingPattern.getTempo() != 0 ?
+                    playingPattern.getTempo() :
+                    song.getContext().getTempo());
             sequencer.setTickPosition(0);
             sequencer.start();
         } catch (final InvalidMidiDataException e) {

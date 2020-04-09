@@ -8,9 +8,9 @@ import com.raltamirano.midipedalboard.orchestration.Orchestrator;
 import lombok.Getter;
 import lombok.NonNull;
 import mugres.core.common.Context;
-import mugres.core.filters.AbstractFilter;
-import mugres.core.filters.Input;
-import mugres.core.filters.Output;
+import mugres.core.live.AbstractFilter;
+import mugres.core.live.Input;
+import mugres.core.live.Output;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
@@ -24,7 +24,7 @@ import java.util.Map;
 import static javax.sound.midi.ShortMessage.NOTE_OFF;
 import static javax.sound.midi.ShortMessage.NOTE_ON;
 
-public class Pedalboard implements Context {
+public class Pedalboard {
     @NonNull
     @Getter
     private Song song;
@@ -127,7 +127,7 @@ public class Pedalboard implements Context {
         }
 
         public void process(final MidiMessage message, final long timestamp) {
-            filterChain.accept(pedalboard, message, timestamp);
+            filterChain.accept(pedalboard.getSong().getContext(), message, timestamp);
         }
 
         public void appendFilter(final AbstractFilter filter) {

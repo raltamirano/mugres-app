@@ -12,18 +12,22 @@ import java.util.Map;
 import static com.raltamirano.midipedalboard.model.Pattern.Mode.SEQUENCE;
 
 @Data
-public class Song implements Context {
+public class Song {
     @NonNull
     private String title;
-    private int tempo = 120;
-    @NonNull
-    private Key key = Key.C;
-    @NonNull
-    private TimeSignature timeSignature = TimeSignature.TS44;
     @NonNull
     private Map<String, Pattern> patterns = new HashMap<>();
     @NonNull
     private final Map<Integer, Action> actions = new HashMap<>();
+    @NonNull
+    private final Context context = new Context.ComposableContext();
+
+    public Song(final String title) {
+        this.title = title;
+        context.put(Context.TEMPO, 120);
+        context.put(Context.KEY, Key.C);
+        context.put(Context.TIME_SIGNATURE, TimeSignature.TS44);
+    }
 
     @NonNull
     public Pattern createPattern(@NonNull final String name) {

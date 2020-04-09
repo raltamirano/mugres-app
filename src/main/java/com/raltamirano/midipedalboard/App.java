@@ -2,10 +2,11 @@ package com.raltamirano.midipedalboard;
 
 import com.raltamirano.midipedalboard.commands.*;
 import com.raltamirano.midipedalboard.model.Action;
+import mugres.core.common.Context;
 import mugres.core.common.Key;
-import mugres.core.filters.Chord;
-import mugres.core.filters.FixNoteLength;
-import mugres.core.filters.Monitor;
+import mugres.core.live.Chord;
+import mugres.core.live.FixNoteLength;
+import mugres.core.live.Monitor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -72,7 +73,7 @@ public class App implements CommandLineRunner {
 	}
 
 	private void setUpMelodicInstrument() {
-		pedalboard.getSong().setKey(Key.C);
+		pedalboard.getSong().getContext().put(Context.KEY, Key.C);
 
 		// Actions for every pedal
 		pedalboard.getSong().setAction(1, playNote(60, 100, 1));
