@@ -3,8 +3,6 @@ package com.raltamirano.midipedalboard.model;
 import lombok.Data;
 import lombok.NonNull;
 import mugres.core.common.Context;
-import mugres.core.common.Key;
-import mugres.core.common.TimeSignature;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,13 +18,11 @@ public class Song {
     @NonNull
     private final Map<Integer, Action> actions = new HashMap<>();
     @NonNull
-    private final Context context = new Context.ComposableContext();
+    private final Context context;
 
     public Song(final String title) {
         this.title = title;
-        context.put(Context.TEMPO, 120);
-        context.put(Context.KEY, Key.C);
-        context.put(Context.TIME_SIGNATURE, TimeSignature.TS44);
+        context = Context.createBasicContext();
     }
 
     @NonNull
