@@ -7,12 +7,11 @@ import mugres.core.common.Played;
 import mugres.core.common.Signal;
 import mugres.core.common.io.Input;
 import mugres.core.common.io.Output;
+import mugres.core.function.builtin.drums.BlastBeat;
+import mugres.core.function.builtin.drums.HalfTime;
 import mugres.core.live.processors.Processor;
 import mugres.core.live.processors.drummer.Drummer;
-import mugres.core.live.processors.drummer.commands.Finish;
-import mugres.core.live.processors.drummer.commands.Play;
-import mugres.core.live.processors.drummer.commands.Stop;
-import mugres.core.live.processors.drummer.commands.Wait;
+import mugres.core.live.processors.drummer.commands.*;
 import mugres.core.live.processors.transformer.Transformer;
 import mugres.core.live.processors.transformer.config.Configuration;
 import mugres.core.live.processors.transformer.filters.Monitor;
@@ -44,7 +43,8 @@ public class Pedalboard {
 		final Input input = Input.midiInput(MUGRES.getMidiInputPort());
 		final Output output = Output.midiSink(MUGRES.getMidiOutputPort());
 
-		final Processor processor = setupDrummer(context, input, output);
+//		final Processor processor = setupDrummer(context, input, output);
+		final Processor processor = setupDrummerBuiltinFunctions(context, input, output);
 //		final Processor processor = setupTransformer(context, input, output);
 
 		final Scanner scanner = new Scanner(System.in);
@@ -77,16 +77,16 @@ public class Pedalboard {
 		final mugres.core.live.processors.drummer.config.Configuration config =
 				new mugres.core.live.processors.drummer.config.Configuration("Live");
 
-		config.createPattern("Intro")
-				.appendGroove(new File(BASE_DIR + "groove2-fill1.mid"));
+		config.createGroove("Intro")
+				.appendMain(new File(BASE_DIR + "groove2-fill1.mid"));
 
-		config.createPattern("Pattern 1")
-				.appendGroove(new File(BASE_DIR + "groove1.mid"))
+		config.createGroove("Pattern 1")
+				.appendMain(new File(BASE_DIR + "groove1.mid"))
 					.appendFill(new File(BASE_DIR + "groove1-fill1.mid"))
 					.appendFill(new File(BASE_DIR + "groove1-fill2.mid"));
 
-		config.createPattern("Pattern 2")
-				.appendGroove(new File(BASE_DIR + "groove2.mid"))
+		config.createGroove("Pattern 2")
+				.appendMain(new File(BASE_DIR + "groove2.mid"))
 					.appendFill(new File(BASE_DIR + "groove2-fill1.mid"))
 					.appendFill(new File(BASE_DIR + "groove2-fill2.mid"));
 
@@ -102,6 +102,25 @@ public class Pedalboard {
 
 		return new Drummer(context, input, output, config, MUGRES.getMidiOutputPort());
 	}
+
+	private Drummer setupDrummerBuiltinFunctions(final Context context,
+												 final Input input,
+												 final Output output) {
+		final mugres.core.live.processors.drummer.config.Configuration config =
+				new mugres.core.live.processors.drummer.config.Configuration("Drumming functions");
+
+		config.createGroove("Pattern 1", context, 8, new BlastBeat());
+		config.createGroove("Pattern 2", context, 4, new HalfTime());
+
+		config.setAction(60, Play.INSTANCE.action("pattern", "Pattern 1"));
+		config.setAction(61, Play.INSTANCE.action("pattern", "Pattern 2"));
+		config.setAction(62, NoOp.INSTANCE.action());
+		config.setAction(63, Finish.INSTANCE.action());
+		config.setAction(64, Stop.INSTANCE.action());
+
+		return new Drummer(context, input, output, config, MUGRES.getMidiOutputPort());
+	}
+
 
 	private Transformer setupTransformer(final Context context,
 										 final Input input,
