@@ -1,2 +1,4 @@
-# midi-pedalboard-java
-MIDI Pedalboard app (Java desktop version)
+# MUGRES Pedalboard
+MUGRES Pedalboard app
+
+
