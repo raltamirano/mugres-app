@@ -1,3 +1,5 @@
+package mugres.pedalboard;
+
 import mugres.core.MUGRES;
 import mugres.core.common.Context;
 import mugres.core.common.Pitch;
@@ -25,16 +27,16 @@ import static java.lang.System.currentTimeMillis;
  * <br />
  * Use the following VM option to set the base directory for MIDI files:
  * <br /><br />
- * -Dmugres.pedalboard.midiFilesBaseDir=r:\all\projects\dev\raltamirano.github\midi-pedalboard\src\etc\midi\
+ * -Dmugres.pedalboard.midiFilesBaseDir=r:\all\projects\dev\raltamirano.github\mugres-pedalboard\src\main\resources\mugres\pedalboard\samples\patterns\
  * <br /><br />
  * Use the following VM options to define input/output MIDI ports:
  * <br /><br />
  * <p>-Dmugres.inputPort="loopMIDI Port"</p>
  * <p>-Dmugres.outputPort="loopMIDI Port 1"</p>
  */
-public class MidiPedalboard {
+public class Pedalboard {
 	public static void main(String[] args) {
-		new MidiPedalboard().run();
+		new Pedalboard().run();
 	}
 
 	public void run() {
