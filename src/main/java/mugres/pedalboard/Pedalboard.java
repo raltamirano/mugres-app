@@ -47,6 +47,8 @@ public class Pedalboard {
 		final Processor processor = setupDrummerBuiltinFunctions(context, input, output);
 //		final Processor processor = setupTransformer(context, input, output);
 
+		processor.addStatusListener(this::statusListener);
+
 		final Scanner scanner = new Scanner(System.in);
 		char c = scanner.next().charAt(0);
 		while (c != 'q') {
@@ -64,6 +66,10 @@ public class Pedalboard {
 		}
 
 		System.exit(0);
+	}
+
+	private void statusListener(final String status) {
+		System.out.println(status);
 	}
 
 	private Signal makeTestSignal(final char c) {
