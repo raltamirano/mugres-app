@@ -16,11 +16,15 @@ import mugres.core.live.processors.transformer.Transformer;
 import mugres.core.live.processors.transformer.config.Configuration;
 import mugres.core.live.processors.transformer.filters.Monitor;
 
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Synthesizer;
 import java.io.File;
 import java.util.Scanner;
 
 import static java.lang.System.currentTimeMillis;
-import static mugres.core.live.processors.drummer.Drummer.SwitchMode.*;
+import static mugres.core.live.processors.drummer.Drummer.SwitchMode.IMMEDIATELY_FILL;
+import static mugres.core.live.processors.drummer.Drummer.SwitchMode.NORMAL;
 
 /**
  * <p>MUGRES MIDI Pedalboard application.</p>
@@ -35,14 +39,16 @@ import static mugres.core.live.processors.drummer.Drummer.SwitchMode.*;
  * <p>-Dmugres.outputPort="loopMIDI Port 1"</p>
  */
 public class Pedalboard {
+	private Receiver midiOutputPort = null;
+
 	public static void main(String[] args) {
 		new Pedalboard().run();
 	}
 
 	public void run() {
 		final Context context = Context.createBasicContext();
-		final Input input = Input.midiInput(MUGRES.getMidiInputPort());
-		final Output output = Output.midiSink(MUGRES.getMidiOutputPort());
+		final Input input = createInput();
+		final Output output = createOutput();
 
 //		final Processor processor = setupDrummer(context, input, output);
 		final Processor processor = setupDrummerBuiltinFunctions(context, input, output);
@@ -67,6 +73,30 @@ public class Pedalboard {
 		}
 
 		System.exit(0);
+	}
+
+	private Input createInput() {
+		return Input.midiInput(MUGRES.getMidiInputPort());
+	}
+
+	private Output createOutput() {
+		try {
+			midiOutputPort = MUGRES.getMidiOutputPort();
+		} catch (final Throwable t) {
+			System.out.println("Could not connect to MUGRES MIDI output port. Trying default synthesizer..");
+			midiOutputPort = createSynthesizer();
+		}
+		return Output.midiSink(midiOutputPort);
+	}
+
+	private Receiver createSynthesizer() {
+		try {
+			final Synthesizer synthesizer = MidiSystem.getSynthesizer();
+			synthesizer.open();
+			return synthesizer.getReceiver();
+		} catch (final Throwable t) {
+			throw new RuntimeException("Could not create synthesizer instance", t);
+		}
 	}
 
 	private void statusListener(final String status) {
@@ -114,7 +144,7 @@ public class Pedalboard {
 		config.setAction(63, Finish.INSTANCE.action());
 		config.setAction(64, Stop.INSTANCE.action());
 
-		return new Drummer(context, input, output, config, MUGRES.getMidiOutputPort());
+		return new Drummer(context, input, output, config, midiOutputPort);
 	}
 
 	private Drummer setupDrummerBuiltinFunctions(final Context context,
@@ -136,7 +166,7 @@ public class Pedalboard {
 		config.setAction(63, Finish.INSTANCE.action());
 		config.setAction(64, Stop.INSTANCE.action());
 
-		return new Drummer(context, input, output, config, MUGRES.getMidiOutputPort());
+		return new Drummer(context, input, output, config, midiOutputPort);
 	}
 
 
