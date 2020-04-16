@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Scanner;
 
 import static java.lang.System.currentTimeMillis;
+import static mugres.core.live.processors.drummer.Drummer.SwitchMode.*;
 
 /**
  * <p>MUGRES MIDI Pedalboard application.</p>
@@ -97,12 +98,19 @@ public class Pedalboard {
 					.appendFill(new File(BASE_DIR + "groove2-fill2.mid"));
 
 		config.setAction(60,
-				Play.INSTANCE.action("pattern", "Intro")
+				Play.INSTANCE.action(
+						"pattern", "Intro",
+						"switchMode", NORMAL)
 						.then(Wait.INSTANCE.action("millis", Wait.HALF_SECOND))
-						.then(Play.INSTANCE.action("pattern", "Pattern 1"))
+						.then(Play.INSTANCE.action("pattern", "Pattern 1",
+								"switchMode", NORMAL))
 		);
-		config.setAction(61, Play.INSTANCE.action("pattern", "Pattern 1"));
-		config.setAction(62, Play.INSTANCE.action("pattern", "Pattern 2"));
+		config.setAction(61, Play.INSTANCE.action(
+				"pattern", "Pattern 1",
+				"switchMode", NORMAL));
+		config.setAction(62, Play.INSTANCE.action(
+				"pattern", "Pattern 2",
+				"switchMode", NORMAL));
 		config.setAction(63, Finish.INSTANCE.action());
 		config.setAction(64, Stop.INSTANCE.action());
 
@@ -120,10 +128,10 @@ public class Pedalboard {
 
 		config.setAction(60, Play.INSTANCE.action(
 				"pattern", "Pattern 1",
-				"immediately", false));
+				"switchMode", IMMEDIATELY_FILL));
 		config.setAction(61, Play.INSTANCE.action(
 				"pattern", "Pattern 2",
-				"immediately", false));
+				"switchMode", IMMEDIATELY_FILL));
 		config.setAction(62, NoOp.INSTANCE.action());
 		config.setAction(63, Finish.INSTANCE.action());
 		config.setAction(64, Stop.INSTANCE.action());
