@@ -115,11 +115,15 @@ public class Pedalboard {
 		final mugres.core.live.processors.drummer.config.Configuration config =
 				new mugres.core.live.processors.drummer.config.Configuration("Drumming functions");
 
-		config.createGroove("Pattern 1", context, 8, new BlastBeat());
+		config.createGroove("Pattern 1", context, 4, new BlastBeat());
 		config.createGroove("Pattern 2", context, 4, new HalfTime());
 
-		config.setAction(60, Play.INSTANCE.action("pattern", "Pattern 1"));
-		config.setAction(61, Play.INSTANCE.action("pattern", "Pattern 2"));
+		config.setAction(60, Play.INSTANCE.action(
+				"pattern", "Pattern 1",
+				"immediately", false));
+		config.setAction(61, Play.INSTANCE.action(
+				"pattern", "Pattern 2",
+				"immediately", false));
 		config.setAction(62, NoOp.INSTANCE.action());
 		config.setAction(63, Finish.INSTANCE.action());
 		config.setAction(64, Stop.INSTANCE.action());
