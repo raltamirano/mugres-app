@@ -20,6 +20,9 @@ import java.io.File;
 import java.util.Scanner;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.Arrays.asList;
+import static mugres.core.common.DrumKit.CR1;
+import static mugres.core.common.DrumKit.CR2;
 import static mugres.core.live.processors.drummer.Drummer.SwitchMode.IMMEDIATELY_FILL;
 import static mugres.core.live.processors.drummer.Drummer.SwitchMode.NORMAL;
 
@@ -159,7 +162,9 @@ public class Pedalboard {
 		config.setAction(61, Play.INSTANCE.action(
 				"pattern", "Pattern 2",
 				"switchMode", IMMEDIATELY_FILL));
-		config.setAction(62, NoOp.INSTANCE.action());
+		config.setAction(62, Hit.INSTANCE.action(
+				"options", asList(CR1, CR2),
+				"velocity", 110));
 		config.setAction(63, Finish.INSTANCE.action());
 		config.setAction(64, Stop.INSTANCE.action());
 
