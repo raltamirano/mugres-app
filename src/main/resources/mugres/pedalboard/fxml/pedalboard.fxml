@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+<BorderPane fx:controller="mugres.pedalboard.PedalboardController"
+            xmlns:fx="http://javafx.com/fxml"
+            id="root">
+
+    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+    <center>
+        <VBox alignment="top_center" prefHeight="400" prefWidth="800">
+            <Label fx:id="drummerMainLabel" maxWidth="Infinity" maxHeight="Infinity"
+                   styleClass="giantStatusText"></Label>
+            <Label fx:id="playingFillLabel" maxWidth="Infinity" maxHeight="Infinity"
+                   styleClass="mediumStatusText"></Label>
+            <Label fx:id="finishingLabel" maxWidth="Infinity" maxHeight="Infinity"
+                   styleClass="mediumStatusText"></Label>
+            <Text fx:id="statusText" />
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="center" prefHeight="120">
+            <Button fx:id="mainButton1" text="1" onAction="#onMainButton"
+                    maxWidth="Infinity" maxHeight="Infinity" styleClass="mainButton" />
+            <Button fx:id="mainButton2" text="2" onAction="#onMainButton"
+                    maxWidth="Infinity" maxHeight="Infinity" styleClass="mainButton" />
+            <Button fx:id="mainButton3" text="3" onAction="#onMainButton"
+                    maxWidth="Infinity" maxHeight="Infinity" styleClass="mainButton"/>
+            <Button fx:id="mainButton4" text="4" onAction="#onMainButton"
+                    maxWidth="Infinity" maxHeight="Infinity" styleClass="mainButton"/>
+            <Button fx:id="mainButton5" text="5" onAction="#onMainButton"
+                    maxWidth="Infinity" maxHeight="Infinity" styleClass="mainButton"/>
+        </HBox>
+    </bottom>
+</BorderPane>

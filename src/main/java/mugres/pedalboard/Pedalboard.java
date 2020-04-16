@@ -1,12 +1,13 @@
 package mugres.pedalboard;
 
 import mugres.core.MUGRES;
-import mugres.core.common.*;
+import mugres.core.common.Context;
 import mugres.core.common.io.Input;
 import mugres.core.common.io.Output;
 import mugres.core.function.builtin.drums.BlastBeat;
 import mugres.core.function.builtin.drums.HalfTime;
 import mugres.core.live.processors.Processor;
+import mugres.core.live.processors.Status;
 import mugres.core.live.processors.drummer.Drummer;
 import mugres.core.live.processors.drummer.commands.*;
 import mugres.core.live.processors.transformer.Transformer;
@@ -17,9 +18,7 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Synthesizer;
 import java.io.File;
-import java.util.Scanner;
 
-import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
 import static mugres.core.common.DrumKit.CR1;
 import static mugres.core.common.DrumKit.CR2;
@@ -39,38 +38,25 @@ import static mugres.core.live.processors.drummer.Drummer.SwitchMode.NORMAL;
  * <p>-Dmugres.outputPort="loopMIDI Port 1"</p>
  */
 public class Pedalboard {
-	public static void main(String[] args) {
-		new Pedalboard().run();
-	}
+	private final Context context;
+	private final Input input;
+	private final Output output;
+	private final Processor processor;
 
-	public void run() {
-		final Context context = Context.createBasicContext();
-		final Input input = createInput();
-		final Output output = createOutput();
+	public Pedalboard() {
+ 		context = Context.createBasicContext();
+		input = createInput();
+		output = createOutput();
 
-//		final Processor processor = setupDrummer(context, input, output);
-		final Processor processor = setupDrummerBuiltinFunctions(context, input, output);
-//		final Processor processor = setupTransformer(context, input, output);
+//		processor = setupDrummer(context, input, output);
+		processor = setupDrummerBuiltinFunctions(context, input, output);
+//		processor = setupTransformer(context, input, output);
 
 		processor.addStatusListener(this::statusListener);
+	}
 
-		final Scanner scanner = new Scanner(System.in);
-		char c = scanner.next().charAt(0);
-		while (c != 'q') {
-			switch (c) {
-				case '1':
-				case '2':
-				case '3':
-				case '4':
-				case '5':
-					makeTestSignals(c).signals().forEach(processor::process);
-				default:
-					break;
-			}
-			c = scanner.next().charAt(0);
-		}
-
-		System.exit(0);
+	public Processor getProcessor() {
+		return processor;
 	}
 
 	private Input createInput() {
@@ -96,16 +82,8 @@ public class Pedalboard {
 		}
 	}
 
-	private void statusListener(final String status) {
-		System.out.println(status);
-	}
-
-	private Signals makeTestSignals(final char c) {
-		final Played played = Played.of(Pitch.of(59 + Integer.valueOf(String.valueOf(c))), 100);
-		final Signal on = Signal.on(currentTimeMillis(), TEST_MIDI_CHANNEL, played);
-		final Signal off = Signal.off(currentTimeMillis()+500, TEST_MIDI_CHANNEL, played);
-
-		return Signals.of(on, off);
+	private void statusListener(final Status status) {
+		System.out.println(status.getText());
 	}
 
 	private Drummer setupDrummer(final Context context,
@@ -185,5 +163,4 @@ public class Pedalboard {
 	}
 
 	private static final String BASE_DIR = System.getProperty("mugres.pedalboard.midiFilesBaseDir");
-	private static final int TEST_MIDI_CHANNEL = 1;
 }
