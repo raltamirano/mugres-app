@@ -6,11 +6,19 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
 <BorderPane fx:controller="mugres.pedalboard.PedalboardController"
             xmlns:fx="http://javafx.com/fxml"
             id="root">
 
     <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+    <top>
+        <AnchorPane fx:id="topAnchorPane">
+            <Label fx:id="mugresVersionLabel" alignment="TOP_LEFT">MUGRES Pedalboard</Label>
+            <ComboBox fx:id="configurationsCombo" onAction="#onConfigurationSelected"></ComboBox>
+        </AnchorPane>
+    </top>
 
     <center>
         <VBox alignment="top_center" prefHeight="400" prefWidth="800">
