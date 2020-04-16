@@ -1,10 +1,7 @@
 package mugres.pedalboard;
 
 import mugres.core.MUGRES;
-import mugres.core.common.Context;
-import mugres.core.common.Pitch;
-import mugres.core.common.Played;
-import mugres.core.common.Signal;
+import mugres.core.common.*;
 import mugres.core.common.io.Input;
 import mugres.core.common.io.Output;
 import mugres.core.function.builtin.drums.BlastBeat;
@@ -39,8 +36,6 @@ import static mugres.core.live.processors.drummer.Drummer.SwitchMode.NORMAL;
  * <p>-Dmugres.outputPort="loopMIDI Port 1"</p>
  */
 public class Pedalboard {
-	private Receiver midiOutputPort = null;
-
 	public static void main(String[] args) {
 		new Pedalboard().run();
 	}
@@ -65,7 +60,7 @@ public class Pedalboard {
 				case '3':
 				case '4':
 				case '5':
-					processor.process(makeTestSignal(c));
+					makeTestSignals(c).signals().forEach(processor::process);
 				default:
 					break;
 			}
@@ -81,12 +76,11 @@ public class Pedalboard {
 
 	private Output createOutput() {
 		try {
-			midiOutputPort = MUGRES.getMidiOutputPort();
+			return Output.midiSink(MUGRES.getMidiOutputPort());
 		} catch (final Throwable t) {
 			System.out.println("Could not connect to MUGRES MIDI output port. Trying default synthesizer..");
-			midiOutputPort = createSynthesizer();
+			return Output.midiSink(createSynthesizer());
 		}
-		return Output.midiSink(midiOutputPort);
 	}
 
 	private Receiver createSynthesizer() {
@@ -103,9 +97,12 @@ public class Pedalboard {
 		System.out.println(status);
 	}
 
-	private Signal makeTestSignal(final char c) {
-		return Signal.on(currentTimeMillis(), TEST_MIDI_CHANNEL,
-				Played.of(Pitch.of(59 + Integer.valueOf(String.valueOf(c))), 100));
+	private Signals makeTestSignals(final char c) {
+		final Played played = Played.of(Pitch.of(59 + Integer.valueOf(String.valueOf(c))), 100);
+		final Signal on = Signal.on(currentTimeMillis(), TEST_MIDI_CHANNEL, played);
+		final Signal off = Signal.off(currentTimeMillis()+500, TEST_MIDI_CHANNEL, played);
+
+		return Signals.of(on, off);
 	}
 
 	private Drummer setupDrummer(final Context context,
@@ -144,7 +141,7 @@ public class Pedalboard {
 		config.setAction(63, Finish.INSTANCE.action());
 		config.setAction(64, Stop.INSTANCE.action());
 
-		return new Drummer(context, input, output, config, midiOutputPort);
+		return new Drummer(context, input, output, config);
 	}
 
 	private Drummer setupDrummerBuiltinFunctions(final Context context,
@@ -166,7 +163,7 @@ public class Pedalboard {
 		config.setAction(63, Finish.INSTANCE.action());
 		config.setAction(64, Stop.INSTANCE.action());
 
-		return new Drummer(context, input, output, config, midiOutputPort);
+		return new Drummer(context, input, output, config);
 	}
 
 
