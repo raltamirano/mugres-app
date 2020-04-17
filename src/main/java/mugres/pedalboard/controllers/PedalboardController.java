@@ -1,35 +1,33 @@
-package mugres.pedalboard;
+package mugres.pedalboard.controllers;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import mugres.core.common.Context;
 import mugres.core.common.Pitch;
 import mugres.core.common.Played;
 import mugres.core.common.Signal;
-import mugres.core.common.io.Input;
-import mugres.core.common.io.Output;
-import mugres.core.function.Function;
 import mugres.core.function.builtin.drums.BlastBeat;
 import mugres.core.function.builtin.drums.HalfTime;
 import mugres.core.function.builtin.drums.PreRecordedDrums;
 import mugres.core.live.processors.Processor;
-import mugres.core.live.processors.Status;
 import mugres.core.live.processors.drummer.Drummer;
 import mugres.core.live.processors.drummer.commands.Finish;
 import mugres.core.live.processors.drummer.commands.Hit;
 import mugres.core.live.processors.drummer.commands.Play;
 import mugres.core.live.processors.drummer.commands.Stop;
+import mugres.core.live.processors.drummer.config.Configuration;
+import mugres.pedalboard.EntryPoint;
 import mugres.pedalboard.config.DrummerConfig;
 import mugres.pedalboard.config.PedalboardConfig;
+import mugres.pedalboard.controls.DrummerPlayer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +38,7 @@ import static java.lang.System.currentTimeMillis;
 
 public class PedalboardController {
     @FXML
-    private Text statusText;
+    private BorderPane root;
 
     @FXML
     private Button mainButton1;
@@ -56,18 +54,6 @@ public class PedalboardController {
 
     @FXML
     private Button mainButton5;
-
-    @FXML
-    private Label drummerMainLabel;
-
-    @FXML
-    private Label playingFillLabel;
-
-    @FXML
-    private Label finishingLabel;
-
-    @FXML
-    private AnchorPane topAnchorPane;
 
     @FXML
     private Label mugresVersionLabel;
@@ -123,11 +109,13 @@ public class PedalboardController {
     }
 
     private void loadConfiguration(final PedalboardConfig pedalboardConfig) {
+        processor = null;
+        root.setCenter(null);
+
         if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.DRUMMER) {
             setDrummerButtonPitches();
 
-            final mugres.core.live.processors.drummer.config.Configuration config =
-                    new mugres.core.live.processors.drummer.config.Configuration(pedalboardConfig.getName());
+            final Configuration config = new Configuration(pedalboardConfig.getName());
 
             final Context context = Context.createBasicContext();
             for(final DrummerConfig.Button button : pedalboardConfig.getDrummerConfig().getButtons()) {
@@ -177,34 +165,21 @@ public class PedalboardController {
                 }
             }
 
-            processor = new Drummer(context,
+            final Drummer drummer = new Drummer(context,
                     EntryPoint.getMUGRESApplication().getInput(),
                     EntryPoint.getMUGRESApplication().getOutput(),
                     config);
 
-            processor.addStatusListener(this::updateDrummerStatus);
+            processor = drummer;
+
+            final DrummerPlayer drummerPlayer = new DrummerPlayer();
+            drummerPlayer.setDrummer(drummer);
+            root.setCenter(drummerPlayer);
         } else if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.TRANSFORMER) {
             throw new RuntimeException("Not implemented!");
         } else {
             throw new RuntimeException("Not implemented!");
         }
-    }
-
-    private void updateDrummerStatus(final Status<Drummer.Status> status) {
-        Platform.runLater(() -> {
-            final Drummer.Status ds = status.getData();
-            if (ds.isPlaying()) {
-                final String mainLine = ds.getPlayingGroove() +
-                        (ds.getNextGroove().isEmpty() ? "" : " > " + ds.getNextGroove());
-                drummerMainLabel.setText(mainLine);
-                playingFillLabel.setText("Playing fill: " + (ds.isPlayingFillNow() ? "Yes" : "No"));
-                finishingLabel.setText("Finishing: " + (ds.isFinishing() ? "Yes" : "No"));
-            } else {
-                drummerMainLabel.setText("");
-                playingFillLabel.setText("");
-                finishingLabel.setText("");
-            }
-        });
     }
 
     private void setDrummerButtonPitches() {

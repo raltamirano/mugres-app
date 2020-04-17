@@ -7,30 +7,18 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.AnchorPane?>
-<BorderPane fx:controller="mugres.pedalboard.PedalboardController"
+<BorderPane fx:controller="mugres.pedalboard.controllers.PedalboardController"
             xmlns:fx="http://javafx.com/fxml"
-            id="root">
+            fx:id="root">
 
     <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
 
     <top>
-        <AnchorPane fx:id="topAnchorPane">
-            <Label fx:id="mugresVersionLabel" alignment="TOP_LEFT">MUGRES Pedalboard</Label>
+        <AnchorPane>
+            <Label fx:id="mugresVersionLabel" alignment="TOP_LEFT"></Label>
             <ComboBox fx:id="configurationsCombo" onAction="#onConfigurationSelected"></ComboBox>
         </AnchorPane>
     </top>
-
-    <center>
-        <VBox alignment="top_center" prefHeight="400" prefWidth="800">
-            <Label fx:id="drummerMainLabel" maxWidth="Infinity" maxHeight="Infinity"
-                   styleClass="giantStatusText"></Label>
-            <Label fx:id="playingFillLabel" maxWidth="Infinity" maxHeight="Infinity"
-                   styleClass="mediumStatusText"></Label>
-            <Label fx:id="finishingLabel" maxWidth="Infinity" maxHeight="Infinity"
-                   styleClass="mediumStatusText"></Label>
-            <Text fx:id="statusText" />
-        </VBox>
-    </center>
 
     <bottom>
         <HBox spacing="10" alignment="center" prefHeight="120">

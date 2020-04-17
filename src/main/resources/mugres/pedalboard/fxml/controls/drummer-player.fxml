@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
+
+    <Label fx:id="drummerMainLabel" maxWidth="Infinity" maxHeight="Infinity"
+           styleClass="giantStatusText"></Label>
+    <Label fx:id="playingFillLabel" maxWidth="Infinity" maxHeight="Infinity"
+           styleClass="mediumStatusText"></Label>
+    <Label fx:id="finishingLabel" maxWidth="Infinity" maxHeight="Infinity"
+           styleClass="mediumStatusText"></Label>
+
+</fx:root>
