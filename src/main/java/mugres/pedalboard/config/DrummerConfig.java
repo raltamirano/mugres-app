@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrummerConfig {
-    private List<Button> buttons = new ArrayList<>();
+    private List<Control> controls = new ArrayList<>();
 
-    public List<Button> getButtons() {
-        return buttons;
+    public List<Control> getControls() {
+        return controls;
     }
 
-    public static class Button {
+    public static class Control {
         private String title;
         private int number;
         private Command command;
@@ -117,7 +117,8 @@ public class DrummerConfig {
             PLAY,
             HIT,
             FINISH,
-            STOP
+            STOP,
+            NOOP
         }
 
         public enum Generator {

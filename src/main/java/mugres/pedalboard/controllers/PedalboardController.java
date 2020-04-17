@@ -4,39 +4,37 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.util.StringConverter;
-import mugres.core.common.Context;
-import mugres.core.common.Pitch;
-import mugres.core.common.Played;
-import mugres.core.common.Signal;
+import mugres.core.common.*;
 import mugres.core.function.builtin.drums.BlastBeat;
 import mugres.core.function.builtin.drums.HalfTime;
 import mugres.core.function.builtin.drums.PreRecordedDrums;
 import mugres.core.live.processors.Processor;
 import mugres.core.live.processors.drummer.Drummer;
-import mugres.core.live.processors.drummer.commands.Finish;
-import mugres.core.live.processors.drummer.commands.Hit;
-import mugres.core.live.processors.drummer.commands.Play;
-import mugres.core.live.processors.drummer.commands.Stop;
+import mugres.core.live.processors.drummer.commands.*;
 import mugres.core.live.processors.drummer.config.Configuration;
 import mugres.pedalboard.EntryPoint;
 import mugres.pedalboard.config.DrummerConfig;
+import mugres.pedalboard.config.MUGRESConfig;
 import mugres.pedalboard.config.PedalboardConfig;
+import mugres.pedalboard.controls.DrummerEditor;
 import mugres.pedalboard.controls.DrummerPlayer;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.lang.System.currentTimeMillis;
 
 
-public class PedalboardController {
+public class PedalboardController
+    implements DrummerEditor.Listener {
     @FXML
     private BorderPane root;
 
@@ -56,10 +54,16 @@ public class PedalboardController {
     private Button mainButton5;
 
     @FXML
-    private Label mugresVersionLabel;
+    private ComboBox configurationsCombo;
 
     @FXML
-    private ComboBox configurationsCombo;
+    private Button editConfigurationButton;
+
+    @FXML
+    private Button deleteConfigurationButton;
+
+    @FXML
+    private HBox configurationControls;
 
     private Processor processor;
 
@@ -77,8 +81,7 @@ public class PedalboardController {
         HBox.setHgrow(mainButton4, Priority.ALWAYS);
         HBox.setHgrow(mainButton5, Priority.ALWAYS);
 
-        AnchorPane.setLeftAnchor(mugresVersionLabel, 1.0);
-        AnchorPane.setRightAnchor(configurationsCombo, 1.0);
+        AnchorPane.setRightAnchor(configurationControls, 1.0);
 
         configurationsCombo.setConverter(new StringConverter<PedalboardConfig>() {
             @Override
@@ -91,12 +94,15 @@ public class PedalboardController {
             }
         });
 
-        loadConfigurations();
+        loadConfigurations(null);
     }
 
-    private void loadConfigurations() {
+    private void loadConfigurations(final String selectedConfiguration) {
         final List<PedalboardConfig> pedalboards = EntryPoint.getMUGRESApplication()
                 .getMUGRESConfig().getPedalboardConfigs();
+
+        editConfigurationButton.setDisable(true);
+        deleteConfigurationButton.setDisable(true);
 
         configurationsCombo.getItems().clear();
         configurationsCombo.getItems().addAll(pedalboards);
@@ -105,10 +111,21 @@ public class PedalboardController {
             final PedalboardConfig pedalboardConfig = pedalboards.get(0);
             configurationsCombo.setValue(pedalboardConfig);
             loadConfiguration(pedalboardConfig);
+        } else if (selectedConfiguration != null) {
+            final PedalboardConfig pedalboardConfig = pedalboards.stream()
+                    .filter(c -> c.getName().equals(selectedConfiguration))
+                    .findFirst()
+                    .orElse(null);
+            configurationsCombo.setValue(pedalboardConfig);
+            if (pedalboardConfig != null)
+                loadConfiguration(pedalboardConfig);
         }
     }
 
     private void loadConfiguration(final PedalboardConfig pedalboardConfig) {
+        editConfigurationButton.setDisable(false);
+        deleteConfigurationButton.setDisable(false);
+
         processor = null;
         root.setCenter(null);
 
@@ -118,11 +135,13 @@ public class PedalboardController {
             final Configuration config = new Configuration(pedalboardConfig.getName());
 
             final Context context = Context.createBasicContext();
-            for(final DrummerConfig.Button button : pedalboardConfig.getDrummerConfig().getButtons()) {
-                switch(button.getCommand()) {
+            for(final DrummerConfig.Control control : pedalboardConfig.getDrummerConfig().getControls()) {
+                setButtonLabel(control);
+
+                switch(control.getCommand()) {
                     case PLAY:
                         final PreRecordedDrums generator;
-                        switch(button.getGenerator()){
+                        switch(control.getGenerator()){
                             case HALF_TIME:
                                 generator = new HalfTime();
                                 break;
@@ -130,38 +149,41 @@ public class PedalboardController {
                                 generator = new BlastBeat();
                                 break;
                             default:
-                                throw new RuntimeException("Unknown generator function: " + button.getGenerator());
+                                throw new RuntimeException("Unknown generator function: " + control.getGenerator());
 
                         }
 
                         final Context playContext = Context.ComposableContext.of(context);
-                        playContext.setTempo(button.getTempo());
-                        playContext.setTimeSignature(button.getTimeSignature());
+                        playContext.setTempo(control.getTempo());
+                        playContext.setTimeSignature(control.getTimeSignature());
 
-                        final String grooveName = button.getTitle();
+                        final String grooveName = control.getTitle();
                         config.createGroove(grooveName, playContext,
-                                button.getLengthInMeasures(), generator);
+                                control.getLengthInMeasures(), generator);
 
-                        config.setAction(buttonPitches.get(button.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
                                 Play.INSTANCE.action(
                                 "pattern", grooveName,
-                                "switchMode", button.getSwitchMode()));
+                                "switchMode", control.getSwitchMode()));
                         break;
 
                     case HIT:
-                        config.setAction(buttonPitches.get(button.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
                                 Hit.INSTANCE.action(
-                                "options", button.getHitOptions(),
-                                "velocity", button.getHitVelocity()));
+                                "options", control.getHitOptions(),
+                                "velocity", control.getHitVelocity()));
                         break;
                     case FINISH:
-                        config.setAction(buttonPitches.get(button.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
                                 Finish.INSTANCE.action());
                         break;
                     case STOP:
-                        config.setAction(buttonPitches.get(button.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
                                 Stop.INSTANCE.action());
                         break;
+                    case NOOP:
+                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
+                                NoOp.INSTANCE.action());
                 }
             }
 
@@ -182,6 +204,47 @@ public class PedalboardController {
         }
     }
 
+    private void setButtonLabel(final DrummerConfig.Control controlConfig) {
+        String label = "";
+        switch(controlConfig.getCommand()) {
+            case PLAY:
+                label = controlConfig.getTitle();
+                break;
+            case HIT:
+                label = "Hit " + controlConfig.getHitOptions().stream().map(DrumKit::getName).
+                        collect(Collectors.joining(" or "));
+                break;
+            case FINISH:
+                label = "Finish";
+                break;
+            case STOP:
+                label = "Stop now!";
+                break;
+            case NOOP:
+                label = "Does nothing";
+                break;
+        }
+
+        if (controlConfig.getTitle() != null && !controlConfig.getTitle().trim().isEmpty())
+            label = controlConfig.getTitle();
+
+        final Button button = getMainButton(controlConfig.getNumber());
+        if (button != null)
+            button.setTooltip(new Tooltip(label));
+    }
+
+    private Button getMainButton(final int number) {
+        switch(number) {
+            case 1: return mainButton1;
+            case 2: return mainButton2;
+            case 3: return mainButton3;
+            case 4: return mainButton4;
+            case 5: return mainButton5;
+        }
+
+        return null;
+    }
+
     private void setDrummerButtonPitches() {
         buttonPitches.clear();
         buttonPitches.put(1, Pitch.of(60));
@@ -193,8 +256,45 @@ public class PedalboardController {
 
     @FXML
     protected void onConfigurationSelected(final ActionEvent event) {
-        if (configurationsCombo.getValue() != null)
-            loadConfiguration((PedalboardConfig) configurationsCombo.getValue());
+        final PedalboardConfig pedalboardConfiguration =
+                (PedalboardConfig)configurationsCombo.getValue();
+
+        if (pedalboardConfiguration != null)
+            loadConfiguration(pedalboardConfiguration);
+    }
+
+    @FXML
+    protected void onNewConfiguration(final ActionEvent event) {
+        final DrummerEditor editor = new DrummerEditor();
+        editor.addListener(this);
+        root.setCenter(editor);
+        configurationControls.setVisible(false);
+    }
+
+    @FXML
+    protected void onEditConfiguration(final ActionEvent event) {
+        final PedalboardConfig pedalboardConfiguration =
+                (PedalboardConfig)configurationsCombo.getValue();
+
+        final DrummerEditor editor = new DrummerEditor();
+        editor.addListener(this);
+        editor.setModel(pedalboardConfiguration);
+        root.setCenter(editor);
+        configurationControls.setVisible(false);
+    }
+
+    @FXML
+    protected void onDeleteConfiguration(final ActionEvent event) {
+        final PedalboardConfig pedalboardConfiguration =
+                (PedalboardConfig)configurationsCombo.getValue();
+
+        // TODO: confirm deletion!
+
+        final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
+        config.getPedalboardConfigs().removeIf(c -> c.getName().equals(pedalboardConfiguration.getName()));
+        config.save();
+
+        loadConfigurations(null);
     }
 
     @FXML
@@ -212,5 +312,39 @@ public class PedalboardController {
 
         processor.process(on);
         processor.process(off);
+    }
+
+    @Override
+    public void onDrummerEditorCreate(final DrummerEditor editor) {
+        root.setCenter(null);
+        configurationControls.setVisible(true);
+
+        final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
+        config.getPedalboardConfigs().add(editor.getOutput());
+        config.save();
+
+        loadConfigurations(editor.getOutput().getName());
+        configurationControls.setVisible(true);
+    }
+
+    @Override
+    public void onDrummerEditorUpdate(final DrummerEditor editor) {
+        root.setCenter(null);
+        configurationControls.setVisible(true);
+
+        final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
+        config.getPedalboardConfigs().removeIf(c -> c.getName().equals(editor.getModel().getName()));
+        config.getPedalboardConfigs().add(editor.getOutput());
+        config.save();
+
+        loadConfigurations(editor.getOutput().getName());
+    }
+
+    @Override
+    public void onDrummerEditorCancel(final DrummerEditor editor) {
+        root.setCenter(null);
+        configurationControls.setVisible(true);
+
+        // TODO restore previous config, if any
     }
 }

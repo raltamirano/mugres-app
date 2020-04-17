@@ -2,11 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.AnchorPane?>
 <BorderPane fx:controller="mugres.pedalboard.controllers.PedalboardController"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="root">
@@ -15,8 +13,16 @@
 
     <top>
         <AnchorPane>
-            <Label fx:id="mugresVersionLabel" alignment="TOP_LEFT"></Label>
-            <ComboBox fx:id="configurationsCombo" onAction="#onConfigurationSelected"></ComboBox>
+            <HBox fx:id="configurationControls">
+                <ComboBox fx:id="configurationsCombo"
+                          onAction="#onConfigurationSelected"></ComboBox>
+                <Button fx:id="newConfigurationButton"
+                        onAction="#onNewConfiguration">New</Button>
+                <Button fx:id="editConfigurationButton"
+                        onAction="#onEditConfiguration">Edit</Button>
+                <Button fx:id="deleteConfigurationButton"
+                        onAction="#onDeleteConfiguration">Delete</Button>
+            </HBox>
         </AnchorPane>
     </top>
 

@@ -1,6 +1,8 @@
 package mugres.pedalboard.config;
 
-public class PedalboardConfig {
+import static mugres.pedalboard.config.MUGRESConfig.GSON;
+
+public class PedalboardConfig implements Cloneable {
     private String name;
     private Processor processor;
     private DrummerConfig drummerConfig;
@@ -36,6 +38,11 @@ public class PedalboardConfig {
 
     public void setTransformerConfig(TransformerConfig transformerConfig) {
         this.transformerConfig = transformerConfig;
+    }
+
+    @Override
+    public PedalboardConfig clone() {
+        return GSON.fromJson(GSON.toJson(this), this.getClass());
     }
 
     public enum Processor {

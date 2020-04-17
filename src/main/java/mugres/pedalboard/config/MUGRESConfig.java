@@ -1,12 +1,12 @@
 package mugres.pedalboard.config;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import mugres.core.common.DrumKit;
 import mugres.core.common.TimeSignature;
-import mugres.core.live.processors.drummer.Drummer;
 import mugres.core.live.processors.drummer.Drummer.SwitchMode;
-import mugres.pedalboard.config.DrummerConfig.Button.Command;
-import mugres.pedalboard.config.DrummerConfig.Button.Generator;
+import mugres.pedalboard.config.DrummerConfig.Control.Command;
+import mugres.pedalboard.config.DrummerConfig.Control.Generator;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,48 +80,48 @@ public class MUGRESConfig {
         pedalboard.setProcessor(PedalboardConfig.Processor.DRUMMER);
         final DrummerConfig drummerConfig = new DrummerConfig();
 
-        final DrummerConfig.Button button1 = new DrummerConfig.Button();
-        button1.setNumber(1);
-        button1.setTitle("Blast Beat");
-        button1.setCommand(Command.PLAY);
-        button1.setGenerator(Generator.BLAST_BEAT);
-        button1.setLengthInMeasures(4);
-        button1.setTempo(190);
-        button1.setTimeSignature(TimeSignature.TS44);
-        button1.setSwitchMode(SwitchMode.IMMEDIATELY_FILL);
-        drummerConfig.getButtons().add(button1);
+        final DrummerConfig.Control control1 = new DrummerConfig.Control();
+        control1.setNumber(1);
+        control1.setTitle("Blast Beat");
+        control1.setCommand(Command.PLAY);
+        control1.setGenerator(Generator.BLAST_BEAT);
+        control1.setLengthInMeasures(4);
+        control1.setTempo(190);
+        control1.setTimeSignature(TimeSignature.TS44);
+        control1.setSwitchMode(SwitchMode.IMMEDIATELY_FILL);
+        drummerConfig.getControls().add(control1);
 
-        final DrummerConfig.Button button2 = new DrummerConfig.Button();
-        button2.setNumber(2);
-        button2.setTitle("Half Time");
-        button2.setCommand(Command.PLAY);
-        button2.setGenerator(Generator.HALF_TIME);
-        button2.setLengthInMeasures(4);
-        button2.setTempo(110);
-        button2.setTimeSignature(TimeSignature.TS44);
-        button2.setSwitchMode(SwitchMode.IMMEDIATELY_FILL);
-        drummerConfig.getButtons().add(button2);
+        final DrummerConfig.Control control2 = new DrummerConfig.Control();
+        control2.setNumber(2);
+        control2.setTitle("Half Time");
+        control2.setCommand(Command.PLAY);
+        control2.setGenerator(Generator.HALF_TIME);
+        control2.setLengthInMeasures(4);
+        control2.setTempo(110);
+        control2.setTimeSignature(TimeSignature.TS44);
+        control2.setSwitchMode(SwitchMode.IMMEDIATELY_FILL);
+        drummerConfig.getControls().add(control2);
 
-        final DrummerConfig.Button button3 = new DrummerConfig.Button();
-        button3.setNumber(3);
-        button3.setTitle("Crash Cymbal hit");
-        button3.setCommand(Command.HIT);
-        button3.getHitOptions().add(DrumKit.CR1);
-        button3.getHitOptions().add(DrumKit.CR2);
-        button3.setHitVelocity(110);
-        drummerConfig.getButtons().add(button3);
+        final DrummerConfig.Control control3 = new DrummerConfig.Control();
+        control3.setNumber(3);
+        control3.setTitle("Crash Cymbal hit");
+        control3.setCommand(Command.HIT);
+        control3.getHitOptions().add(DrumKit.CR1);
+        control3.getHitOptions().add(DrumKit.CR2);
+        control3.setHitVelocity(110);
+        drummerConfig.getControls().add(control3);
 
-        final DrummerConfig.Button button4 = new DrummerConfig.Button();
-        button4.setNumber(4);
-        button4.setTitle("Finish");
-        button4.setCommand(Command.FINISH);
-        drummerConfig.getButtons().add(button4);
+        final DrummerConfig.Control control4 = new DrummerConfig.Control();
+        control4.setNumber(4);
+        control4.setTitle("Finish");
+        control4.setCommand(Command.FINISH);
+        drummerConfig.getControls().add(control4);
 
-        final DrummerConfig.Button button5 = new DrummerConfig.Button();
-        button5.setNumber(5);
-        button5.setTitle("Stop now!");
-        button5.setCommand(Command.STOP);
-        drummerConfig.getButtons().add(button5);
+        final DrummerConfig.Control control5 = new DrummerConfig.Control();
+        control5.setNumber(5);
+        control5.setTitle("Stop now!");
+        control5.setCommand(Command.STOP);
+        drummerConfig.getControls().add(control5);
 
         pedalboard.setDrummerConfig(drummerConfig);
         config.getPedalboardConfigs().add(pedalboard);
@@ -144,5 +144,5 @@ public class MUGRESConfig {
         return new File(System.getProperty("user.home"), "mugres-config.json");
     }
 
-    private static final Gson GSON = new Gson();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 }
