@@ -369,6 +369,7 @@ public class PedalboardController
         root.setCenter(null);
         configurationControls.setVisible(true);
 
-        // TODO restore previous config, if any
+        if (editor.isEditing())
+            loadConfiguration((PedalboardConfig) configurationsCombo.getValue());
     }
 }
