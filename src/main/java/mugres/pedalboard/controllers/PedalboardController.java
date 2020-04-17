@@ -2,9 +2,7 @@ package mugres.pedalboard.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -103,6 +101,8 @@ public class PedalboardController
 
         editConfigurationButton.setDisable(true);
         deleteConfigurationButton.setDisable(true);
+        clearButtonsTooltips();
+        processor = null;
 
         configurationsCombo.getItems().clear();
         configurationsCombo.getItems().addAll(pedalboards);
@@ -128,6 +128,7 @@ public class PedalboardController
 
         processor = null;
         root.setCenter(null);
+        clearButtonsTooltips();
 
         if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.DRUMMER) {
             setDrummerButtonPitches();
@@ -202,6 +203,14 @@ public class PedalboardController
         } else {
             throw new RuntimeException("Not implemented!");
         }
+    }
+
+    private void clearButtonsTooltips() {
+        getMainButton(1).setTooltip(null);
+        getMainButton(2).setTooltip(null);
+        getMainButton(3).setTooltip(null);
+        getMainButton(4).setTooltip(null);
+        getMainButton(5).setTooltip(null);
     }
 
     private void setButtonLabel(final DrummerConfig.Control controlConfig) {
@@ -288,13 +297,28 @@ public class PedalboardController
         final PedalboardConfig pedalboardConfiguration =
                 (PedalboardConfig)configurationsCombo.getValue();
 
-        // TODO: confirm deletion!
+        final Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Delete configuration '" + pedalboardConfiguration.getName() + "'?",
+                ButtonType.YES, ButtonType.NO);
+        alert.setTitle("Confirm deletion");
+        setDefaultButton(alert, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.NO)
+            return;
 
         final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
         config.getPedalboardConfigs().removeIf(c -> c.getName().equals(pedalboardConfiguration.getName()));
         config.save();
 
         loadConfigurations(null);
+    }
+
+    private static Alert setDefaultButton(final Alert alert, final ButtonType defaultButton) {
+        DialogPane pane = alert.getDialogPane();
+        for (final ButtonType t : alert.getButtonTypes())
+            ((Button)pane.lookupButton(t)).setDefaultButton( t == defaultButton );
+        return alert;
     }
 
     @FXML

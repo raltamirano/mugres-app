@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import mugres.pedalboard.config.DrummerConfig;
 import mugres.pedalboard.config.DrummerConfig.Control.Command;
 import mugres.pedalboard.config.PedalboardConfig;
+import mugres.pedalboard.config.PedalboardConfig.Processor;
 
 import java.io.IOException;
 import java.net.URL;
@@ -92,11 +93,14 @@ public class DrummerEditor extends VBox implements Initializable {
     @Override
     public void initialize(final URL url, final ResourceBundle resourceBundle) {
         output = new PedalboardConfig();
+        output.setName("New configuration");
+        output.setProcessor(Processor.DRUMMER);
 
         final DrummerConfig drummerConfig = new DrummerConfig();
         final DrummerConfig.Control control1Config = new DrummerConfig.Control();
         control1Config.setNumber(1);
         control1Config.setCommand(Command.NOOP);
+        drummerConfig.getControls().add(control1Config);
         final DrummerConfig.Control control2Config = new DrummerConfig.Control();
         control2Config.setNumber(2);
         control2Config.setCommand(Command.NOOP);
