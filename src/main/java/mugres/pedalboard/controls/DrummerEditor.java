@@ -6,6 +6,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mugres.pedalboard.config.DrummerConfig;
 import mugres.pedalboard.config.DrummerConfig.Control.Command;
@@ -27,16 +29,16 @@ public class DrummerEditor extends VBox implements Initializable {
     private PedalboardConfig output;
 
     @FXML
-    private TextField control1Title;
-
-    @FXML
-    private TextField control2Title;
+    private TextField configurationNameText;
 
     @FXML
     private Button saveButton;
 
     @FXML
     private Button cancelButton;
+
+    @FXML
+    private HBox saveOrCancelBox;
 
     public DrummerEditor() {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
@@ -120,13 +122,19 @@ public class DrummerEditor extends VBox implements Initializable {
 
         output.setDrummerConfig(drummerConfig);
         initializeEditControls();
+
+        AnchorPane.setRightAnchor(saveOrCancelBox, 1.0);
+    }
+
+    private void initializeEditControls() {
+//        control1Title.setText(output.getDrummerConfig().getControls().get(0).getTitle());
+//        control2Title.setText(output.getDrummerConfig().getControls().get(1).getTitle());
     }
 
     @FXML
     protected void onSave(final ActionEvent event) {
-        output.getDrummerConfig().getControls().get(0).setTitle(control1Title.getText());
-        output.getDrummerConfig().getControls().get(1).setTitle(control2Title.getText());
-
+//        output.getDrummerConfig().getControls().get(0).setTitle(control1Title.getText());
+//        output.getDrummerConfig().getControls().get(1).setTitle(control2Title.getText());
         if (isEditing())
             notifyUpdate();
         else
@@ -136,11 +144,6 @@ public class DrummerEditor extends VBox implements Initializable {
     @FXML
     protected void onCancel(final ActionEvent event) {
         notifyCancel();
-    }
-
-    private void initializeEditControls() {
-        control1Title.setText(output.getDrummerConfig().getControls().get(0).getTitle());
-        control2Title.setText(output.getDrummerConfig().getControls().get(1).getTitle());
     }
 
     public interface Listener {

@@ -4,26 +4,48 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import mugres.pedalboard.controls.DrummerControlEditor?>
+<?import javafx.scene.control.ScrollPane?>
 <fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
 
     <BorderPane>
         <center>
-            <VBox fx:id="controlEditors">
-                <HBox>
-                    <Label>Control 1</Label>
-                    <TextField fx:id="control1Title"></TextField>
-                </HBox>
-                <HBox>
-                    <Label>Control 2</Label>
-                    <TextField fx:id="control2Title"></TextField>
-                </HBox>
-            </VBox>
+            <ScrollPane>
+                <GridPane>
+                        <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            Configuration name</Label>
+                        <TextField fx:id="configurationNameText"
+                                   GridPane.columnIndex="1" GridPane.rowIndex="0"></TextField>
+                        <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            Control 1</Label>
+                        <DrummerControlEditor fx:id="control1" styleClass="oddDrummerControl"
+                                              GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label GridPane.columnIndex="0" GridPane.rowIndex="2">
+                            Control 2</Label>
+                        <DrummerControlEditor fx:id="control2"
+                                              GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Label GridPane.columnIndex="0" GridPane.rowIndex="3">
+                            Control 3</Label>
+                        <DrummerControlEditor fx:id="control3" styleClass="oddDrummerControl"
+                                              GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <Label GridPane.columnIndex="0" GridPane.rowIndex="4">
+                            Control 4</Label>
+                        <DrummerControlEditor fx:id="control4"
+                                              GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        <Label GridPane.columnIndex="0" GridPane.rowIndex="5">
+                            Control 5</Label>
+                        <DrummerControlEditor fx:id="control5" styleClass="oddDrummerControl"
+                                              GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                </GridPane>
+            </ScrollPane>
         </center>
         <bottom>
-            <HBox>
-                <Button fx:id="saveButton" onAction="#onSave">Save</Button>
-                <Button fx:id="cancelButton" onAction="#onCancel">Cancel</Button>
-            </HBox>
+            <AnchorPane>
+                <HBox fx:id="saveOrCancelBox">
+                    <Button fx:id="saveButton" onAction="#onSave">Save</Button>
+                    <Button fx:id="cancelButton" onAction="#onCancel">Cancel</Button>
+                </HBox>
+            </AnchorPane>
         </bottom>
     </BorderPane>
 

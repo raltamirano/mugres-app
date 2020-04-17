@@ -20,3 +20,7 @@
     -fx-font-size: 70px;
     -fx-font-weight: bolder;
 }
+
+.oddDrummerControl {
+     -fx-background-color: darkgray;
+}

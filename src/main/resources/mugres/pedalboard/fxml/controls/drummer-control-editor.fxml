@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root type="javafx.scene.layout.VBox" xmlns:fx="http://javafx.com/fxml">
+    <GridPane>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Title</Label>
+        <TextField fx:id="titleText" GridPane.columnIndex="1" GridPane.rowIndex="0"></TextField>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="1">Command</Label>
+        <ComboBox fx:id="commandCombo" GridPane.columnIndex="1" GridPane.rowIndex="1"></ComboBox>
+
+        <!-- Play command props -->
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="2">Generator</Label>
+        <ComboBox fx:id="generatorCombo" GridPane.columnIndex="1" GridPane.rowIndex="2"></ComboBox>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="3">Measures</Label>
+        <TextField fx:id="measuresText" GridPane.columnIndex="1" GridPane.rowIndex="3"></TextField>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="4">Tempo</Label>
+        <TextField fx:id="tempoText" GridPane.columnIndex="1" GridPane.rowIndex="4"></TextField>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="5">Time Signature</Label>
+        <ComboBox fx:id="timeSignatureCombo" GridPane.columnIndex="1" GridPane.rowIndex="5"></ComboBox>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="6">Switch Mode</Label>
+        <ComboBox fx:id="switchModeCombo" GridPane.columnIndex="1" GridPane.rowIndex="6"></ComboBox>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="7">Main Variants</Label>
+        <ComboBox fx:id="mainVariantsCombo" GridPane.columnIndex="1" GridPane.rowIndex="7"></ComboBox>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="8">Fill Variants</Label>
+        <ComboBox fx:id="fillVariantsCombo" GridPane.columnIndex="1" GridPane.rowIndex="8"></ComboBox>
+
+
+        <!-- Hit command props -->
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="9">Hit Options</Label>
+        <ComboBox fx:id="hitOptionsCombo" GridPane.columnIndex="1" GridPane.rowIndex="9"></ComboBox>
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="10">Hit velocity</Label>
+        <TextField fx:id="hitVelocityText" GridPane.columnIndex="1" GridPane.rowIndex="10"></TextField>
+    </GridPane>
+</fx:root>
