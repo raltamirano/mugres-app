@@ -15,11 +15,12 @@ import mugres.core.function.builtin.drums.PreRecordedDrums;
 import mugres.core.live.processors.Processor;
 import mugres.core.live.processors.drummer.Drummer;
 import mugres.core.live.processors.drummer.commands.*;
-import mugres.core.live.processors.drummer.config.Configuration;
+import mugres.core.live.processors.transformer.Transformer;
 import mugres.pedalboard.EntryPoint;
 import mugres.pedalboard.config.DrummerConfig;
 import mugres.pedalboard.config.MUGRESConfig;
 import mugres.pedalboard.config.PedalboardConfig;
+import mugres.pedalboard.config.TransformerConfig;
 import mugres.pedalboard.controls.DrummerEditor;
 import mugres.pedalboard.controls.DrummerPlayer;
 
@@ -133,11 +134,12 @@ public class PedalboardController
         if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.DRUMMER) {
             setDrummerButtonPitches();
 
-            final Configuration config = new Configuration(pedalboardConfig.getName());
+            final mugres.core.live.processors.drummer.config.Configuration config =
+                    new mugres.core.live.processors.drummer.config.Configuration(pedalboardConfig.getName());
 
             final Context context = Context.createBasicContext();
             for(final DrummerConfig.Control control : pedalboardConfig.getDrummerConfig().getControls()) {
-                setButtonLabel(control);
+                setDrummerButtonLabel(control);
 
                 switch(control.getCommand()) {
                     case PLAY:
@@ -199,7 +201,19 @@ public class PedalboardController
             drummerPlayer.setDrummer(drummer);
             root.setCenter(drummerPlayer);
         } else if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.TRANSFORMER) {
-            throw new RuntimeException("Not implemented!");
+            setTransformerButtonPitches(pedalboardConfig.getTransformerConfig());
+
+            final mugres.core.live.processors.transformer.config.Configuration config =
+                    new mugres.core.live.processors.transformer.config.Configuration();
+
+            final Context context = Context.createBasicContext();
+            for(final TransformerConfig.Button button : pedalboardConfig.getTransformerConfig().getButtons())
+                getMainButton(button.getNumber()).setTooltip(new Tooltip(button.getLabel()));
+
+            processor = new Transformer(context,
+                    EntryPoint.getMUGRESApplication().getInput(),
+                    EntryPoint.getMUGRESApplication().getOutput(),
+                    config);
         } else {
             throw new RuntimeException("Not implemented!");
         }
@@ -213,7 +227,7 @@ public class PedalboardController
         getMainButton(5).setTooltip(null);
     }
 
-    private void setButtonLabel(final DrummerConfig.Control controlConfig) {
+    private void setDrummerButtonLabel(final DrummerConfig.Control controlConfig) {
         String label = "";
         switch(controlConfig.getCommand()) {
             case PLAY:
@@ -261,6 +275,15 @@ public class PedalboardController
         buttonPitches.put(3, Pitch.of(62));
         buttonPitches.put(4, Pitch.of(63));
         buttonPitches.put(5, Pitch.of(64));
+    }
+
+    private void setTransformerButtonPitches(final TransformerConfig transformerConfig) {
+        buttonPitches.clear();
+        buttonPitches.put(1, transformerConfig.getButton(1).getPitch());
+        buttonPitches.put(2, transformerConfig.getButton(2).getPitch());
+        buttonPitches.put(3, transformerConfig.getButton(3).getPitch());
+        buttonPitches.put(4, transformerConfig.getButton(4).getPitch());
+        buttonPitches.put(5, transformerConfig.getButton(5).getPitch());
     }
 
     @FXML
@@ -332,7 +355,10 @@ public class PedalboardController
 
         final Played played = Played.of(buttonPitches.get(buttonNumber), velocity);
         final Signal on = Signal.on(currentTimeMillis(), midiChannel, played);
+        // FIXME: tie to button's release?
         final Signal off = Signal.off(currentTimeMillis() + 500, midiChannel, played);
+        System.out.println(on);
+        System.out.println(off);
 
         processor.process(on);
         processor.process(off);

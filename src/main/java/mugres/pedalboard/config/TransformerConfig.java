@@ -1,11 +1,9 @@
 package mugres.pedalboard.config;
 
+import mugres.core.common.Note;
 import mugres.core.common.Pitch;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TransformerConfig {
     private List<Button> buttons = new ArrayList<>();
@@ -19,6 +17,10 @@ public class TransformerConfig {
         this.buttons = buttons;
     }
 
+    public Button getButton(final int number) {
+        return buttons.stream().filter(b -> b.number == number).findFirst().orElse(null);
+    }
+
     public List<Filter> getFilters() {
         return filters;
     }
@@ -29,8 +31,7 @@ public class TransformerConfig {
 
     public static class Button {
         private int number;
-        private Pitch pitch;
-        private int octave;
+        private int midi;
         private String label;
 
         public int getNumber() {
@@ -41,20 +42,12 @@ public class TransformerConfig {
             this.number = number;
         }
 
-        public Pitch getPitch() {
-            return pitch;
+        public int getMidi() {
+            return midi;
         }
 
-        public void setPitch(Pitch pitch) {
-            this.pitch = pitch;
-        }
-
-        public int getOctave() {
-            return octave;
-        }
-
-        public void setOctave(int octave) {
-            this.octave = octave;
+        public void setMidi(int midi) {
+            this.midi = midi;
         }
 
         public String getLabel() {
@@ -64,7 +57,12 @@ public class TransformerConfig {
         public void setLabel(String label) {
             this.label = label;
         }
+
+        public Pitch getPitch() {
+            return Pitch.of(midi);
+        }
     }
+
     public static class Filter {
         private String filter;
         private Map<String, Object> arguments = new HashMap<>();
