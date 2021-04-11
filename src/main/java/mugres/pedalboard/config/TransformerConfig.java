@@ -1,6 +1,5 @@
 package mugres.pedalboard.config;
 
-import mugres.core.common.Note;
 import mugres.core.common.Pitch;
 
 import java.util.*;
@@ -65,7 +64,7 @@ public class TransformerConfig {
 
     public static class Filter {
         private String filter;
-        private Map<String, Object> arguments = new HashMap<>();
+        private Map<String, Object> args = new HashMap<>();
 
         public String getFilter() {
             return filter;
@@ -75,12 +74,12 @@ public class TransformerConfig {
             this.filter = filter;
         }
 
-        public Map<String, Object> getArguments() {
-            return arguments;
+        public Map<String, Object> getArgs() {
+            return args;
         }
 
-        public void setArguments(Map<String, Object> arguments) {
-            this.arguments = arguments;
+        public void setArgs(Map<String, Object> args) {
+            this.args = args;
         }
     }
 }

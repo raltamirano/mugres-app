@@ -16,6 +16,7 @@ import mugres.core.live.processors.Processor;
 import mugres.core.live.processors.drummer.Drummer;
 import mugres.core.live.processors.drummer.commands.*;
 import mugres.core.live.processors.transformer.Transformer;
+import mugres.core.live.processors.transformer.filters.Filter;
 import mugres.pedalboard.EntryPoint;
 import mugres.pedalboard.config.DrummerConfig;
 import mugres.pedalboard.config.MUGRESConfig;
@@ -209,6 +210,9 @@ public class PedalboardController
             final Context context = Context.createBasicContext();
             for(final TransformerConfig.Button button : pedalboardConfig.getTransformerConfig().getButtons())
                 getMainButton(button.getNumber()).setTooltip(new Tooltip(button.getLabel()));
+            for(final TransformerConfig.Filter filter : pedalboardConfig.getTransformerConfig().getFilters()) {
+                config.appendFilter(filter.getFilter(), filter.getArgs());
+            }
 
             processor = new Transformer(context,
                     EntryPoint.getMUGRESApplication().getInput(),
@@ -357,8 +361,6 @@ public class PedalboardController
         final Signal on = Signal.on(currentTimeMillis(), midiChannel, played);
         // FIXME: tie to button's release?
         final Signal off = Signal.off(currentTimeMillis() + 500, midiChannel, played);
-        System.out.println(on);
-        System.out.println(off);
 
         processor.process(on);
         processor.process(off);
