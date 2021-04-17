@@ -16,7 +16,6 @@ import mugres.core.live.processors.Processor;
 import mugres.core.live.processors.drummer.Drummer;
 import mugres.core.live.processors.drummer.commands.*;
 import mugres.core.live.processors.transformer.Transformer;
-import mugres.core.live.processors.transformer.filters.Filter;
 import mugres.pedalboard.EntryPoint;
 import mugres.pedalboard.config.DrummerConfig;
 import mugres.pedalboard.config.MUGRESConfig;
