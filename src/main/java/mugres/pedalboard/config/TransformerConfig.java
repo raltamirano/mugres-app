@@ -7,6 +7,7 @@ import java.util.*;
 public class TransformerConfig {
     private List<Button> buttons = new ArrayList<>();
     private List<Filter> filters = new ArrayList<>();
+    private ContextConfig context;
 
     public List<Button> getButtons() {
         return buttons;
@@ -26,6 +27,14 @@ public class TransformerConfig {
 
     public void setFilters(List<Filter> filters) {
         this.filters = filters;
+    }
+
+    public ContextConfig getContext() {
+        return context;
+    }
+
+    public void setContext(ContextConfig context) {
+        this.context = context;
     }
 
     public static class Button {

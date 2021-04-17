@@ -7,6 +7,7 @@ import mugres.core.common.TimeSignature;
 import mugres.core.live.processors.drummer.Drummer.SwitchMode;
 import mugres.pedalboard.config.DrummerConfig.Control.Command;
 import mugres.pedalboard.config.DrummerConfig.Control.Generator;
+import mugres.pedalboard.config.adapters.ContextConfigAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class MUGRESConfig {
     private String midiOutputPort;
     private int midiInputChannel;
     private List<PedalboardConfig> pedalboardConfigs = new ArrayList<>();
+    private ContextConfig context;
 
     public String getMidiInputPort() {
         return midiInputPort;
@@ -54,6 +56,14 @@ public class MUGRESConfig {
         this.pedalboardConfigs = pedalboardConfigs;
     }
 
+    public ContextConfig getContext() {
+        return context;
+    }
+
+    public void setContext(ContextConfig context) {
+        this.context = context;
+    }
+
     public static MUGRESConfig read() {
         try {
             final File configFile = getConfigFile();
@@ -61,7 +71,10 @@ public class MUGRESConfig {
                 return MUGRESConfig.defaultConfig();
 
             try (final Reader reader = Files.newBufferedReader(configFile.toPath())) {
-                return GSON.fromJson(reader, MUGRESConfig.class);
+                final MUGRESConfig config = GSON.fromJson(reader, MUGRESConfig.class);
+                for(PedalboardConfig c : config.getPedalboardConfigs())
+                    c.setMUGRESConfig(config);
+                return config;
             }
         } catch (final IOException e) {
             throw new RuntimeException(e);
@@ -144,5 +157,8 @@ public class MUGRESConfig {
         return new File(System.getProperty("user.home"), "mugres-config.json");
     }
 
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(ContextConfig.class, new ContextConfigAdapter())
+            .create();
 }

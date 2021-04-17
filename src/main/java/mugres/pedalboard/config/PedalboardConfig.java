@@ -7,6 +7,7 @@ public class PedalboardConfig implements Cloneable {
     private Processor processor;
     private DrummerConfig drummerConfig;
     private TransformerConfig transformerConfig;
+    private transient MUGRESConfig mugresConfig;
 
     public String getName() {
         return name;
@@ -38,6 +39,14 @@ public class PedalboardConfig implements Cloneable {
 
     public void setTransformerConfig(TransformerConfig transformerConfig) {
         this.transformerConfig = transformerConfig;
+    }
+
+    public MUGRESConfig getMUGRESConfig() {
+        return mugresConfig;
+    }
+
+    public void setMUGRESConfig(MUGRESConfig mugresConfig) {
+        this.mugresConfig = mugresConfig;
     }
 
     @Override

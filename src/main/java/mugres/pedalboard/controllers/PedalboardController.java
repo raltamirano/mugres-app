@@ -17,10 +17,7 @@ import mugres.core.live.processors.drummer.Drummer;
 import mugres.core.live.processors.drummer.commands.*;
 import mugres.core.live.processors.transformer.Transformer;
 import mugres.pedalboard.EntryPoint;
-import mugres.pedalboard.config.DrummerConfig;
-import mugres.pedalboard.config.MUGRESConfig;
-import mugres.pedalboard.config.PedalboardConfig;
-import mugres.pedalboard.config.TransformerConfig;
+import mugres.pedalboard.config.*;
 import mugres.pedalboard.controls.DrummerEditor;
 import mugres.pedalboard.controls.DrummerPlayer;
 
@@ -131,13 +128,15 @@ public class PedalboardController
         root.setCenter(null);
         clearButtonsTooltips();
 
+        final Context context = Context.createBasicContext();
+        overrideWithContextConfig(context, pedalboardConfig.getMUGRESConfig().getContext());
+
         if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.DRUMMER) {
             setDrummerButtonPitches();
 
             final mugres.core.live.processors.drummer.config.Configuration config =
                     new mugres.core.live.processors.drummer.config.Configuration(pedalboardConfig.getName());
 
-            final Context context = Context.createBasicContext();
             for(final DrummerConfig.Control control : pedalboardConfig.getDrummerConfig().getControls()) {
                 setDrummerButtonLabel(control);
 
@@ -206,18 +205,31 @@ public class PedalboardController
             final mugres.core.live.processors.transformer.config.Configuration config =
                     new mugres.core.live.processors.transformer.config.Configuration();
 
-            final Context context = Context.createBasicContext();
+            final Context playContext = Context.ComposableContext.of(context);
+            overrideWithContextConfig(playContext, pedalboardConfig.getTransformerConfig().getContext());
+
             for(final TransformerConfig.Button button : pedalboardConfig.getTransformerConfig().getButtons())
                 getMainButton(button.getNumber()).setTooltip(new Tooltip(button.getLabel()));
             for(final TransformerConfig.Filter filter : pedalboardConfig.getTransformerConfig().getFilters())
                 config.appendFilter(filter.getFilter(), filter.getArgs());
 
-            processor = new Transformer(context,
+            processor = new Transformer(playContext,
                     EntryPoint.getMUGRESApplication().getInput(),
                     EntryPoint.getMUGRESApplication().getOutput(),
                     config);
         } else {
             throw new RuntimeException("Not implemented!");
+        }
+    }
+
+    private void overrideWithContextConfig(final Context baseContext, final ContextConfig contextConfig) {
+        if (contextConfig != null) {
+            if (contextConfig.getTempo() > 0)
+                baseContext.setTempo(contextConfig.getTempo());
+            if (contextConfig.getKey() != null)
+                baseContext.setKey(contextConfig.getKey());
+            if (contextConfig.getTimeSignature() != null)
+                baseContext.setTimeSignature(contextConfig.getTimeSignature());
         }
     }
 
