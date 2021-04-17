@@ -209,9 +209,8 @@ public class PedalboardController
             final Context context = Context.createBasicContext();
             for(final TransformerConfig.Button button : pedalboardConfig.getTransformerConfig().getButtons())
                 getMainButton(button.getNumber()).setTooltip(new Tooltip(button.getLabel()));
-            for(final TransformerConfig.Filter filter : pedalboardConfig.getTransformerConfig().getFilters()) {
+            for(final TransformerConfig.Filter filter : pedalboardConfig.getTransformerConfig().getFilters())
                 config.appendFilter(filter.getFilter(), filter.getArgs());
-            }
 
             processor = new Transformer(context,
                     EntryPoint.getMUGRESApplication().getInput(),
