@@ -1,0 +1,542 @@
+{
+  "midiInputPort": "loopMIDI Port",
+  "midiOutputPort": "loopMIDI Port 1",
+  "midiInputChannel": 1,
+  "context": {
+	"tempo": 80,
+	"key": "C",
+	"timeSignature": "4/4"
+  },
+  "pedalboardConfigs": [
+    {
+      "name": "Maestro",
+      "processor": "TRANSFORMER",
+      "transformerConfig": {
+		"buttons": [
+			{
+				"number": 1,
+				"midi": 60,
+				"label": "C"
+			},
+			{
+				"number": 2,
+				"midi": 62,
+				"label": "D"
+			},
+			{
+				"number": 3,
+				"midi": 63,
+				"label": "E"
+			},
+			{
+				"number": 4,
+				"midi": 65,
+				"label": "F"
+			},
+			{
+				"number": 5,
+				"midi": 67,
+				"label": "G"
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Splitter",
+				"args": {
+					"tagPrefix": "split",
+					"copies": 2
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"chordMode": "DIATONIC"
+				}
+			},
+					{
+						"filter": "Transpose",
+						"args": {
+							"onlyForTags": "split1",
+							"semitones": "-12"
+						}
+					},
+
+
+					{
+						"filter": "Transpose",
+						"args": {
+							"onlyForTags": "split2",
+							"semitones": "12"
+						}
+					},
+					{
+						"filter": "Arpeggiate",
+						"args": {
+							"onlyForTags": "split2",
+							"pattern": "1232"
+						}
+					},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+	{
+      "name": "Repeat After Me",
+      "processor": "TRANSFORMER",
+      "transformerConfig": {
+		"buttons": [
+			{
+				"number": 1,
+				"midi": 60,
+				"label": "C"
+			},
+			{
+				"number": 2,
+				"midi": 62,
+				"label": "D"
+			},
+			{
+				"number": 3,
+				"midi": 63,
+				"label": "E"
+			},
+			{
+				"number": 4,
+				"midi": 65,
+				"label": "F"
+			},
+			{
+				"number": 5,
+				"midi": 67,
+				"label": "G"
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "RateRepeater",
+				"args": {
+					"rate": "q",
+					"duration": "q"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Season of Ranges",
+      "processor": "TRANSFORMER",
+      "transformerConfig": {
+		"buttons": [
+			{
+				"number": 1,
+				"midi": 60,
+				"label": "C"
+			},
+			{
+				"number": 2,
+				"midi": 62,
+				"label": "D"
+			},
+			{
+				"number": 3,
+				"midi": 63,
+				"label": "E"
+			},
+			{
+				"number": 4,
+				"midi": 65,
+				"label": "F"
+			},
+			{
+				"number": 5,
+				"midi": 67,
+				"label": "G"
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Ranges",
+				"args": {
+					"ranges": "Low:48:59,Hi:60:72,Others:*"
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"chordMode": "DIATONIC"
+				}
+			},
+			{
+				"filter": "Arpeggiate",
+				"args": {
+					"onlyForTags": "Hi",
+					"pattern": "XXXX"
+				}
+			},
+			{
+				"filter": "Clear",
+				"args": {
+					"onlyForTags": "Others"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+	{
+      "name": "Key-Correct Chords",
+      "processor": "TRANSFORMER",
+      "transformerConfig": {
+		"context": {
+			"key": "E min"
+		},
+		"buttons": [
+			{
+				"number": 1,
+				"midi": 60,
+				"label": "C"
+			},
+			{
+				"number": 2,
+				"midi": 62,
+				"label": "D"
+			},
+			{
+				"number": 3,
+				"midi": 63,
+				"label": "E"
+			},
+			{
+				"number": 4,
+				"midi": 65,
+				"label": "F"
+			},
+			{
+				"number": 5,
+				"midi": 67,
+				"label": "G"
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "ScaleEnforcer",
+				"args": {
+					"correctionMode": "UP"
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"chordMode": "DIATONIC"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Arpeggios",
+      "processor": "TRANSFORMER",
+      "transformerConfig": {
+		"buttons": [
+			{
+				"number": 1,
+				"midi": 60,
+				"label": "C"
+			},
+			{
+				"number": 2,
+				"midi": 62,
+				"label": "D"
+			},
+			{
+				"number": 3,
+				"midi": 63,
+				"label": "E"
+			},
+			{
+				"number": 4,
+				"midi": 65,
+				"label": "F"
+			},
+			{
+				"number": 5,
+				"midi": 67,
+				"label": "G"
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"chordMode": "FIXED",
+					"chordType": "min"
+				}
+			},
+			{
+				"filter": "Arpeggiate",
+				"args": {
+					"pattern": "12XX"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "2 Octaves Down",
+      "processor": "TRANSFORMER",
+      "transformerConfig": {
+		"buttons": [
+			{
+				"number": 1,
+				"midi": 60,
+				"label": "C"
+			},
+			{
+				"number": 2,
+				"midi": 62,
+				"label": "D"
+			},
+			{
+				"number": 3,
+				"midi": 63,
+				"label": "E"
+			},
+			{
+				"number": 4,
+				"midi": 65,
+				"label": "F"
+			},
+			{
+				"number": 5,
+				"midi": 67,
+				"label": "G"
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Transpose",
+				"args": {
+					"semitones": "-24"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Transformer Chain",
+      "processor": "TRANSFORMER",
+      "transformerConfig": {
+		"context": {
+			"tempo": 80,
+			"key": "D min",
+			"timeSignature": "4/4"
+		},
+		"buttons": [
+			{
+				"number": 1,
+				"midi": 60,
+				"label": "C"
+			},
+			{
+				"number": 2,
+				"midi": 62,
+				"label": "D"
+			},
+			{
+				"number": 3,
+				"midi": 63,
+				"label": "E"
+			},
+			{
+				"number": 4,
+				"midi": 65,
+				"label": "F"
+			},
+			{
+				"number": 5,
+				"midi": 67,
+				"label": "G"
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "ScaleEnforcer",
+				"args": {
+					"root": "C",
+					"scale": "Major",
+					"correctionMode": "UP"
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"chordMode": "DIATONIC",
+					"key": "C",
+					"notes": "3"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Drummer",
+      "processor": "DRUMMER",
+      "drummerConfig": {
+        "controls": [
+          {
+            "title": "Blast Beat 1",
+            "number": 1,
+            "command": "PLAY",
+            "generator": "BLAST_BEAT",
+            "lengthInMeasures": 4,
+            "tempo": 190,
+            "timeSignature": {
+              "numerator": 4,
+              "denominator": "QUARTER"
+            },
+            "switchMode": "IMMEDIATELY_FILL",
+            "mainVariants": [],
+            "fillVariants": [],
+            "hitOptions": [],
+            "hitVelocity": 0
+          },
+          {
+            "title": "Half Time 2",
+            "number": 2,
+            "command": "PLAY",
+            "generator": "HALF_TIME",
+            "lengthInMeasures": 4,
+            "tempo": 110,
+            "timeSignature": {
+              "numerator": 4,
+              "denominator": "QUARTER"
+            },
+            "switchMode": "IMMEDIATELY_FILL",
+            "mainVariants": [],
+            "fillVariants": [],
+            "hitOptions": [],
+            "hitVelocity": 0
+          },
+          {
+            "title": "Crash Cymbal hit",
+            "number": 3,
+            "command": "HIT",
+            "lengthInMeasures": 0,
+            "tempo": 0,
+            "mainVariants": [],
+            "fillVariants": [],
+            "hitOptions": [
+              "CR1",
+              "CR2"
+            ],
+            "hitVelocity": 110
+          },
+          {
+            "title": "Finish",
+            "number": 4,
+            "command": "FINISH",
+            "lengthInMeasures": 0,
+            "tempo": 0,
+            "mainVariants": [],
+            "fillVariants": [],
+            "hitOptions": [],
+            "hitVelocity": 0
+          },
+          {
+            "title": "Stop now!",
+            "number": 5,
+            "command": "STOP",
+            "lengthInMeasures": 0,
+            "tempo": 0,
+            "mainVariants": [],
+            "fillVariants": [],
+            "hitOptions": [],
+            "hitVelocity": 0
+          }
+        ]
+      }
+    }
+  ]
+}
