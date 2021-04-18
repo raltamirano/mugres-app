@@ -24,6 +24,7 @@ import mugres.pedalboard.controls.DrummerPlayer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.System.currentTimeMillis;
@@ -368,9 +369,9 @@ public class PedalboardController
                 .replaceAll("[^\\d.]", ""));
 
         final Played played = Played.of(buttonPitches.get(buttonNumber), velocity);
-        final Signal on = Signal.on(currentTimeMillis(), midiChannel, played);
+        final Signal on = Signal.on(UUID.randomUUID(), currentTimeMillis(), midiChannel, played);
         // FIXME: tie to button's release?
-        final Signal off = Signal.off(currentTimeMillis() + 500, midiChannel, played);
+        final Signal off = Signal.off(UUID.randomUUID(), currentTimeMillis() + 500, midiChannel, played);
 
         processor.process(on);
         processor.process(off);
