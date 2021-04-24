@@ -2,6 +2,10 @@
   "midiInputPort": "loopMIDI Port",
   "midiOutputPort": "loopMIDI Port 1",
   "midiInputChannel": 1,
+  "context": {
+	"key": "C",
+	"tempo": 120
+  },
   "pedalboards": [
     {
       "name": "Madness? This is Random!",
@@ -61,6 +65,10 @@
       "name": "Sui Generis",
       "processor": "TRANSFORMER",
       "transformer": {
+		"context": {
+			"key": "E min",
+			"tempo": 60
+		},
 		"signalers": [
 			{
 				"frequency": {
@@ -87,12 +95,7 @@
 			{
 				"filter": "Randomizer",
 				"args": {
-				}
-			},
-			{
-				"filter": "ScaleEnforcer",
-				"args": {
-					"correctionMode": "UP"
+					"mode": "DIATONIC"
 				}
 			},
 			{
