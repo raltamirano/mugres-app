@@ -7,6 +7,7 @@ import java.util.*;
 public class TransformerConfig {
     private List<Button> buttons = new ArrayList<>();
     private List<Filter> filters = new ArrayList<>();
+    private final List<Signaler> signalers = new ArrayList<>();
     private ContextConfig context;
 
     public List<Button> getButtons() {
@@ -27,6 +28,10 @@ public class TransformerConfig {
 
     public void setFilters(List<Filter> filters) {
         this.filters = filters;
+    }
+
+    public List<Signaler> getSignalers() {
+        return signalers;
     }
 
     public ContextConfig getContext() {
@@ -89,6 +94,52 @@ public class TransformerConfig {
 
         public void setArgs(Map<String, Object> args) {
             this.args = args;
+        }
+    }
+
+    public static class Signaler {
+        private Frequency frequency;
+        private Set<String> tags = new HashSet<>();
+
+        public Frequency getFrequency() {
+            return frequency;
+        }
+
+        public void setFrequency(Frequency frequency) {
+            this.frequency = frequency;
+        }
+
+        public Set<String> getTags() {
+            return tags;
+        }
+
+        public void setTags(Set<String> tags) {
+            this.tags = tags;
+        }
+
+        public static class Frequency {
+            private Mode mode;
+            private Object value;
+
+            public Mode getMode() {
+                return mode;
+            }
+
+            public void setMode(Mode mode) {
+                this.mode = mode;
+            }
+
+            public Object getValue() {
+                return value;
+            }
+
+            public void setValue(Object value) {
+                this.value = value;
+            }
+
+            public enum Mode {
+                FIXED;
+            }
         }
     }
 }

@@ -120,7 +120,7 @@ public class DrummerEditor extends VBox implements Initializable {
         control5Config.setCommand(Command.NOOP);
         drummerConfig.getControls().add(control5Config);
 
-        output.setDrummerConfig(drummerConfig);
+        output.setDrummer(drummerConfig);
         initializeEditControls();
 
         AnchorPane.setRightAnchor(saveOrCancelBox, 1.0);

@@ -21,7 +21,7 @@ public class MUGRESConfig {
     private String midiInputPort;
     private String midiOutputPort;
     private int midiInputChannel;
-    private List<PedalboardConfig> pedalboardConfigs = new ArrayList<>();
+    private List<PedalboardConfig> pedalboards = new ArrayList<>();
     private ContextConfig context;
 
     public String getMidiInputPort() {
@@ -48,12 +48,12 @@ public class MUGRESConfig {
         this.midiInputChannel = midiInputChannel;
     }
 
-    public List<PedalboardConfig> getPedalboardConfigs() {
-        return pedalboardConfigs;
+    public List<PedalboardConfig> getPedalboards() {
+        return pedalboards;
     }
 
-    public void setPedalboardConfigs(List<PedalboardConfig> pedalboardConfigs) {
-        this.pedalboardConfigs = pedalboardConfigs;
+    public void setPedalboards(List<PedalboardConfig> pedalboards) {
+        this.pedalboards = pedalboards;
     }
 
     public ContextConfig getContext() {
@@ -72,7 +72,7 @@ public class MUGRESConfig {
 
             try (final Reader reader = Files.newBufferedReader(configFile.toPath())) {
                 final MUGRESConfig config = GSON.fromJson(reader, MUGRESConfig.class);
-                for(PedalboardConfig c : config.getPedalboardConfigs())
+                for(PedalboardConfig c : config.getPedalboards())
                     c.setMUGRESConfig(config);
                 return config;
             }
@@ -136,8 +136,8 @@ public class MUGRESConfig {
         control5.setCommand(Command.STOP);
         drummerConfig.getControls().add(control5);
 
-        pedalboard.setDrummerConfig(drummerConfig);
-        config.getPedalboardConfigs().add(pedalboard);
+        pedalboard.setDrummer(drummerConfig);
+        config.getPedalboards().add(pedalboard);
 
         return config;
     }

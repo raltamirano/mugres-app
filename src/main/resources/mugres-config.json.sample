@@ -2,43 +2,139 @@
   "midiInputPort": "loopMIDI Port",
   "midiOutputPort": "loopMIDI Port 1",
   "midiInputChannel": 1,
-  "context": {
-	"tempo": 80,
-	"key": "C",
-	"timeSignature": "4/4"
-  },
-  "pedalboardConfigs": [
+  "pedalboards": [
+    {
+      "name": "Madness? This is Random!",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"filters": [
+			{
+				"filter": "Randomizer",
+				"args": {
+					"mode": "DIATONIC",
+					"root": "E",
+					"scale": "Minor Pentatonic",
+					"startingOctave": 4,
+					"octaves": 2
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT",
+					"onlyActives": true
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Chords At The Bar",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"signalers": [
+			{
+				"frequency": {
+					"mode": "FIXED",
+					"value": "w"
+				},
+				"tags": ["s1"]
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Sui Generis",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"signalers": [
+			{
+				"frequency": {
+					"mode": "FIXED",
+					"value": "w"
+				},
+				"tags": ["s1"]
+			},
+			{
+				"frequency": {
+					"mode": "FIXED",
+					"value": "q"
+				},
+				"tags": ["s2"]
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Randomizer",
+				"args": {
+				}
+			},
+			{
+				"filter": "ScaleEnforcer",
+				"args": {
+					"correctionMode": "UP"
+				}
+			},
+			{
+				"filter": "Transpose",
+				"args": {
+					"onlyForTags": "s1",
+					"semitones": -12
+				}
+			},
+			{
+				"filter": "Transpose",
+				"args": {
+					"onlyForTags": "s2",
+					"semitones": 12
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"chordMode": "DIATONIC"
+				}
+			},
+			{
+				"filter": "Arpeggiate",
+				"args": {
+					"onlyForTags": "s2",
+					"pattern": "1232"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
     {
       "name": "Maestro",
       "processor": "TRANSFORMER",
-      "transformerConfig": {
-		"buttons": [
-			{
-				"number": 1,
-				"midi": 60,
-				"label": "C"
-			},
-			{
-				"number": 2,
-				"midi": 62,
-				"label": "D"
-			},
-			{
-				"number": 3,
-				"midi": 63,
-				"label": "E"
-			},
-			{
-				"number": 4,
-				"midi": 65,
-				"label": "F"
-			},
-			{
-				"number": 5,
-				"midi": 67,
-				"label": "G"
-			}
-		],
+      "transformer": {
 		"filters": [
 			{
 				"filter": "Monitor",
@@ -63,7 +159,7 @@
 						"filter": "Transpose",
 						"args": {
 							"onlyForTags": "split1",
-							"semitones": "-12"
+							"semitones": -12
 						}
 					},
 
@@ -72,7 +168,7 @@
 						"filter": "Transpose",
 						"args": {
 							"onlyForTags": "split2",
-							"semitones": "12"
+							"semitones": 12
 						}
 					},
 					{
@@ -94,34 +190,7 @@
 	{
       "name": "Repeat After Me",
       "processor": "TRANSFORMER",
-      "transformerConfig": {
-		"buttons": [
-			{
-				"number": 1,
-				"midi": 60,
-				"label": "C"
-			},
-			{
-				"number": 2,
-				"midi": 62,
-				"label": "D"
-			},
-			{
-				"number": 3,
-				"midi": 63,
-				"label": "E"
-			},
-			{
-				"number": 4,
-				"midi": 65,
-				"label": "F"
-			},
-			{
-				"number": 5,
-				"midi": 67,
-				"label": "G"
-			}
-		],
+      "transformer": {
 		"filters": [
 			{
 				"filter": "Monitor",
@@ -148,34 +217,7 @@
     {
       "name": "Season of Ranges",
       "processor": "TRANSFORMER",
-      "transformerConfig": {
-		"buttons": [
-			{
-				"number": 1,
-				"midi": 60,
-				"label": "C"
-			},
-			{
-				"number": 2,
-				"midi": 62,
-				"label": "D"
-			},
-			{
-				"number": 3,
-				"midi": 63,
-				"label": "E"
-			},
-			{
-				"number": 4,
-				"midi": 65,
-				"label": "F"
-			},
-			{
-				"number": 5,
-				"midi": 67,
-				"label": "G"
-			}
-		],
+      "transformer": {
 		"filters": [
 			{
 				"filter": "Monitor",
@@ -220,37 +262,10 @@
 	{
       "name": "Key-Correct Chords",
       "processor": "TRANSFORMER",
-      "transformerConfig": {
+      "transformer": {
 		"context": {
 			"key": "E min"
 		},
-		"buttons": [
-			{
-				"number": 1,
-				"midi": 60,
-				"label": "C"
-			},
-			{
-				"number": 2,
-				"midi": 62,
-				"label": "D"
-			},
-			{
-				"number": 3,
-				"midi": 63,
-				"label": "E"
-			},
-			{
-				"number": 4,
-				"midi": 65,
-				"label": "F"
-			},
-			{
-				"number": 5,
-				"midi": 67,
-				"label": "G"
-			}
-		],
 		"filters": [
 			{
 				"filter": "Monitor",
@@ -282,34 +297,7 @@
     {
       "name": "Arpeggios",
       "processor": "TRANSFORMER",
-      "transformerConfig": {
-		"buttons": [
-			{
-				"number": 1,
-				"midi": 60,
-				"label": "C"
-			},
-			{
-				"number": 2,
-				"midi": 62,
-				"label": "D"
-			},
-			{
-				"number": 3,
-				"midi": 63,
-				"label": "E"
-			},
-			{
-				"number": 4,
-				"midi": 65,
-				"label": "F"
-			},
-			{
-				"number": 5,
-				"midi": 67,
-				"label": "G"
-			}
-		],
+      "transformer": {
 		"filters": [
 			{
 				"filter": "Monitor",
@@ -342,34 +330,7 @@
     {
       "name": "2 Octaves Down",
       "processor": "TRANSFORMER",
-      "transformerConfig": {
-		"buttons": [
-			{
-				"number": 1,
-				"midi": 60,
-				"label": "C"
-			},
-			{
-				"number": 2,
-				"midi": 62,
-				"label": "D"
-			},
-			{
-				"number": 3,
-				"midi": 63,
-				"label": "E"
-			},
-			{
-				"number": 4,
-				"midi": 65,
-				"label": "F"
-			},
-			{
-				"number": 5,
-				"midi": 67,
-				"label": "G"
-			}
-		],
+      "transformer": {
 		"filters": [
 			{
 				"filter": "Monitor",
@@ -380,7 +341,7 @@
 			{
 				"filter": "Transpose",
 				"args": {
-					"semitones": "-24"
+					"semitones": -24
 				}
 			},
 			{
@@ -395,39 +356,12 @@
     {
       "name": "Transformer Chain",
       "processor": "TRANSFORMER",
-      "transformerConfig": {
+      "transformer": {
 		"context": {
 			"tempo": 80,
 			"key": "D min",
 			"timeSignature": "4/4"
 		},
-		"buttons": [
-			{
-				"number": 1,
-				"midi": 60,
-				"label": "C"
-			},
-			{
-				"number": 2,
-				"midi": 62,
-				"label": "D"
-			},
-			{
-				"number": 3,
-				"midi": 63,
-				"label": "E"
-			},
-			{
-				"number": 4,
-				"midi": 65,
-				"label": "F"
-			},
-			{
-				"number": 5,
-				"midi": 67,
-				"label": "G"
-			}
-		],
 		"filters": [
 			{
 				"filter": "Monitor",
@@ -460,10 +394,57 @@
 		]
 	  }
 	},
+   {
+      "name": "Custom Buttons",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"buttons": [
+			{
+				"number": 1,
+				"midi": 35,
+				"label": "First"
+			},
+			{
+				"number": 2,
+				"midi": 49,
+				"label": "Douh!"
+			},
+			{
+				"number": 3,
+				"midi": 62,
+				"label": "Eaaaa"
+			},
+			{
+				"number": 4,
+				"midi": 60,
+				"label": "Ohh..."
+			},
+			{
+				"number": 5,
+				"midi": 67,
+				"label": "Hey!"
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
     {
       "name": "Drummer",
       "processor": "DRUMMER",
-      "drummerConfig": {
+      "drummer": {
         "controls": [
           {
             "title": "Blast Beat 1",

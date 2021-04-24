@@ -16,6 +16,8 @@ import mugres.core.live.processors.Processor;
 import mugres.core.live.processors.drummer.Drummer;
 import mugres.core.live.processors.drummer.commands.*;
 import mugres.core.live.processors.transformer.Transformer;
+import mugres.core.live.signaler.Signaler;
+import mugres.core.live.signaler.config.Configuration;
 import mugres.pedalboard.EntryPoint;
 import mugres.pedalboard.config.*;
 import mugres.pedalboard.controls.DrummerEditor;
@@ -96,7 +98,7 @@ public class PedalboardController
 
     private void loadConfigurations(final String selectedConfiguration) {
         final List<PedalboardConfig> pedalboards = EntryPoint.getMUGRESApplication()
-                .getMUGRESConfig().getPedalboardConfigs();
+                .getMUGRESConfig().getPedalboards();
 
         editConfigurationButton.setDisable(true);
         deleteConfigurationButton.setDisable(true);
@@ -125,6 +127,9 @@ public class PedalboardController
         editConfigurationButton.setDisable(false);
         deleteConfigurationButton.setDisable(false);
 
+        if (processor != null)
+            processor.stop();
+
         processor = null;
         root.setCenter(null);
         clearButtonsTooltips();
@@ -138,7 +143,7 @@ public class PedalboardController
             final mugres.core.live.processors.drummer.config.Configuration config =
                     new mugres.core.live.processors.drummer.config.Configuration(pedalboardConfig.getName());
 
-            for(final DrummerConfig.Control control : pedalboardConfig.getDrummerConfig().getControls()) {
+            for(final DrummerConfig.Control control : pedalboardConfig.getDrummer().getControls()) {
                 setDrummerButtonLabel(control);
 
                 switch(control.getCommand()) {
@@ -201,18 +206,36 @@ public class PedalboardController
             drummerPlayer.setDrummer(drummer);
             root.setCenter(drummerPlayer);
         } else if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.TRANSFORMER) {
-            setTransformerButtonPitches(pedalboardConfig.getTransformerConfig());
-
             final mugres.core.live.processors.transformer.config.Configuration config =
                     new mugres.core.live.processors.transformer.config.Configuration();
 
             final Context playContext = Context.ComposableContext.of(context);
-            overrideWithContextConfig(playContext, pedalboardConfig.getTransformerConfig().getContext());
+            overrideWithContextConfig(playContext, pedalboardConfig.getTransformer().getContext());
 
-            for(final TransformerConfig.Button button : pedalboardConfig.getTransformerConfig().getButtons())
-                getMainButton(button.getNumber()).setTooltip(new Tooltip(button.getLabel()));
-            for(final TransformerConfig.Filter filter : pedalboardConfig.getTransformerConfig().getFilters())
+            if (pedalboardConfig.getTransformer().getButtons().isEmpty()) {
+                setStandardButtonPitches();
+                for(int index=1; index<=5; index++)
+                    getMainButton(index).setTooltip(new Tooltip(String.valueOf(index)));
+            } else {
+                setTransformerButtonPitches(pedalboardConfig.getTransformer());
+                for (final TransformerConfig.Button button : pedalboardConfig.getTransformer().getButtons())
+                    getMainButton(button.getNumber()).setTooltip(new Tooltip(button.getLabel()));
+            }
+
+            for(final TransformerConfig.Filter filter : pedalboardConfig.getTransformer().getFilters())
                 config.appendFilter(filter.getFilter(), filter.getArgs());
+
+            if (!pedalboardConfig.getTransformer().getSignalers().isEmpty()) {
+                for(final TransformerConfig.Signaler s : pedalboardConfig.getTransformer().getSignalers()) {
+                    Configuration signalerConfig = new Configuration();
+                    Configuration.Frequency frequency = new Configuration.Frequency();
+                    frequency.setMode(Configuration.Frequency.Mode.valueOf(s.getFrequency().getMode().toString()));
+                    frequency.setValue(s.getFrequency().getValue());
+                    signalerConfig.setFrequency(frequency);
+                    s.getTags().forEach(signalerConfig.getTags()::add);
+                    config.addSignaler(Signaler.forConfig(signalerConfig));
+                }
+            }
 
             processor = new Transformer(playContext,
                     EntryPoint.getMUGRESApplication().getInput(),
@@ -221,6 +244,8 @@ public class PedalboardController
         } else {
             throw new RuntimeException("Not implemented!");
         }
+
+        processor.start();
     }
 
     private void overrideWithContextConfig(final Context baseContext, final ContextConfig contextConfig) {
@@ -292,6 +317,15 @@ public class PedalboardController
         buttonPitches.put(5, Pitch.of(64));
     }
 
+    private void setStandardButtonPitches() {
+        buttonPitches.clear();
+        buttonPitches.put(1, Pitch.of(60));
+        buttonPitches.put(2, Pitch.of(61));
+        buttonPitches.put(3, Pitch.of(62));
+        buttonPitches.put(4, Pitch.of(63));
+        buttonPitches.put(5, Pitch.of(64));
+    }
+
     private void setTransformerButtonPitches(final TransformerConfig transformerConfig) {
         buttonPitches.clear();
         buttonPitches.put(1, transformerConfig.getButton(1).getPitch());
@@ -346,7 +380,7 @@ public class PedalboardController
             return;
 
         final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
-        config.getPedalboardConfigs().removeIf(c -> c.getName().equals(pedalboardConfiguration.getName()));
+        config.getPedalboards().removeIf(c -> c.getName().equals(pedalboardConfiguration.getName()));
         config.save();
 
         loadConfigurations(null);
@@ -383,7 +417,7 @@ public class PedalboardController
         configurationControls.setVisible(true);
 
         final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
-        config.getPedalboardConfigs().add(editor.getOutput());
+        config.getPedalboards().add(editor.getOutput());
         config.save();
 
         loadConfigurations(editor.getOutput().getName());
@@ -396,8 +430,8 @@ public class PedalboardController
         configurationControls.setVisible(true);
 
         final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
-        config.getPedalboardConfigs().removeIf(c -> c.getName().equals(editor.getModel().getName()));
-        config.getPedalboardConfigs().add(editor.getOutput());
+        config.getPedalboards().removeIf(c -> c.getName().equals(editor.getModel().getName()));
+        config.getPedalboards().add(editor.getOutput());
         config.save();
 
         loadConfigurations(editor.getOutput().getName());

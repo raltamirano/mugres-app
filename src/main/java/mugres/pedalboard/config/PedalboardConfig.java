@@ -5,8 +5,8 @@ import static mugres.pedalboard.config.MUGRESConfig.GSON;
 public class PedalboardConfig implements Cloneable {
     private String name;
     private Processor processor;
-    private DrummerConfig drummerConfig;
-    private TransformerConfig transformerConfig;
+    private DrummerConfig drummer;
+    private TransformerConfig transformer;
     private transient MUGRESConfig mugresConfig;
 
     public String getName() {
@@ -25,20 +25,20 @@ public class PedalboardConfig implements Cloneable {
         this.processor = processor;
     }
 
-    public DrummerConfig getDrummerConfig() {
-        return drummerConfig;
+    public DrummerConfig getDrummer() {
+        return drummer;
     }
 
-    public void setDrummerConfig(DrummerConfig drummerConfig) {
-        this.drummerConfig = drummerConfig;
+    public void setDrummer(DrummerConfig drummer) {
+        this.drummer = drummer;
     }
 
-    public TransformerConfig getTransformerConfig() {
-        return transformerConfig;
+    public TransformerConfig getTransformer() {
+        return transformer;
     }
 
-    public void setTransformerConfig(TransformerConfig transformerConfig) {
-        this.transformerConfig = transformerConfig;
+    public void setTransformer(TransformerConfig transformer) {
+        this.transformer = transformer;
     }
 
     public MUGRESConfig getMUGRESConfig() {
