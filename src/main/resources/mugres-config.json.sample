@@ -19,14 +19,14 @@
 					"root": "E",
 					"scale": "Minor Pentatonic",
 					"startingOctave": 4,
-					"octaves": 2
+					"octaves": 2,
+					"deactivationFollows": true
 				}
 			},
 			{
 				"filter": "Monitor",
 				"args": {
-					"label": "OUT",
-					"onlyActives": true
+					"label": "OUT"
 				}
 			}
 		]
