@@ -5,8 +5,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import mugres.core.live.processors.Status;
-import mugres.core.live.processors.drummer.Drummer;
+import mugres.core.live.processor.Status;
+import mugres.core.live.processor.drummer.Drummer;
 
 import java.io.IOException;
 

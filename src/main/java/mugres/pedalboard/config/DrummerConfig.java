@@ -3,7 +3,7 @@ package mugres.pedalboard.config;
 import mugres.core.common.DrumKit;
 import mugres.core.common.TimeSignature;
 import mugres.core.function.Function.Parameter.Variant;
-import mugres.core.live.processors.drummer.Drummer;
+import mugres.core.live.processor.drummer.Drummer;
 
 import java.util.ArrayList;
 import java.util.List;

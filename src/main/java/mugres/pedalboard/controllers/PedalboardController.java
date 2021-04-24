@@ -12,10 +12,10 @@ import mugres.core.common.*;
 import mugres.core.function.builtin.drums.BlastBeat;
 import mugres.core.function.builtin.drums.HalfTime;
 import mugres.core.function.builtin.drums.PreRecordedDrums;
-import mugres.core.live.processors.Processor;
-import mugres.core.live.processors.drummer.Drummer;
-import mugres.core.live.processors.drummer.commands.*;
-import mugres.core.live.processors.transformer.Transformer;
+import mugres.core.live.processor.Processor;
+import mugres.core.live.processor.drummer.Drummer;
+import mugres.core.live.processor.drummer.commands.*;
+import mugres.core.live.processor.transformer.Transformer;
 import mugres.core.live.signaler.Signaler;
 import mugres.core.live.signaler.config.Configuration;
 import mugres.pedalboard.EntryPoint;
@@ -140,8 +140,8 @@ public class PedalboardController
         if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.DRUMMER) {
             setDrummerButtonPitches();
 
-            final mugres.core.live.processors.drummer.config.Configuration config =
-                    new mugres.core.live.processors.drummer.config.Configuration(pedalboardConfig.getName());
+            final mugres.core.live.processor.drummer.config.Configuration config =
+                    new mugres.core.live.processor.drummer.config.Configuration(pedalboardConfig.getName());
 
             for(final DrummerConfig.Control control : pedalboardConfig.getDrummer().getControls()) {
                 setDrummerButtonLabel(control);
@@ -206,8 +206,8 @@ public class PedalboardController
             drummerPlayer.setDrummer(drummer);
             root.setCenter(drummerPlayer);
         } else if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.TRANSFORMER) {
-            final mugres.core.live.processors.transformer.config.Configuration config =
-                    new mugres.core.live.processors.transformer.config.Configuration();
+            final mugres.core.live.processor.transformer.config.Configuration config =
+                    new mugres.core.live.processor.transformer.config.Configuration();
 
             final Context playContext = Context.ComposableContext.of(context);
             overrideWithContextConfig(playContext, pedalboardConfig.getTransformer().getContext());

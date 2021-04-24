@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mugres.core.common.DrumKit;
 import mugres.core.common.TimeSignature;
-import mugres.core.live.processors.drummer.Drummer.SwitchMode;
+import mugres.core.live.processor.drummer.Drummer.SwitchMode;
 import mugres.pedalboard.config.DrummerConfig.Control.Command;
 import mugres.pedalboard.config.DrummerConfig.Control.Generator;
 import mugres.pedalboard.config.adapters.ContextConfigAdapter;
