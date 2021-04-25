@@ -97,8 +97,8 @@ public class PedalboardController
     }
 
     private void loadConfigurations(final String selectedConfiguration) {
-        final List<PedalboardConfig> pedalboards = EntryPoint.getMUGRESApplication()
-                .getMUGRESConfig().getPedalboards();
+        final List<PedalboardConfig> pedalboards = EntryPoint.MUGRES()
+                .getConfig().getPedalboards();
 
         editConfigurationButton.setDisable(true);
         deleteConfigurationButton.setDisable(true);
@@ -196,8 +196,8 @@ public class PedalboardController
             }
 
             final Drummer drummer = new Drummer(context,
-                    EntryPoint.getMUGRESApplication().getInput(),
-                    EntryPoint.getMUGRESApplication().getOutput(),
+                    EntryPoint.MUGRES().getInput(),
+                    EntryPoint.MUGRES().getOutput(),
                     config);
 
             processor = drummer;
@@ -233,13 +233,14 @@ public class PedalboardController
                     frequency.setValue(s.getFrequency().getValue());
                     signalerConfig.setFrequency(frequency);
                     s.getTags().forEach(signalerConfig.getTags()::add);
+                    signalerConfig.setDuration(s.getDuration());
                     config.addSignaler(Signaler.forConfig(signalerConfig));
                 }
             }
 
             processor = new Transformer(playContext,
-                    EntryPoint.getMUGRESApplication().getInput(),
-                    EntryPoint.getMUGRESApplication().getOutput(),
+                    EntryPoint.MUGRES().getInput(),
+                    EntryPoint.MUGRES().getOutput(),
                     config);
         } else {
             throw new RuntimeException("Not implemented!");
@@ -379,7 +380,7 @@ public class PedalboardController
         if (alert.getResult() == ButtonType.NO)
             return;
 
-        final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
+        final MUGRESConfig config = EntryPoint.MUGRES().getConfig();
         config.getPedalboards().removeIf(c -> c.getName().equals(pedalboardConfiguration.getName()));
         config.save();
 
@@ -407,8 +408,8 @@ public class PedalboardController
         // FIXME: tie to button's release?
         final Signal off = Signal.off(UUID.randomUUID(), currentTimeMillis() + 500, midiChannel, played);
 
-        processor.process(on);
-        processor.process(off);
+        EntryPoint.MUGRES().getInput().send(on);
+        EntryPoint.MUGRES().getInput().send(off);
     }
 
     @Override
@@ -416,7 +417,7 @@ public class PedalboardController
         root.setCenter(null);
         configurationControls.setVisible(true);
 
-        final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
+        final MUGRESConfig config = EntryPoint.MUGRES().getConfig();
         config.getPedalboards().add(editor.getOutput());
         config.save();
 
@@ -429,7 +430,7 @@ public class PedalboardController
         root.setCenter(null);
         configurationControls.setVisible(true);
 
-        final MUGRESConfig config = EntryPoint.getMUGRESApplication().getMUGRESConfig();
+        final MUGRESConfig config = EntryPoint.MUGRES().getConfig();
         config.getPedalboards().removeIf(c -> c.getName().equals(editor.getModel().getName()));
         config.getPedalboards().add(editor.getOutput());
         config.save();

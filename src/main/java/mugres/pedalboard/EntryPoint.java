@@ -27,7 +27,7 @@ public class EntryPoint extends Application {
         stage.show();
     }
 
-    public static MUGRESApplication getMUGRESApplication() {
+    public static MUGRESApplication MUGRES() {
         return mugresApplication;
     }
 

@@ -36,7 +36,7 @@ public class MUGRESApplication {
 		output = createOutput();
 	}
 
-	public MUGRESConfig getMUGRESConfig() {
+	public MUGRESConfig getConfig() {
 		return mugresConfig;
 	}
 
@@ -54,10 +54,10 @@ public class MUGRESApplication {
 
 	private Output createOutput() {
 		try {
-			return Output.midiSink(MUGRES.getMidiOutputPort());
+			return Output.midiOutput(MUGRES.getMidiOutputPort());
 		} catch (final Throwable t) {
 			System.out.println("Could not connect to MUGRES MIDI output port. Trying default synthesizer..");
-			return Output.midiSink(createSynthesizer());
+			return Output.midiOutput(createSynthesizer());
 		}
 	}
 

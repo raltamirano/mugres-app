@@ -100,6 +100,7 @@ public class TransformerConfig {
     public static class Signaler {
         private Frequency frequency;
         private Set<String> tags = new HashSet<>();
+        private String duration;
 
         public Frequency getFrequency() {
             return frequency;
@@ -115,6 +116,14 @@ public class TransformerConfig {
 
         public void setTags(Set<String> tags) {
             this.tags = tags;
+        }
+
+        public String getDuration() {
+            return duration;
+        }
+
+        public void setDuration(String duration) {
+            this.duration = duration;
         }
 
         public static class Frequency {
