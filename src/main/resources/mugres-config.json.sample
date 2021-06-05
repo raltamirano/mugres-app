@@ -1,12 +1,66 @@
 {
-  "midiInputPort": "loopMIDI Port",
-  "midiOutputPort": "loopMIDI Port 1",
+  "midiInputPort": "mugres-in",
   "midiInputChannel": 1,
+  "midiOutputPort": "Gervill",
   "context": {
 	"key": "C",
 	"tempo": 120
   },
   "pedalboards": [
+    {
+      "name": "Sui Generis 2",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"context": {
+			"key": "E min",
+			"tempo": 60
+		},
+		"setups": [
+			{
+				"setup": "TwelveToneMatrix",
+				"args": {
+					"primeRow": ""
+				}
+			}
+		],
+		"signalers": [
+			{
+				"frequency": {
+					"mode": "FIXED",
+					"value": "w"
+				},
+				"duration": "h",
+				"tags": ["s1"]
+			}
+		],
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"chordMode": "DIATONIC"
+				}
+			},
+			{
+				"filter": "Arpeggiate",
+				"args": {
+					"pattern": "1232"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
     {
       "name": "Madness? This is Random!",
       "processor": "TRANSFORMER",
@@ -51,7 +105,7 @@
 			{
 				"frequency": {
 					"mode": "FIXED",
-					"value": "h"
+					"value": "q"
 				},
 				"tags": ["s2"]
 			}
@@ -67,7 +121,7 @@
 				"filter": "Randomizer",
 				"args": {
 					"mode": "DIATONIC",
-					"deactivationFollows": false
+					"deactivationFollows": true
 				}
 			},
 			{
@@ -273,6 +327,10 @@
       "name": "Arpeggios",
       "processor": "TRANSFORMER",
       "transformer": {
+		"context": {
+			"key": "A min",
+			"tempo": 90
+		},
 		"filters": [
 			{
 				"filter": "Monitor",
@@ -281,16 +339,21 @@
 				}
 			},
 			{
+				"filter": "ScaleEnforcer",
+				"args": {
+					"correctionMode": "UP"
+				}
+			},
+			{
 				"filter": "Chorder",
 				"args": {
-					"chordMode": "FIXED",
-					"chordType": "min"
+					"chordMode": "DIATONIC"
 				}
 			},
 			{
 				"filter": "Arpeggiate",
 				"args": {
-					"pattern": "12XX"
+					"pattern": "1232"
 				}
 			},
 			{

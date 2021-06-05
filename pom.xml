@@ -16,8 +16,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>mugres</groupId>
-			<artifactId>mugres-core</artifactId>
-			<version>0.16-SNAPSHOT</version>
+			<artifactId>mugres</artifactId>
+			<version>0.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
