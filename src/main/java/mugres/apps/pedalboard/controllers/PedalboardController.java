@@ -1,4 +1,4 @@
-package mugres.pedalboard.controllers;
+package mugres.apps.pedalboard.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,10 +18,10 @@ import mugres.core.live.processor.drummer.commands.*;
 import mugres.core.live.processor.transformer.Transformer;
 import mugres.core.live.signaler.Signaler;
 import mugres.core.live.signaler.config.Configuration;
-import mugres.pedalboard.EntryPoint;
-import mugres.pedalboard.config.*;
-import mugres.pedalboard.controls.DrummerEditor;
-import mugres.pedalboard.controls.DrummerPlayer;
+import mugres.apps.pedalboard.EntryPoint;
+import mugres.apps.pedalboard.config.*;
+import mugres.apps.pedalboard.controls.DrummerEditor;
+import mugres.apps.pedalboard.controls.DrummerPlayer;
 
 import java.util.HashMap;
 import java.util.List;

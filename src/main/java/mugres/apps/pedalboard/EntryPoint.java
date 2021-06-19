@@ -1,4 +1,4 @@
-package mugres.pedalboard;
+package mugres.apps.pedalboard;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,14 +16,14 @@ public class EntryPoint extends Application {
     public void start(final Stage stage) throws IOException {
         mugresApplication = new MUGRESApplication();
 
-        final Parent pedalboard = FXMLLoader.load(getClass().getResource("/mugres/pedalboard/fxml/pedalboard.fxml"));
-        pedalboard.getStylesheets().add(getClass().getResource("/mugres/pedalboard/fxml/css/pedalboard.css").toExternalForm());
+        final Parent pedalboard = FXMLLoader.load(getClass().getResource("/mugres/apps/pedalboard/fxml/pedalboard.fxml"));
+        pedalboard.getStylesheets().add(getClass().getResource("/mugres/apps/pedalboard/fxml/css/pedalboard.css").toExternalForm());
 
 
         final Scene scene = new Scene(pedalboard, 1000, 700);
         stage.setTitle("MUGRES Pedalboard");
         stage.setScene(scene);
-        stage.getIcons().add(new Image(getClass().getResource("/mugres/pedalboard/fxml/images/icon.png").openStream()));
+        stage.getIcons().add(new Image(getClass().getResource("/mugres/apps/pedalboard/fxml/images/icon.png").openStream()));
         stage.show();
     }
 

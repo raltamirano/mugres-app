@@ -1,4 +1,4 @@
-package mugres.pedalboard.controls;
+package mugres.apps.pedalboard.controls;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,10 +9,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mugres.pedalboard.config.DrummerConfig;
-import mugres.pedalboard.config.DrummerConfig.Control.Command;
-import mugres.pedalboard.config.PedalboardConfig;
-import mugres.pedalboard.config.PedalboardConfig.Processor;
+import mugres.apps.pedalboard.config.DrummerConfig;
+import mugres.apps.pedalboard.config.DrummerConfig.Control.Command;
+import mugres.apps.pedalboard.config.PedalboardConfig;
+import mugres.apps.pedalboard.config.PedalboardConfig.Processor;
 
 import java.io.IOException;
 import java.net.URL;
@@ -42,7 +42,7 @@ public class DrummerEditor extends VBox implements Initializable {
 
     public DrummerEditor() {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                "/mugres/pedalboard/fxml/controls/drummer-editor.fxml"));
+                "/mugres/apps/pedalboard/fxml/controls/drummer-editor.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

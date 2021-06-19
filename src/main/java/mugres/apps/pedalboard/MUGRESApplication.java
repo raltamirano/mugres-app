@@ -1,9 +1,9 @@
-package mugres.pedalboard;
+package mugres.apps.pedalboard;
 
 import mugres.core.MUGRES;
 import mugres.core.common.io.Input;
 import mugres.core.common.io.Output;
-import mugres.pedalboard.config.MUGRESConfig;
+import mugres.apps.pedalboard.config.MUGRESConfig;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Receiver;

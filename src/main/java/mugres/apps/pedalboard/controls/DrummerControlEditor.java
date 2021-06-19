@@ -1,4 +1,4 @@
-package mugres.pedalboard.controls;
+package mugres.apps.pedalboard.controls;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
@@ -8,7 +8,7 @@ import java.io.IOException;
 public class DrummerControlEditor extends VBox {
     public DrummerControlEditor() {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                "/mugres/pedalboard/fxml/controls/drummer-control-editor.fxml"));
+                "/mugres/apps/pedalboard/fxml/controls/drummer-control-editor.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

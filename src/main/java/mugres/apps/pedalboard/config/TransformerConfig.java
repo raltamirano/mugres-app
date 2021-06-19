@@ -1,4 +1,4 @@
-package mugres.pedalboard.config;
+package mugres.apps.pedalboard.config;
 
 import mugres.core.common.Pitch;
 

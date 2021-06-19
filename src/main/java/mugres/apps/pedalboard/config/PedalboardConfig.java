@@ -1,6 +1,6 @@
-package mugres.pedalboard.config;
+package mugres.apps.pedalboard.config;
 
-import static mugres.pedalboard.config.MUGRESConfig.GSON;
+import static mugres.apps.pedalboard.config.MUGRESConfig.GSON;
 
 public class PedalboardConfig implements Cloneable {
     private String name;
