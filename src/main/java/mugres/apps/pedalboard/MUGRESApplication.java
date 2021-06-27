@@ -1,13 +1,7 @@
 package mugres.apps.pedalboard;
 
+import mugres.MUGRES;
 import mugres.apps.pedalboard.config.MUGRESConfig;
-import mugres.core.MUGRES;
-import mugres.core.common.io.Input;
-import mugres.core.common.io.Output;
-
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.Synthesizer;
 
 /**
  * <p>MUGRES MIDI Pedalboard application.</p>

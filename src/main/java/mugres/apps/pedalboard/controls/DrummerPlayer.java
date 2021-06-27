@@ -43,10 +43,10 @@ public class DrummerPlayer extends VBox {
 
     private void updateDrummerStatus(final Status<Drummer.Status> status) {
         Platform.runLater(() -> {
-            final Drummer.Status ds = status.getData();
+            final Drummer.Status ds = status.data();
             if (ds.isPlaying()) {
-                final String mainLine = ds.getPlayingGroove() +
-                        (ds.getNextGroove().isEmpty() ? "" : " > " + ds.getNextGroove());
+                final String mainLine = ds.playingGroove() +
+                        (ds.nextGroove().isEmpty() ? "" : " > " + ds.nextGroove());
                 drummerMainLabel.setText(mainLine);
                 playingFillLabel.setText("Playing fill: " + (ds.isPlayingFillNow() ? "Yes" : "No"));
                 finishingLabel.setText("Finishing: " + (ds.isFinishing() ? "Yes" : "No"));

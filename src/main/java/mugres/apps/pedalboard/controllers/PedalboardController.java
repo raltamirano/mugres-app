@@ -21,15 +21,13 @@ import mugres.apps.pedalboard.config.PedalboardConfig;
 import mugres.apps.pedalboard.config.TransformerConfig;
 import mugres.apps.pedalboard.controls.DrummerEditor;
 import mugres.apps.pedalboard.controls.DrummerPlayer;
-import mugres.core.MUGRES;
+import mugres.MUGRES;
 import mugres.core.common.Context;
 import mugres.core.common.DrumKit;
 import mugres.core.common.Pitch;
 import mugres.core.common.Played;
 import mugres.core.common.Signal;
 import mugres.core.function.Function;
-import mugres.core.function.builtin.drums.BlastBeat;
-import mugres.core.function.builtin.drums.HalfTime;
 import mugres.core.function.builtin.drums.PreRecordedDrums;
 import mugres.core.live.processor.Processor;
 import mugres.core.live.processor.drummer.Drummer;
@@ -153,7 +151,7 @@ public class PedalboardController
         root.setCenter(null);
         clearButtonsTooltips();
 
-        final Context context = Context.createBasicContext();
+        final Context context = Context.basicContext();
         overrideWithContextConfig(context, pedalboardConfig.getMUGRESConfig().getContext());
 
         if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.DRUMMER) {
@@ -181,35 +179,35 @@ public class PedalboardController
                         }
 
                         final Context playContext = Context.ComposableContext.of(context);
-                        playContext.setTempo(control.getTempo());
-                        playContext.setTimeSignature(control.getTimeSignature());
+                        playContext.tempo(control.getTempo());
+                        playContext.timeSignature(control.getTimeSignature());
 
                         final String grooveName = control.getTitle();
                         config.createGroove(grooveName, playContext,
                                 control.getLengthInMeasures(), generator);
 
-                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).midi(),
                                 Play.INSTANCE.action(
                                 "pattern", grooveName,
                                 "switchMode", control.getSwitchMode()));
                         break;
 
                     case HIT:
-                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).midi(),
                                 Hit.INSTANCE.action(
                                 "options", control.getHitOptions(),
                                 "velocity", control.getHitVelocity()));
                         break;
                     case FINISH:
-                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).midi(),
                                 Finish.INSTANCE.action());
                         break;
                     case STOP:
-                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).midi(),
                                 Stop.INSTANCE.action());
                         break;
                     case NOOP:
-                        config.setAction(buttonPitches.get(control.getNumber()).getMidi(),
+                        config.setAction(buttonPitches.get(control.getNumber()).midi(),
                                 NoOp.INSTANCE.action());
                 }
             }
@@ -248,11 +246,11 @@ public class PedalboardController
                 for(final TransformerConfig.Signaler s : pedalboardConfig.getTransformer().getSignalers()) {
                     Configuration signalerConfig = new Configuration();
                     Configuration.Frequency frequency = new Configuration.Frequency();
-                    frequency.setMode(Configuration.Frequency.Mode.valueOf(s.getFrequency().getMode().toString()));
-                    frequency.setValue(s.getFrequency().getValue());
-                    signalerConfig.setFrequency(frequency);
-                    s.getTags().forEach(signalerConfig.getTags()::add);
-                    signalerConfig.setDuration(s.getDuration());
+                    frequency.mode(Configuration.Frequency.Mode.valueOf(s.getFrequency().getMode().toString()));
+                    frequency.value(s.getFrequency().getValue());
+                    signalerConfig.frequency(frequency);
+                    s.getTags().forEach(signalerConfig.tags()::add);
+                    signalerConfig.duration(s.getDuration());
                     config.addSignaler(Signaler.forConfig(signalerConfig));
                 }
             }
@@ -271,11 +269,11 @@ public class PedalboardController
     private void overrideWithContextConfig(final Context baseContext, final ContextConfig contextConfig) {
         if (contextConfig != null) {
             if (contextConfig.getTempo() > 0)
-                baseContext.setTempo(contextConfig.getTempo());
+                baseContext.tempo(contextConfig.getTempo());
             if (contextConfig.getKey() != null)
-                baseContext.setKey(contextConfig.getKey());
+                baseContext.key(contextConfig.getKey());
             if (contextConfig.getTimeSignature() != null)
-                baseContext.setTimeSignature(contextConfig.getTimeSignature());
+                baseContext.timeSignature(contextConfig.getTimeSignature());
         }
     }
 
