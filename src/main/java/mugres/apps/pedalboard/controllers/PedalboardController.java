@@ -2,26 +2,45 @@ package mugres.apps.pedalboard.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.util.StringConverter;
-import mugres.core.common.*;
+import mugres.apps.pedalboard.EntryPoint;
+import mugres.apps.pedalboard.config.ContextConfig;
+import mugres.apps.pedalboard.config.DrummerConfig;
+import mugres.apps.pedalboard.config.MUGRESConfig;
+import mugres.apps.pedalboard.config.PedalboardConfig;
+import mugres.apps.pedalboard.config.TransformerConfig;
+import mugres.apps.pedalboard.controls.DrummerEditor;
+import mugres.apps.pedalboard.controls.DrummerPlayer;
+import mugres.core.MUGRES;
+import mugres.core.common.Context;
+import mugres.core.common.DrumKit;
+import mugres.core.common.Pitch;
+import mugres.core.common.Played;
+import mugres.core.common.Signal;
+import mugres.core.function.Function;
 import mugres.core.function.builtin.drums.BlastBeat;
 import mugres.core.function.builtin.drums.HalfTime;
 import mugres.core.function.builtin.drums.PreRecordedDrums;
 import mugres.core.live.processor.Processor;
 import mugres.core.live.processor.drummer.Drummer;
-import mugres.core.live.processor.drummer.commands.*;
+import mugres.core.live.processor.drummer.commands.Finish;
+import mugres.core.live.processor.drummer.commands.Hit;
+import mugres.core.live.processor.drummer.commands.NoOp;
+import mugres.core.live.processor.drummer.commands.Play;
+import mugres.core.live.processor.drummer.commands.Stop;
 import mugres.core.live.processor.transformer.Transformer;
 import mugres.core.live.signaler.Signaler;
 import mugres.core.live.signaler.config.Configuration;
-import mugres.apps.pedalboard.EntryPoint;
-import mugres.apps.pedalboard.config.*;
-import mugres.apps.pedalboard.controls.DrummerEditor;
-import mugres.apps.pedalboard.controls.DrummerPlayer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -151,10 +170,10 @@ public class PedalboardController
                         final PreRecordedDrums generator;
                         switch(control.getGenerator()){
                             case HALF_TIME:
-                                generator = new HalfTime();
+                                generator = Function.forName("halfTime");
                                 break;
                             case BLAST_BEAT:
-                                generator = new BlastBeat();
+                                generator = Function.forName("blastBeat");
                                 break;
                             default:
                                 throw new RuntimeException("Unknown generator function: " + control.getGenerator());
@@ -196,8 +215,8 @@ public class PedalboardController
             }
 
             final Drummer drummer = new Drummer(context,
-                    EntryPoint.MUGRES().getInput(),
-                    EntryPoint.MUGRES().getOutput(),
+                    MUGRES.input(),
+                    MUGRES.output(),
                     config);
 
             processor = drummer;
@@ -239,8 +258,8 @@ public class PedalboardController
             }
 
             processor = new Transformer(playContext,
-                    EntryPoint.MUGRES().getInput(),
-                    EntryPoint.MUGRES().getOutput(),
+                    MUGRES.input(),
+                    MUGRES.output(),
                     config);
         } else {
             throw new RuntimeException("Not implemented!");
@@ -275,7 +294,7 @@ public class PedalboardController
                 label = controlConfig.getTitle();
                 break;
             case HIT:
-                label = "Hit " + controlConfig.getHitOptions().stream().map(DrumKit::getName).
+                label = "Hit " + controlConfig.getHitOptions().stream().map(DrumKit::label).
                         collect(Collectors.joining(" or "));
                 break;
             case FINISH:
@@ -408,8 +427,8 @@ public class PedalboardController
         // FIXME: tie to button's release?
         final Signal off = Signal.off(UUID.randomUUID(), currentTimeMillis() + 500, midiChannel, played);
 
-        EntryPoint.MUGRES().getInput().send(on);
-        EntryPoint.MUGRES().getInput().send(off);
+        MUGRES.input().send(on);
+        MUGRES.input().send(off);
     }
 
     @Override
