@@ -24,8 +24,10 @@ import mugres.apps.pedalboard.controls.DrummerPlayer;
 import mugres.MUGRES;
 import mugres.core.common.Context;
 import mugres.core.common.DrumKit;
+import mugres.core.common.Note;
 import mugres.core.common.Pitch;
 import mugres.core.common.Played;
+import mugres.core.common.Scale;
 import mugres.core.common.Signal;
 import mugres.core.function.Function;
 import mugres.core.function.builtin.drums.PreRecordedDrums;
@@ -36,6 +38,7 @@ import mugres.core.live.processor.drummer.commands.Hit;
 import mugres.core.live.processor.drummer.commands.NoOp;
 import mugres.core.live.processor.drummer.commands.Play;
 import mugres.core.live.processor.drummer.commands.Stop;
+import mugres.core.live.processor.spirographone.Spirographone;
 import mugres.core.live.processor.transformer.Transformer;
 import mugres.core.live.signaler.Signaler;
 import mugres.core.live.signaler.config.Configuration;
@@ -47,6 +50,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.System.currentTimeMillis;
+import static mugres.apps.pedalboard.config.PedalboardConfig.Processor.SPIROGRAPHONE;
 
 
 public class PedalboardController
@@ -256,6 +260,31 @@ public class PedalboardController
             }
 
             processor = new Transformer(playContext,
+                    MUGRES.input(),
+                    MUGRES.output(),
+                    config);
+        } else if (pedalboardConfig.getProcessor() == SPIROGRAPHONE) {
+            final mugres.core.live.processor.spirographone.config.Configuration config =
+                    new mugres.core.live.processor.spirographone.config.Configuration();
+            final Context playContext = Context.ComposableContext.of(context);
+            overrideWithContextConfig(playContext, pedalboardConfig.getSpirographone().getContext());
+
+            config.setOutputChannel(pedalboardConfig.getSpirographone().getOutputChannel());
+            config.setExternalCircleRadius(pedalboardConfig.getSpirographone().getExternalCircleRadius());
+            config.setInternalCircleRadius(pedalboardConfig.getSpirographone().getInternalCircleRadius());
+            config.setOffsetOnInternalCircle(pedalboardConfig.getSpirographone().getOffsetOnInternalCircle());
+            config.setIterationDelta(pedalboardConfig.getSpirographone().getIterationDelta());
+            config.setSpaceMillis(pedalboardConfig.getSpirographone().getSpaceMillis());
+            config.setMinOctave(pedalboardConfig.getSpirographone().getMinOctave());
+            config.setMaxOctave(pedalboardConfig.getSpirographone().getMaxOctave());
+            final Note root = pedalboardConfig.getSpirographone().getRoot() != null ?
+                    pedalboardConfig.getSpirographone().getRoot() : playContext.key().root();
+            config.setRoot(root);
+            final Scale scale = pedalboardConfig.getSpirographone().getScale() != null ?
+                    pedalboardConfig.getSpirographone().getScale() : playContext.key().defaultScale();
+            config.setScale(scale);
+
+            processor = new Spirographone(playContext,
                     MUGRES.input(),
                     MUGRES.output(),
                     config);
