@@ -2,7 +2,7 @@ package mugres.apps.pedalboard.config;
 
 import mugres.core.common.DrumKit;
 import mugres.core.common.TimeSignature;
-import mugres.core.function.Function.Parameter.Variant;
+import mugres.core.common.Variant;
 import mugres.core.live.processor.drummer.Drummer;
 
 import java.util.ArrayList;
