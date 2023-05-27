@@ -22,26 +22,26 @@ import mugres.apps.pedalboard.config.TransformerConfig;
 import mugres.apps.pedalboard.controls.DrummerEditor;
 import mugres.apps.pedalboard.controls.DrummerPlayer;
 import mugres.MUGRES;
-import mugres.core.common.Context;
-import mugres.core.common.DrumKit;
-import mugres.core.common.Note;
-import mugres.core.common.Pitch;
-import mugres.core.common.Played;
-import mugres.core.common.Scale;
-import mugres.core.common.Signal;
-import mugres.core.function.Function;
-import mugres.core.function.builtin.drums.PreRecordedDrums;
-import mugres.core.live.processor.Processor;
-import mugres.core.live.processor.drummer.Drummer;
-import mugres.core.live.processor.drummer.commands.Finish;
-import mugres.core.live.processor.drummer.commands.Hit;
-import mugres.core.live.processor.drummer.commands.NoOp;
-import mugres.core.live.processor.drummer.commands.Play;
-import mugres.core.live.processor.drummer.commands.Stop;
-import mugres.core.live.processor.spirographone.Spirographone;
-import mugres.core.live.processor.transformer.Transformer;
-import mugres.core.live.signaler.Signaler;
-import mugres.core.live.signaler.config.Configuration;
+import mugres.common.Context;
+import mugres.common.DrumKit;
+import mugres.common.Note;
+import mugres.common.Pitch;
+import mugres.common.Played;
+import mugres.common.Scale;
+import mugres.common.Signal;
+import mugres.function.Function;
+import mugres.function.builtin.drums.PreRecordedDrums;
+import mugres.live.processor.Processor;
+import mugres.live.processor.drummer.Drummer;
+import mugres.live.processor.drummer.commands.Finish;
+import mugres.live.processor.drummer.commands.Hit;
+import mugres.live.processor.drummer.commands.NoOp;
+import mugres.live.processor.drummer.commands.Play;
+import mugres.live.processor.drummer.commands.Stop;
+import mugres.live.processor.spirographone.Spirographone;
+import mugres.live.processor.transformer.Transformer;
+import mugres.live.signaler.Signaler;
+import mugres.live.signaler.config.Configuration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -161,8 +161,8 @@ public class PedalboardController
         if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.DRUMMER) {
             setDrummerButtonPitches();
 
-            final mugres.core.live.processor.drummer.config.Configuration config =
-                    new mugres.core.live.processor.drummer.config.Configuration(pedalboardConfig.getName());
+            final mugres.live.processor.drummer.config.Configuration config =
+                    new mugres.live.processor.drummer.config.Configuration(pedalboardConfig.getName());
 
             for(final DrummerConfig.Control control : pedalboardConfig.getDrummer().getControls()) {
                 setDrummerButtonLabel(control);
@@ -227,8 +227,8 @@ public class PedalboardController
             drummerPlayer.setDrummer(drummer);
             root.setCenter(drummerPlayer);
         } else if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.TRANSFORMER) {
-            final mugres.core.live.processor.transformer.config.Configuration config =
-                    new mugres.core.live.processor.transformer.config.Configuration();
+            final mugres.live.processor.transformer.config.Configuration config =
+                    new mugres.live.processor.transformer.config.Configuration();
 
             final Context playContext = Context.ComposableContext.of(context);
             overrideWithContextConfig(playContext, pedalboardConfig.getTransformer().getContext());
@@ -264,8 +264,8 @@ public class PedalboardController
                     MUGRES.output(),
                     config);
         } else if (pedalboardConfig.getProcessor() == SPIROGRAPHONE) {
-            final mugres.core.live.processor.spirographone.config.Configuration config =
-                    new mugres.core.live.processor.spirographone.config.Configuration();
+            final mugres.live.processor.spirographone.config.Configuration config =
+                    new mugres.live.processor.spirographone.config.Configuration();
             final Context playContext = Context.ComposableContext.of(context);
             overrideWithContextConfig(playContext, pedalboardConfig.getSpirographone().getContext());
 

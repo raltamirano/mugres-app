@@ -1,6 +1,6 @@
 package mugres.apps.pedalboard.config;
 
-import mugres.core.common.Pitch;
+import mugres.common.Pitch;
 
 import java.util.*;
 

@@ -1,7 +1,7 @@
 package mugres.apps.pedalboard.config;
 
-import mugres.core.common.Note;
-import mugres.core.common.Scale;
+import mugres.common.Note;
+import mugres.common.Scale;
 
 public class SpirographoneConfig {
     private ContextConfig context;

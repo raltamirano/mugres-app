@@ -2,9 +2,9 @@ package mugres.apps.pedalboard.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import mugres.core.common.DrumKit;
-import mugres.core.common.TimeSignature;
-import mugres.core.live.processor.drummer.Drummer.SwitchMode;
+import mugres.common.DrumKit;
+import mugres.common.TimeSignature;
+import mugres.live.processor.drummer.Drummer.SwitchMode;
 import mugres.apps.pedalboard.config.DrummerConfig.Control.Command;
 import mugres.apps.pedalboard.config.DrummerConfig.Control.Generator;
 import mugres.apps.pedalboard.config.adapters.ContextConfigAdapter;

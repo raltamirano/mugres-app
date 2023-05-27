@@ -1,7 +1,7 @@
 package mugres.apps.pedalboard.config;
 
-import mugres.core.common.Key;
-import mugres.core.common.TimeSignature;
+import mugres.common.Key;
+import mugres.common.TimeSignature;
 
 public class ContextConfig {
     private int tempo;
