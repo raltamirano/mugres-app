@@ -26,9 +26,8 @@ import mugres.common.Context;
 import mugres.common.DrumKit;
 import mugres.common.Note;
 import mugres.common.Pitch;
-import mugres.common.Played;
 import mugres.common.Scale;
-import mugres.common.Signal;
+import mugres.live.Signal;
 import mugres.function.Function;
 import mugres.function.builtin.drums.PreRecordedDrums;
 import mugres.live.processor.Processor;
@@ -46,10 +45,8 @@ import mugres.live.signaler.config.Configuration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static java.lang.System.currentTimeMillis;
 import static mugres.app.config.ProcessorConfig.Processor.SPIROGRAPHONE;
 
 
@@ -449,10 +446,9 @@ public class ProcessorController
         final int buttonNumber = Integer.valueOf(button.getId()
                 .replaceAll("[^\\d.]", ""));
 
-        final Played played = Played.of(buttonPitches.get(buttonNumber), velocity);
-        final Signal on = Signal.on(UUID.randomUUID(), currentTimeMillis(), midiChannel, played);
+        final Signal on = Signal.on(midiChannel, buttonPitches.get(buttonNumber), velocity);
         // FIXME: tie to button's release?
-        final Signal off = Signal.off(UUID.randomUUID(), currentTimeMillis() + 500, midiChannel, played);
+        final Signal off = Signal.off(midiChannel, buttonPitches.get(buttonNumber));
 
         MUGRES.input().send(on);
         MUGRES.input().send(off);
