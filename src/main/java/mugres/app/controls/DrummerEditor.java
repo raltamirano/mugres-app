@@ -1,4 +1,4 @@
-package mugres.apps.pedalboard.controls;
+package mugres.app.controls;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,10 +9,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mugres.apps.pedalboard.config.DrummerConfig;
-import mugres.apps.pedalboard.config.DrummerConfig.Control.Command;
-import mugres.apps.pedalboard.config.PedalboardConfig;
-import mugres.apps.pedalboard.config.PedalboardConfig.Processor;
+import mugres.app.config.DrummerConfig;
+import mugres.app.config.DrummerConfig.Control.Command;
+import mugres.app.config.ProcessorConfig;
+import mugres.app.config.ProcessorConfig.Processor;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,9 +24,9 @@ public class DrummerEditor extends VBox implements Initializable {
 
     private boolean editing;
 
-    private PedalboardConfig model;
+    private ProcessorConfig model;
 
-    private PedalboardConfig output;
+    private ProcessorConfig output;
 
     @FXML
     private TextField configurationNameText;
@@ -42,7 +42,7 @@ public class DrummerEditor extends VBox implements Initializable {
 
     public DrummerEditor() {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                "/mugres/apps/pedalboard/fxml/controls/drummer-editor.fxml"));
+                "/mugres/app/fxml/controls/drummer-editor.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 
@@ -61,15 +61,15 @@ public class DrummerEditor extends VBox implements Initializable {
         return editing;
     }
 
-    public PedalboardConfig getModel() {
+    public ProcessorConfig getModel() {
         return model;
     }
 
-    public PedalboardConfig getOutput() {
+    public ProcessorConfig getOutput() {
         return output;
     }
 
-    public void setModel(final PedalboardConfig model) {
+    public void setModel(final ProcessorConfig model) {
         if (model == null)
             throw new IllegalArgumentException("model");
 
@@ -94,7 +94,7 @@ public class DrummerEditor extends VBox implements Initializable {
 
     @Override
     public void initialize(final URL url, final ResourceBundle resourceBundle) {
-        output = new PedalboardConfig();
+        output = new ProcessorConfig();
         output.setName("New configuration");
         output.setProcessor(Processor.DRUMMER);
 

@@ -1,13 +1,13 @@
-package mugres.apps.pedalboard.config;
+package mugres.app.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import mugres.common.DrumKit;
 import mugres.common.TimeSignature;
 import mugres.live.processor.drummer.Drummer.SwitchMode;
-import mugres.apps.pedalboard.config.DrummerConfig.Control.Command;
-import mugres.apps.pedalboard.config.DrummerConfig.Control.Generator;
-import mugres.apps.pedalboard.config.adapters.ContextConfigAdapter;
+import mugres.app.config.DrummerConfig.Control.Command;
+import mugres.app.config.DrummerConfig.Control.Generator;
+import mugres.app.config.adapters.ContextConfigAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +21,8 @@ public class MUGRESConfig {
     private String midiInputPort;
     private String midiOutputPort;
     private int midiInputChannel;
-    private List<PedalboardConfig> pedalboards = new ArrayList<>();
     private ContextConfig context;
+    private List<ProcessorConfig> processors = new ArrayList<>();
 
     public String getMidiInputPort() {
         return midiInputPort;
@@ -48,20 +48,20 @@ public class MUGRESConfig {
         this.midiInputChannel = midiInputChannel;
     }
 
-    public List<PedalboardConfig> getPedalboards() {
-        return pedalboards;
-    }
-
-    public void setPedalboards(List<PedalboardConfig> pedalboards) {
-        this.pedalboards = pedalboards;
-    }
-
     public ContextConfig getContext() {
         return context;
     }
 
     public void setContext(ContextConfig context) {
         this.context = context;
+    }
+
+    public List<ProcessorConfig> getProcessors() {
+        return processors;
+    }
+
+    public void setProcessors(List<ProcessorConfig> processors) {
+        this.processors = processors;
     }
 
     public static MUGRESConfig read() {
@@ -72,7 +72,7 @@ public class MUGRESConfig {
 
             try (final Reader reader = Files.newBufferedReader(configFile.toPath())) {
                 final MUGRESConfig config = GSON.fromJson(reader, MUGRESConfig.class);
-                for(PedalboardConfig c : config.getPedalboards())
+                for(ProcessorConfig c : config.getProcessors())
                     c.setMUGRESConfig(config);
                 return config;
             }
@@ -88,9 +88,9 @@ public class MUGRESConfig {
         config.setMidiOutputPort(System.getenv("mugres.outputPort"));
         config.setMidiInputChannel(1);
 
-        final PedalboardConfig pedalboard = new PedalboardConfig();
-        pedalboard.setName("Default");
-        pedalboard.setProcessor(PedalboardConfig.Processor.DRUMMER);
+        final ProcessorConfig processor = new ProcessorConfig();
+        processor.setName("Default");
+        processor.setProcessor(ProcessorConfig.Processor.DRUMMER);
         final DrummerConfig drummerConfig = new DrummerConfig();
 
         final DrummerConfig.Control control1 = new DrummerConfig.Control();
@@ -136,8 +136,8 @@ public class MUGRESConfig {
         control5.setCommand(Command.STOP);
         drummerConfig.getControls().add(control5);
 
-        pedalboard.setDrummer(drummerConfig);
-        config.getPedalboards().add(pedalboard);
+        processor.setDrummer(drummerConfig);
+        config.getProcessors().add(processor);
 
         return config;
     }

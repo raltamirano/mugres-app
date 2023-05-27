@@ -1,4 +1,4 @@
-package mugres.apps.pedalboard.controllers;
+package mugres.app.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,14 +13,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.util.StringConverter;
-import mugres.apps.pedalboard.EntryPoint;
-import mugres.apps.pedalboard.config.ContextConfig;
-import mugres.apps.pedalboard.config.DrummerConfig;
-import mugres.apps.pedalboard.config.MUGRESConfig;
-import mugres.apps.pedalboard.config.PedalboardConfig;
-import mugres.apps.pedalboard.config.TransformerConfig;
-import mugres.apps.pedalboard.controls.DrummerEditor;
-import mugres.apps.pedalboard.controls.DrummerPlayer;
+import mugres.app.EntryPoint;
+import mugres.app.config.ContextConfig;
+import mugres.app.config.DrummerConfig;
+import mugres.app.config.MUGRESConfig;
+import mugres.app.config.ProcessorConfig;
+import mugres.app.config.TransformerConfig;
+import mugres.app.controls.DrummerEditor;
+import mugres.app.controls.DrummerPlayer;
 import mugres.MUGRES;
 import mugres.common.Context;
 import mugres.common.DrumKit;
@@ -50,10 +50,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.System.currentTimeMillis;
-import static mugres.apps.pedalboard.config.PedalboardConfig.Processor.SPIROGRAPHONE;
+import static mugres.app.config.ProcessorConfig.Processor.SPIROGRAPHONE;
 
 
-public class PedalboardController
+public class ProcessorController
     implements DrummerEditor.Listener {
     @FXML
     private BorderPane root;
@@ -103,13 +103,13 @@ public class PedalboardController
 
         AnchorPane.setRightAnchor(configurationControls, 1.0);
 
-        configurationsCombo.setConverter(new StringConverter<PedalboardConfig>() {
+        configurationsCombo.setConverter(new StringConverter<ProcessorConfig>() {
             @Override
-            public String toString(final PedalboardConfig pedalboardConfig) {
-                return pedalboardConfig != null ? pedalboardConfig.getName() : "";
+            public String toString(final ProcessorConfig processorConfig) {
+                return processorConfig != null ? processorConfig.getName() : "";
             }
             @Override
-            public PedalboardConfig fromString(final String s) {
+            public ProcessorConfig fromString(final String s) {
                 return null;
             }
         });
@@ -118,8 +118,8 @@ public class PedalboardController
     }
 
     private void loadConfigurations(final String selectedConfiguration) {
-        final List<PedalboardConfig> pedalboards = EntryPoint.MUGRES()
-                .getConfig().getPedalboards();
+        final List<ProcessorConfig> processorConfigs = EntryPoint.MUGRESApp()
+                .getConfig().getProcessors();
 
         editConfigurationButton.setDisable(true);
         deleteConfigurationButton.setDisable(true);
@@ -127,24 +127,24 @@ public class PedalboardController
         processor = null;
 
         configurationsCombo.getItems().clear();
-        configurationsCombo.getItems().addAll(pedalboards);
+        configurationsCombo.getItems().addAll(processorConfigs);
 
-        if (pedalboards.size() == 1) {
-            final PedalboardConfig pedalboardConfig = pedalboards.get(0);
-            configurationsCombo.setValue(pedalboardConfig);
-            loadConfiguration(pedalboardConfig);
+        if (processorConfigs.size() == 1) {
+            final ProcessorConfig processorConfig = processorConfigs.get(0);
+            configurationsCombo.setValue(processorConfig);
+            loadConfiguration(processorConfig);
         } else if (selectedConfiguration != null) {
-            final PedalboardConfig pedalboardConfig = pedalboards.stream()
+            final ProcessorConfig processorConfig = processorConfigs.stream()
                     .filter(c -> c.getName().equals(selectedConfiguration))
                     .findFirst()
                     .orElse(null);
-            configurationsCombo.setValue(pedalboardConfig);
-            if (pedalboardConfig != null)
-                loadConfiguration(pedalboardConfig);
+            configurationsCombo.setValue(processorConfig);
+            if (processorConfig != null)
+                loadConfiguration(processorConfig);
         }
     }
 
-    private void loadConfiguration(final PedalboardConfig pedalboardConfig) {
+    private void loadConfiguration(final ProcessorConfig processorConfig) {
         editConfigurationButton.setDisable(false);
         deleteConfigurationButton.setDisable(false);
 
@@ -156,15 +156,15 @@ public class PedalboardController
         clearButtonsTooltips();
 
         final Context context = Context.basicContext();
-        overrideWithContextConfig(context, pedalboardConfig.getMUGRESConfig().getContext());
+        overrideWithContextConfig(context, processorConfig.getMUGRESConfig().getContext());
 
-        if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.DRUMMER) {
+        if (processorConfig.getProcessor() == ProcessorConfig.Processor.DRUMMER) {
             setDrummerButtonPitches();
 
             final mugres.live.processor.drummer.config.Configuration config =
-                    new mugres.live.processor.drummer.config.Configuration(pedalboardConfig.getName());
+                    new mugres.live.processor.drummer.config.Configuration(processorConfig.getName());
 
-            for(final DrummerConfig.Control control : pedalboardConfig.getDrummer().getControls()) {
+            for(final DrummerConfig.Control control : processorConfig.getDrummer().getControls()) {
                 setDrummerButtonLabel(control);
 
                 switch(control.getCommand()) {
@@ -226,28 +226,28 @@ public class PedalboardController
             final DrummerPlayer drummerPlayer = new DrummerPlayer();
             drummerPlayer.setDrummer(drummer);
             root.setCenter(drummerPlayer);
-        } else if (pedalboardConfig.getProcessor() == PedalboardConfig.Processor.TRANSFORMER) {
+        } else if (processorConfig.getProcessor() == ProcessorConfig.Processor.TRANSFORMER) {
             final mugres.live.processor.transformer.config.Configuration config =
                     new mugres.live.processor.transformer.config.Configuration();
 
             final Context playContext = Context.ComposableContext.of(context);
-            overrideWithContextConfig(playContext, pedalboardConfig.getTransformer().getContext());
+            overrideWithContextConfig(playContext, processorConfig.getTransformer().getContext());
 
-            if (pedalboardConfig.getTransformer().getButtons().isEmpty()) {
+            if (processorConfig.getTransformer().getButtons().isEmpty()) {
                 setStandardButtonPitches();
                 for(int index=1; index<=5; index++)
                     getMainButton(index).setTooltip(new Tooltip(String.valueOf(index)));
             } else {
-                setTransformerButtonPitches(pedalboardConfig.getTransformer());
-                for (final TransformerConfig.Button button : pedalboardConfig.getTransformer().getButtons())
+                setTransformerButtonPitches(processorConfig.getTransformer());
+                for (final TransformerConfig.Button button : processorConfig.getTransformer().getButtons())
                     getMainButton(button.getNumber()).setTooltip(new Tooltip(button.getLabel()));
             }
 
-            for(final TransformerConfig.Filter filter : pedalboardConfig.getTransformer().getFilters())
+            for(final TransformerConfig.Filter filter : processorConfig.getTransformer().getFilters())
                 config.appendFilter(filter.getFilter(), filter.getArgs());
 
-            if (!pedalboardConfig.getTransformer().getSignalers().isEmpty()) {
-                for(final TransformerConfig.Signaler s : pedalboardConfig.getTransformer().getSignalers()) {
+            if (!processorConfig.getTransformer().getSignalers().isEmpty()) {
+                for(final TransformerConfig.Signaler s : processorConfig.getTransformer().getSignalers()) {
                     Configuration signalerConfig = new Configuration();
                     Configuration.Frequency frequency = new Configuration.Frequency();
                     frequency.mode(Configuration.Frequency.Mode.valueOf(s.getFrequency().getMode().toString()));
@@ -263,25 +263,25 @@ public class PedalboardController
                     MUGRES.input(),
                     MUGRES.output(),
                     config);
-        } else if (pedalboardConfig.getProcessor() == SPIROGRAPHONE) {
+        } else if (processorConfig.getProcessor() == SPIROGRAPHONE) {
             final mugres.live.processor.spirographone.config.Configuration config =
                     new mugres.live.processor.spirographone.config.Configuration();
             final Context playContext = Context.ComposableContext.of(context);
-            overrideWithContextConfig(playContext, pedalboardConfig.getSpirographone().getContext());
+            overrideWithContextConfig(playContext, processorConfig.getSpirographone().getContext());
 
-            config.setOutputChannel(pedalboardConfig.getSpirographone().getOutputChannel());
-            config.setExternalCircleRadius(pedalboardConfig.getSpirographone().getExternalCircleRadius());
-            config.setInternalCircleRadius(pedalboardConfig.getSpirographone().getInternalCircleRadius());
-            config.setOffsetOnInternalCircle(pedalboardConfig.getSpirographone().getOffsetOnInternalCircle());
-            config.setIterationDelta(pedalboardConfig.getSpirographone().getIterationDelta());
-            config.setSpaceMillis(pedalboardConfig.getSpirographone().getSpaceMillis());
-            config.setMinOctave(pedalboardConfig.getSpirographone().getMinOctave());
-            config.setMaxOctave(pedalboardConfig.getSpirographone().getMaxOctave());
-            final Note root = pedalboardConfig.getSpirographone().getRoot() != null ?
-                    pedalboardConfig.getSpirographone().getRoot() : playContext.key().root();
+            config.setOutputChannel(processorConfig.getSpirographone().getOutputChannel());
+            config.setExternalCircleRadius(processorConfig.getSpirographone().getExternalCircleRadius());
+            config.setInternalCircleRadius(processorConfig.getSpirographone().getInternalCircleRadius());
+            config.setOffsetOnInternalCircle(processorConfig.getSpirographone().getOffsetOnInternalCircle());
+            config.setIterationDelta(processorConfig.getSpirographone().getIterationDelta());
+            config.setSpaceMillis(processorConfig.getSpirographone().getSpaceMillis());
+            config.setMinOctave(processorConfig.getSpirographone().getMinOctave());
+            config.setMaxOctave(processorConfig.getSpirographone().getMaxOctave());
+            final Note root = processorConfig.getSpirographone().getRoot() != null ?
+                    processorConfig.getSpirographone().getRoot() : playContext.key().root();
             config.setRoot(root);
-            final Scale scale = pedalboardConfig.getSpirographone().getScale() != null ?
-                    pedalboardConfig.getSpirographone().getScale() : playContext.key().defaultScale();
+            final Scale scale = processorConfig.getSpirographone().getScale() != null ?
+                    processorConfig.getSpirographone().getScale() : playContext.key().defaultScale();
             config.setScale(scale);
 
             processor = new Spirographone(playContext,
@@ -384,11 +384,11 @@ public class PedalboardController
 
     @FXML
     protected void onConfigurationSelected(final ActionEvent event) {
-        final PedalboardConfig pedalboardConfiguration =
-                (PedalboardConfig)configurationsCombo.getValue();
+        final ProcessorConfig processorConfiguration =
+                (ProcessorConfig)configurationsCombo.getValue();
 
-        if (pedalboardConfiguration != null)
-            loadConfiguration(pedalboardConfiguration);
+        if (processorConfiguration != null)
+            loadConfiguration(processorConfiguration);
     }
 
     @FXML
@@ -401,23 +401,23 @@ public class PedalboardController
 
     @FXML
     protected void onEditConfiguration(final ActionEvent event) {
-        final PedalboardConfig pedalboardConfiguration =
-                (PedalboardConfig)configurationsCombo.getValue();
+        final ProcessorConfig processorConfiguration =
+                (ProcessorConfig)configurationsCombo.getValue();
 
         final DrummerEditor editor = new DrummerEditor();
         editor.addListener(this);
-        editor.setModel(pedalboardConfiguration);
+        editor.setModel(processorConfiguration);
         root.setCenter(editor);
         configurationControls.setVisible(false);
     }
 
     @FXML
     protected void onDeleteConfiguration(final ActionEvent event) {
-        final PedalboardConfig pedalboardConfiguration =
-                (PedalboardConfig)configurationsCombo.getValue();
+        final ProcessorConfig processorConfiguration =
+                (ProcessorConfig)configurationsCombo.getValue();
 
         final Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                "Delete configuration '" + pedalboardConfiguration.getName() + "'?",
+                "Delete configuration '" + processorConfiguration.getName() + "'?",
                 ButtonType.YES, ButtonType.NO);
         alert.setTitle("Confirm deletion");
         setDefaultButton(alert, ButtonType.NO);
@@ -426,8 +426,8 @@ public class PedalboardController
         if (alert.getResult() == ButtonType.NO)
             return;
 
-        final MUGRESConfig config = EntryPoint.MUGRES().getConfig();
-        config.getPedalboards().removeIf(c -> c.getName().equals(pedalboardConfiguration.getName()));
+        final MUGRESConfig config = EntryPoint.MUGRESApp().getConfig();
+        config.getProcessors().removeIf(c -> c.getName().equals(processorConfiguration.getName()));
         config.save();
 
         loadConfigurations(null);
@@ -463,8 +463,8 @@ public class PedalboardController
         root.setCenter(null);
         configurationControls.setVisible(true);
 
-        final MUGRESConfig config = EntryPoint.MUGRES().getConfig();
-        config.getPedalboards().add(editor.getOutput());
+        final MUGRESConfig config = EntryPoint.MUGRESApp().getConfig();
+        config.getProcessors().add(editor.getOutput());
         config.save();
 
         loadConfigurations(editor.getOutput().getName());
@@ -476,9 +476,9 @@ public class PedalboardController
         root.setCenter(null);
         configurationControls.setVisible(true);
 
-        final MUGRESConfig config = EntryPoint.MUGRES().getConfig();
-        config.getPedalboards().removeIf(c -> c.getName().equals(editor.getModel().getName()));
-        config.getPedalboards().add(editor.getOutput());
+        final MUGRESConfig config = EntryPoint.MUGRESApp().getConfig();
+        config.getProcessors().removeIf(c -> c.getName().equals(editor.getModel().getName()));
+        config.getProcessors().add(editor.getOutput());
         config.save();
 
         loadConfigurations(editor.getOutput().getName());
@@ -490,6 +490,6 @@ public class PedalboardController
         configurationControls.setVisible(true);
 
         if (editor.isEditing())
-            loadConfiguration((PedalboardConfig) configurationsCombo.getValue());
+            loadConfiguration((ProcessorConfig) configurationsCombo.getValue());
     }
 }

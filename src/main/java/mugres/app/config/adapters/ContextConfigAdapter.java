@@ -1,11 +1,11 @@
-package mugres.apps.pedalboard.config.adapters;
+package mugres.app.config.adapters;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import mugres.common.Key;
 import mugres.common.TimeSignature;
-import mugres.apps.pedalboard.config.ContextConfig;
+import mugres.app.config.ContextConfig;
 
 import java.io.IOException;
 

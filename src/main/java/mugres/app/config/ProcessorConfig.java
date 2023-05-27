@@ -1,8 +1,8 @@
-package mugres.apps.pedalboard.config;
+package mugres.app.config;
 
-import static mugres.apps.pedalboard.config.MUGRESConfig.GSON;
+import static mugres.app.config.MUGRESConfig.GSON;
 
-public class PedalboardConfig implements Cloneable {
+public class ProcessorConfig implements Cloneable {
     private String name;
     private Processor processor;
     private DrummerConfig drummer;
@@ -59,7 +59,7 @@ public class PedalboardConfig implements Cloneable {
     }
 
     @Override
-    public PedalboardConfig clone() {
+    public ProcessorConfig clone() {
         return GSON.fromJson(GSON.toJson(this), this.getClass());
     }
 

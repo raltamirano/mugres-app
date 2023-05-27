@@ -1,24 +1,20 @@
-package mugres.apps.pedalboard;
+package mugres.app;
 
 import mugres.MUGRES;
-import mugres.apps.pedalboard.config.MUGRESConfig;
+import mugres.app.config.MUGRESConfig;
 
 /**
- * <p>MUGRES MIDI Pedalboard application.</p>
+ * <p>MUGRES main application.</p>
  * <br />
- * Use the following VM option to set the base directory for MIDI files:
- * <br /><br />
- * -Dmugres.pedalboard.midiFilesBaseDir=r:\all\projects\dev\raltamirano.github\mugres-pedalboard\src\main\resources\mugres\pedalboard\samples\patterns\
- * <br /><br />
  * Use the following VM options to define input/output MIDI ports:
  * <br /><br />
  * <p>-Dmugres.inputPort="mugres-in"</p>
  * <p>-Dmugres.outputPort="mugres-out"</p>
  */
-public class MUGRESApplication {
+public class MUGRESApp {
 	private MUGRESConfig mugresConfig;
 
-	public MUGRESApplication() {
+	public MUGRESApp() {
 		mugresConfig = MUGRESConfig.read();
 
 		MUGRES.useMidiInputPort(mugresConfig.getMidiInputPort());

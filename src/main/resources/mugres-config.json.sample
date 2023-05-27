@@ -6,7 +6,147 @@
 	"key": "C",
 	"tempo": 120
   },
-  "pedalboards": [
+  "processors": [
+    {
+      "name": "Spirographone 1",
+      "processor": "SPIROGRAPHONE",
+	  "spirographone": {
+		"context": {
+			"key": "D",
+			"tempo": 120
+		},
+		"outputChannel": 1,
+		"externalCircleRadius": 66.0,
+		"internalCircleRadius": 28.0,
+		"offsetOnInternalCircle": 20.0,
+		"iterationDelta": 2,
+		"spaceMillis": 1,
+		"minOctave": 5,
+		"maxOctave": 7,
+		"root": "E",
+		"scale": "MINOR_PENTATONIC"
+	  }
+	},
+    {
+      "name": "Spirographone 2",
+      "processor": "SPIROGRAPHONE",
+	  "spirographone": {
+		"context": {
+			"key": "E",
+			"tempo": 120
+		},
+		"outputChannel": 2,
+		"externalCircleRadius": 33.0,
+		"internalCircleRadius": 12.0,
+		"offsetOnInternalCircle": 2.73,
+		"iterationDelta": 5,
+		"spaceMillis": 89,
+		"minOctave": 5,
+		"maxOctave": 7,
+		"root": "E",
+		"scale": "MINOR_PENTATONIC"
+	  }
+	},
+    {
+      "name": "Latch",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Latch"
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Fur TheThe",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"context": {
+			"key": "C min",
+			"tempo": 90
+		},
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "ScaleEnforcer",
+				"args": {
+					"correctionMode": "UP"
+				}
+			},
+			{
+				"filter": "Ranges",
+				"args": {
+					"ranges": "Low:0:59,Hi:60:127"
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"onlyForTags": "Low",
+					"chordMode": "DIATONIC"
+				}
+			},
+			{
+				"filter": "Arpeggiate",
+				"args": {
+					"onlyForTags": "Low",
+					"pattern": "1232"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Power Chords",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Chorder",
+				"args": {
+					"chordMode": "FIXED",
+					"chordType": "5"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
     {
       "name": "Sui Generis 2",
       "processor": "TRANSFORMER",
@@ -490,7 +630,7 @@
             "command": "PLAY",
             "generator": "BLAST_BEAT",
             "lengthInMeasures": 4,
-            "tempo": 190,
+            "tempo": 96,
             "timeSignature": {
               "numerator": 4,
               "denominator": "QUARTER"
@@ -507,7 +647,7 @@
             "command": "PLAY",
             "generator": "HALF_TIME",
             "lengthInMeasures": 4,
-            "tempo": 110,
+            "tempo": 100,
             "timeSignature": {
               "numerator": 4,
               "denominator": "QUARTER"

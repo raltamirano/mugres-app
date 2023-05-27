@@ -1,4 +1,4 @@
-package mugres.apps.pedalboard.config;
+package mugres.app.config;
 
 import mugres.common.Note;
 import mugres.common.Scale;

@@ -1,4 +1,4 @@
-# MUGRES Pedalboard
-MUGRES Pedalboard app
+# MUGRES App
+MUGRES App
 
 

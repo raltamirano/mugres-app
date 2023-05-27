@@ -1,4 +1,4 @@
-package mugres.apps.pedalboard.config;
+package mugres.app.config;
 
 import mugres.common.DrumKit;
 import mugres.common.TimeSignature;
