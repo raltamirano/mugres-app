@@ -59,7 +59,33 @@
 				}
 			},
 			{
-				"filter": "Latch"
+				"filter": "Latch",
+				"args": {
+					"killSwitch": "96"
+				}
+			},
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "OUT"
+				}
+			}
+		]
+	  }
+	},
+    {
+      "name": "Legato",
+      "processor": "TRANSFORMER",
+      "transformer": {
+		"filters": [
+			{
+				"filter": "Monitor",
+				"args": {
+					"label": "IN"
+				}
+			},
+			{
+				"filter": "Legato"
 			},
 			{
 				"filter": "Monitor",
@@ -464,48 +490,6 @@
 	  }
 	},
     {
-      "name": "Arpeggios",
-      "processor": "TRANSFORMER",
-      "transformer": {
-		"context": {
-			"key": "A min",
-			"tempo": 90
-		},
-		"filters": [
-			{
-				"filter": "Monitor",
-				"args": {
-					"label": "IN"
-				}
-			},
-			{
-				"filter": "ScaleEnforcer",
-				"args": {
-					"correctionMode": "UP"
-				}
-			},
-			{
-				"filter": "Chorder",
-				"args": {
-					"chordMode": "DIATONIC"
-				}
-			},
-			{
-				"filter": "Arpeggiate",
-				"args": {
-					"pattern": "1232"
-				}
-			},
-			{
-				"filter": "Monitor",
-				"args": {
-					"label": "OUT"
-				}
-			}
-		]
-	  }
-	},
-    {
       "name": "2 Octaves Down",
       "processor": "TRANSFORMER",
       "transformer": {
@@ -630,12 +614,12 @@
             "command": "PLAY",
             "generator": "BLAST_BEAT",
             "lengthInMeasures": 4,
-            "tempo": 96,
+            "tempo": 130,
             "timeSignature": {
               "numerator": 4,
               "denominator": "QUARTER"
             },
-            "switchMode": "IMMEDIATELY_FILL",
+            "switchMode": "NORMAL",
             "mainVariants": [],
             "fillVariants": [],
             "hitOptions": [],
@@ -647,12 +631,12 @@
             "command": "PLAY",
             "generator": "HALF_TIME",
             "lengthInMeasures": 4,
-            "tempo": 100,
+            "tempo": 130,
             "timeSignature": {
               "numerator": 4,
               "denominator": "QUARTER"
             },
-            "switchMode": "IMMEDIATELY_FILL",
+            "switchMode": "NORMAL",
             "mainVariants": [],
             "fillVariants": [],
             "hitOptions": [],
