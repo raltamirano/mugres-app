@@ -1,10 +1,14 @@
 package mugres.app.config;
 
+import java.util.List;
+
 import static mugres.app.config.MUGRESConfig.GSON;
 
 public class ProcessorConfig implements Cloneable {
     private String name;
     private Processor processor;
+    private List<Filter> inputFilters;
+    private List<Filter> outputFilters;
     private DrummerConfig drummer;
     private TransformerConfig transformer;
     private SpirographoneConfig spirographone;
@@ -24,6 +28,22 @@ public class ProcessorConfig implements Cloneable {
 
     public void setProcessor(Processor processor) {
         this.processor = processor;
+    }
+
+    public List<Filter> getInputFilters() {
+        return inputFilters;
+    }
+
+    public void setInputFilters(List<Filter> inputFilters) {
+        this.inputFilters = inputFilters;
+    }
+
+    public List<Filter> getOutputFilters() {
+        return outputFilters;
+    }
+
+    public void setOutputFilters(List<Filter> outputFilters) {
+        this.outputFilters = outputFilters;
     }
 
     public DrummerConfig getDrummer() {

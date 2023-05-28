@@ -16,6 +16,7 @@ import javafx.util.StringConverter;
 import mugres.app.EntryPoint;
 import mugres.app.config.ContextConfig;
 import mugres.app.config.DrummerConfig;
+import mugres.app.config.Filter;
 import mugres.app.config.MUGRESConfig;
 import mugres.app.config.ProcessorConfig;
 import mugres.app.config.TransformerConfig;
@@ -27,6 +28,10 @@ import mugres.common.DrumKit;
 import mugres.common.Note;
 import mugres.common.Pitch;
 import mugres.common.Scale;
+import mugres.common.io.Input;
+import mugres.common.io.Output;
+import mugres.common.io.ProxyInput;
+import mugres.common.io.ProxyOutput;
 import mugres.live.Signal;
 import mugres.function.Function;
 import mugres.function.builtin.drums.PreRecordedDrums;
@@ -42,6 +47,7 @@ import mugres.live.processor.transformer.Transformer;
 import mugres.live.signaler.Signaler;
 import mugres.live.signaler.config.Configuration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,8 +220,8 @@ public class ProcessorController
             }
 
             final Drummer drummer = new Drummer(context,
-                    MUGRES.input(),
-                    MUGRES.output(),
+                    createProcessorInput(processorConfig),
+                    createProcessorOutput(processorConfig),
                     config);
 
             processor = drummer;
@@ -240,11 +246,11 @@ public class ProcessorController
                     getMainButton(button.getNumber()).setTooltip(new Tooltip(button.getLabel()));
             }
 
-            for(final TransformerConfig.Filter filter : processorConfig.getTransformer().getFilters())
+            for(final Filter filter : processorConfig.getTransformer().getFilters())
                 config.appendFilter(filter.getFilter(), filter.getArgs());
 
             if (!processorConfig.getTransformer().getSignalers().isEmpty()) {
-                for(final TransformerConfig.Signaler s : processorConfig.getTransformer().getSignalers()) {
+                for(final mugres.app.config.Signaler s : processorConfig.getTransformer().getSignalers()) {
                     Configuration signalerConfig = new Configuration();
                     Configuration.Frequency frequency = new Configuration.Frequency();
                     frequency.mode(Configuration.Frequency.Mode.valueOf(s.getFrequency().getMode().toString()));
@@ -257,8 +263,8 @@ public class ProcessorController
             }
 
             processor = new Transformer(playContext,
-                    MUGRES.input(),
-                    MUGRES.output(),
+                    createProcessorInput(processorConfig),
+                    createProcessorOutput(processorConfig),
                     config);
         } else if (processorConfig.getProcessor() == SPIROGRAPHONE) {
             final mugres.live.processor.spirographone.config.Configuration config =
@@ -283,8 +289,8 @@ public class ProcessorController
             config.setScale(scale);
 
             processor = new Spirographone(playContext,
-                    MUGRES.input(),
-                    MUGRES.output(),
+                    createProcessorInput(processorConfig),
+                    createProcessorOutput(processorConfig),
                     config);
         } else {
             throw new RuntimeException("Not implemented!");
@@ -294,7 +300,26 @@ public class ProcessorController
         processor.start();
     }
 
+    private Input createProcessorInput(final ProcessorConfig processorConfig) {
+        List<mugres.filter.Filter> filters = new ArrayList<>();
+        if (processorConfig.getInputFilters() != null)
+            for(final Filter filter : processorConfig.getInputFilters())
+                filters.add(mugres.filter.Filter.of(filter.getFilter(), filter.getArgs()));
+
+        return ProxyInput.of(MUGRES.input(), filters);
+    }
+
+    private Output createProcessorOutput(final ProcessorConfig processorConfig) {
+        List<mugres.filter.Filter> filters = new ArrayList<>();
+        if (processorConfig.getOutputFilters() != null)
+            for(final Filter filter : processorConfig.getOutputFilters())
+                filters.add(mugres.filter.Filter.of(filter.getFilter(), filter.getArgs()));
+
+        return ProxyOutput.of(MUGRES.output(), filters);
+    }
+
     private void configureControls() {
+        
     }
 
     private void overrideWithContextConfig(final Context baseContext, final ContextConfig contextConfig) {
@@ -455,8 +480,8 @@ public class ProcessorController
         // FIXME: tie to button's release?
         final Signal off = Signal.off(midiChannel, buttonPitches.get(buttonNumber));
 
-        MUGRES.input().send(on);
-        MUGRES.input().send(off);
+        MUGRES.input().receive(on);
+        MUGRES.input().receive(off);
     }
 
     @Override

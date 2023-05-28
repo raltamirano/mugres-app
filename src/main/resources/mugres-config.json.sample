@@ -10,12 +10,16 @@
     {
       "name": "Spirographone 1",
       "processor": "SPIROGRAPHONE",
+	  "inputFilters": [
+		{
+			"filter": "Legato"
+		}
+	  ],
+	  "outputFilters": [
+	  ],
 	  "spirographone": {
-		"context": {
-			"key": "D",
-			"tempo": 120
-		},
 		"outputChannel": 1,
+		"autoStart": false,
 		"externalCircleRadius": 66.0,
 		"internalCircleRadius": 28.0,
 		"offsetOnInternalCircle": 20.0,
@@ -23,8 +27,8 @@
 		"spaceMillis": 1,
 		"minOctave": 5,
 		"maxOctave": 7,
-		"root": "E",
-		"scale": "MINOR_PENTATONIC"
+		"root": "C",
+		"scale": "MAJOR"
 	  }
 	},
     {
@@ -32,7 +36,7 @@
       "processor": "SPIROGRAPHONE",
 	  "spirographone": {
 		"context": {
-			"key": "E",
+			"key": "C",
 			"tempo": 120
 		},
 		"outputChannel": 2,
