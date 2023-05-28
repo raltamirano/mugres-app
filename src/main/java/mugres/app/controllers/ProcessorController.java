@@ -267,6 +267,7 @@ public class ProcessorController
             overrideWithContextConfig(playContext, processorConfig.getSpirographone().getContext());
 
             config.setOutputChannel(processorConfig.getSpirographone().getOutputChannel());
+            config.setAutoStart(processorConfig.getSpirographone().isAutoStart());
             config.setExternalCircleRadius(processorConfig.getSpirographone().getExternalCircleRadius());
             config.setInternalCircleRadius(processorConfig.getSpirographone().getInternalCircleRadius());
             config.setOffsetOnInternalCircle(processorConfig.getSpirographone().getOffsetOnInternalCircle());
@@ -289,7 +290,11 @@ public class ProcessorController
             throw new RuntimeException("Not implemented!");
         }
 
+        configureControls();
         processor.start();
+    }
+
+    private void configureControls() {
     }
 
     private void overrideWithContextConfig(final Context baseContext, final ContextConfig contextConfig) {

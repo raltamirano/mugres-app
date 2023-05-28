@@ -5,6 +5,7 @@ import mugres.common.Scale;
 
 public class SpirographoneConfig {
     private ContextConfig context;
+    private boolean autoStart;
     private int outputChannel;
     private double externalCircleRadius;
     private double internalCircleRadius;
@@ -30,6 +31,14 @@ public class SpirographoneConfig {
 
     public void setOutputChannel(int outputChannel) {
         this.outputChannel = outputChannel;
+    }
+
+    public boolean isAutoStart() {
+        return autoStart;
+    }
+
+    public void setAutoStart(boolean autoStart) {
+        this.autoStart = autoStart;
     }
 
     public double getExternalCircleRadius() {
