@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="mugres-main" stylesheets="@mugres.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mugres.app.controllers.MUGRESController">
+   <children>
+      <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="Tracker">
+            <fx:include source="tracker/song-editor.fxml"></fx:include>
+          </Tab>
+          <Tab text="Processors">
+              <fx:include source="processor/processor.fxml"></fx:include>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
