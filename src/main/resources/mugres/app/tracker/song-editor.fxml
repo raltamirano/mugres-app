@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import mugres.app.control.KeyValueEditor ?>
+
+<fx:root type="javafx.scene.layout.BorderPane"
+         xmlns="http://javafx.com/javafx/10.0.2-internal"
+         stylesheets="@song-editor.css"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <KeyValueEditor fx:id="songPropertiesEditor"></KeyValueEditor>
+    </top>
+    <left>
+    </left>
+    <right>
+
+    </right>
+    <center>
+
+    </center>
+    <bottom>
+
+    </bottom>
+</fx:root>

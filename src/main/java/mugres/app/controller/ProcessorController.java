@@ -1,4 +1,4 @@
-package mugres.app.controllers;
+package mugres.app.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,8 +20,8 @@ import mugres.app.config.Filter;
 import mugres.app.config.MUGRESConfig;
 import mugres.app.config.ProcessorConfig;
 import mugres.app.config.TransformerConfig;
-import mugres.app.controls.DrummerEditor;
-import mugres.app.controls.DrummerPlayer;
+import mugres.app.control.drummer.DrummerEditor;
+import mugres.app.control.drummer.DrummerPlayer;
 import mugres.MUGRES;
 import mugres.common.Context;
 import mugres.common.DrumKit;

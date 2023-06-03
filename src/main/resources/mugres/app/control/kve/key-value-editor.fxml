@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root stylesheets="@key-value-editor.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+      <Label fx:id="titleLabel" text="Properties" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <TableView fx:id="propertiesTable" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
+        <columns>
+          <TableColumn fx:id="keyColumn" prefWidth="75.0" text="key" />
+          <TableColumn fx:id="valueColumn" prefWidth="125.0" text="value" />
+        </columns>
+      </TableView>
+</fx:root>

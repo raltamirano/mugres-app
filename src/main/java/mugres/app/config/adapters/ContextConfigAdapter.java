@@ -32,7 +32,7 @@ public class ContextConfigAdapter extends TypeAdapter<ContextConfig> {
                     contextConfig.setTempo(jsonReader.nextInt());
                     break;
                 case "key":
-                    contextConfig.setKey(Key.fromLabel(jsonReader.nextString()));
+                    contextConfig.setKey(Key.of(jsonReader.nextString()));
                     break;
                 case "timeSignature":
                     contextConfig.setTimeSignature(TimeSignature.of(jsonReader.nextString()));

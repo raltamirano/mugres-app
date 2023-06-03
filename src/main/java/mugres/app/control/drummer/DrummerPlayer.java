@@ -1,4 +1,4 @@
-package mugres.app.controls;
+package mugres.app.control.drummer;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -15,7 +15,7 @@ public class DrummerPlayer extends VBox {
 
     public DrummerPlayer() {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                "/mugres/app/fxml/controls/drummer-player.fxml"));
+                "/mugres/app/control/drummer-player.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

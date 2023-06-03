@@ -16,12 +16,12 @@ public class EntryPoint extends Application {
     public void start(final Stage stage) throws IOException {
         mugresApp = new MUGRESApp();
 
-        final Parent mugresParent = FXMLLoader.load(getClass().getResource("/mugres/app/fxml/mugres.fxml"));
+        final Parent mugresParent = FXMLLoader.load(getClass().getResource("/mugres/app/mugres.fxml"));
         final Scene scene = new Scene(mugresParent);
         stage.setTitle("MUGRES");
         stage.setScene(scene);
         stage.setMaximized(true);
-        stage.getIcons().add(new Image(getClass().getResource("/mugres/app/fxml/images/icon.png").openStream()));
+        stage.getIcons().add(new Image(getClass().getResource("/mugres/app/image/icon.png").openStream()));
         stage.show();
     }
 

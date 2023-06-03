@@ -1,4 +1,4 @@
-package mugres.app.controls;
+package mugres.app.control.drummer;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -42,7 +42,7 @@ public class DrummerEditor extends VBox implements Initializable {
 
     public DrummerEditor() {
         final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                "/mugres/app/fxml/controls/drummer-editor.fxml"));
+                "/mugres/app/control/drummer-editor.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

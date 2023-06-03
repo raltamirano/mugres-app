@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<BorderPane fx:controller="mugres.app.controllers.ProcessorController"
+<BorderPane fx:controller="mugres.app.controller.ProcessorController"
             xmlns:fx="http://javafx.com/fxml"
             stylesheets="@processor.css"
             fx:id="root">

@@ -1,4 +1,4 @@
-package mugres.app.controllers;
+package mugres.app.controller;
 
 public class MUGRESController {
 }
