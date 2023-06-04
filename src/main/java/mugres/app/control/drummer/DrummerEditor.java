@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class DrummerEditor extends VBox implements Initializable {
+    private static final String FXML = "/mugres/app/control/drummer-editor.fxml";
+
     private final java.util.List<Listener> listeners = new ArrayList<>();
 
     private boolean editing;
@@ -41,8 +43,7 @@ public class DrummerEditor extends VBox implements Initializable {
     private HBox saveOrCancelBox;
 
     public DrummerEditor() {
-        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                "/mugres/app/control/drummer-editor.fxml"));
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

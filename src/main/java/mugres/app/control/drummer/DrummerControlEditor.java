@@ -6,9 +6,10 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 
 public class DrummerControlEditor extends VBox {
+    private static final String FXML = "/mugres/app/control/drummer-control-editor.fxml";
+
     public DrummerControlEditor() {
-        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                "/mugres/app/control/drummer-control-editor.fxml"));
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

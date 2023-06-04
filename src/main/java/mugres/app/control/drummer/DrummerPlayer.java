@@ -11,11 +11,12 @@ import mugres.live.processor.drummer.Drummer;
 import java.io.IOException;
 
 public class DrummerPlayer extends VBox {
+    private static final String FXML = "/mugres/app/control/drummer-player.fxml";
+    
     private Drummer drummer;
 
     public DrummerPlayer() {
-        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                "/mugres/app/control/drummer-player.fxml"));
+        final FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 
