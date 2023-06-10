@@ -33,7 +33,7 @@
                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
     </right>
     <center>
-
+        <Matrix fx:id="partyCallsMatrix"></Matrix>
     </center>
     <bottom>
 

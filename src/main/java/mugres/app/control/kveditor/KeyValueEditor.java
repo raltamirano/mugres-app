@@ -23,7 +23,10 @@ import mugres.common.Variant;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.Arrays.asList;
 
 public class KeyValueEditor extends AnchorPane {
     private static final String FXML = "/mugres/app/control/kveditor/key-value-editor.fxml";
@@ -45,10 +48,6 @@ public class KeyValueEditor extends AnchorPane {
         } catch (final IOException exception) {
             throw new RuntimeException(exception);
         }
-    }
-
-    @FXML
-    public void initialize() {
     }
 
     public Model getModel() {
@@ -80,6 +79,10 @@ public class KeyValueEditor extends AnchorPane {
     }
 
     public void setValueHeader(final String text) {
+    }
+
+    public void setTitleVisible(final boolean value) {
+        titleLabel.setVisible(value);
     }
 
     private void loadModel() {
@@ -190,11 +193,15 @@ public class KeyValueEditor extends AnchorPane {
         private Model() {
         }
 
-        public static Model of(final Property... properties) {
+        public static Model of(final Collection<Property> properties) {
             final Model model = new Model();
             for(Property p : properties)
                 model.properties.put(p.name, p);
             return model;
+        }
+
+        public static Model of(final Property... properties) {
+          return of(asList(properties));
         }
 
         public Map<String, Property> getProperties() {
