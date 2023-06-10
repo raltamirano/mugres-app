@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import mugres.app.control.kveditor.*?>
+<?import mugres.app.control.tracker.*?>
+
+<fx:root minHeight="600.0" minWidth="800.0" stylesheets="@song-editor.css" type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <left>
+        <BorderPane>
+            <left>
+                <VBox layoutX="419.0" maxHeight="300.0" minHeight="250.0">
+                    <children>
+                        <KeyValueEditor fx:id="songPropertiesEditor" maxHeight="300.0" minHeight="220.0" title="Song" />
+                        <KeyValueEditor fx:id="patternPropertiesEditor" maxHeight="220.0" minHeight="220.0" title="Pattern" />
+                        <HBox maxHeight="32.0" minWidth="30.0">
+                            <children>
+                                <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="&lt;" />
+                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="62.0" text="Create" />
+                                <Button layoutX="40.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="65.0" text="Rename" />
+                                <Button layoutX="102.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="65.0" text="Delete" />
+                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="30.0" text="&gt;" />
+                            </children>
+                        </HBox>
+                        <KeyValueEditor fx:id="callPropertiesEditor"  minHeight="500.0" title="Properties" />
+                    </children>
+                </VBox>
+            </left>
+        </BorderPane>
+    </left>
+    <right>
+        <ArrangementEditor fx:id="arrangementEditor" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    </right>
+    <center>
+
+    </center>
+    <bottom>
+
+    </bottom>
+</fx:root>

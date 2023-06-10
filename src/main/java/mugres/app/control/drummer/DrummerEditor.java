@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class DrummerEditor extends VBox implements Initializable {
-    private static final String FXML = "/mugres/app/control/drummer-editor.fxml";
+    private static final String FXML = "/mugres/app/control/drummer/drummer-editor.fxml";
 
     private final java.util.List<Listener> listeners = new ArrayList<>();
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root minHeight="500.0" minWidth="280.0" stylesheets="@arrangement-editor.css" type="javafx.scene.layout.VBox"
+         xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+       <Label fx:id="titleLabel" text="Arrangement" />
+       <TableView fx:id="entriesTableView" minHeight="500.0">
+        <columns>
+          <TableColumn fx:id="patternTableColumn" prefWidth="230.0" text="Pattern" />
+          <TableColumn fx:id="repetitionsTableColumn" prefWidth="50.0" text="Reps" />
+        </columns>
+      </TableView>
+      <HBox maxHeight="30.0" minHeight="30.0">
+         <children>
+            <Button fx:id="addArrangementEntryButton" mnemonicParsing="false" prefHeight="29.0" prefWidth="70.0" text="Create" />
+            <Button fx:id="deleteArrangementEntryButton" mnemonicParsing="false" prefHeight="29.0" prefWidth="70.0" text="Delete" />
+            <Button fx:id="moveDownEntryButton" layoutX="69.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="70.0" text="Down" />
+            <Button fx:id="moveUpEntryButton" layoutX="130.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="70.0" text="Up" />
+         </children>
+      </HBox>
+   </children>
+</fx:root>

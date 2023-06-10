@@ -1,7 +1,5 @@
-package mugres.app.control;
+package mugres.app.control.kveditor;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,15 +21,18 @@ import mugres.common.Value;
 import mugres.common.Variant;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class KeyValueEditor extends AnchorPane {
-    private static final String FXML = "/mugres/app/control/kve/key-value-editor.fxml";
+    private static final String FXML = "/mugres/app/control/kveditor/key-value-editor.fxml";
 
     private Model model;
+
     @FXML
     private Label titleLabel;
+
     @FXML
     private GridPane propertiesGrid;
 
@@ -116,16 +117,27 @@ public class KeyValueEditor extends AnchorPane {
                 case BOOLEAN:
                     editor = getCheckBox(p);
                     break;
+                case UNKNOWN:
+                    if (p.isDomainBased())
+                        editor = getComboBox(p, p.domain);
+                    else
+                        throw new IllegalArgumentException("No editor for data type: " + p.type);
+                    break;
                 case PITCH:
                 case LENGTH:
                 case EUCLIDEAN_PATTERN:
-                case UNKNOWN:
+                default:
                     throw new IllegalArgumentException("No editor for data type: " + p.type);
             }
             editor.setUserData(p.name);
+            editor.minWidth(200.0);
 
             propertiesGrid.addRow(rowIndex++, new Label(p.label), editor);
         }
+    }
+
+    private ComboBox getComboBox(final Property property, final Collection<Object> values) {
+        return getComboBox(property, values.toArray());
     }
 
     private ComboBox getComboBox(final Property property, final Object[] values) {
@@ -204,24 +216,31 @@ public class KeyValueEditor extends AnchorPane {
         private Object value;
         private Object min;
         private Object max;
+        private Collection<Object> domain;
 
         private Property(final String name, final String label, final DataType type, final Object value,
-                         final Object min, final Object max) {
+                         final Object min, final Object max, final Collection<Object> domain) {
             this.name = name;
             this.label = label;
             this.type = type;
             this.value = value;
             this.min = min;
             this.max = max;
+            this.domain = domain;
+        }
+
+        public static Property of(final String name, final String label, final DataType type,
+                                      final Object value, final Collection<Object> domain) {
+            return new Property(name, label, type, value, null, null, domain);
         }
 
         public static Property of(final String name, final String label, final DataType type, final Object value) {
-            return of(name, label, type, value, null, null);
+            return new Property(name, label, type, value, null, null, null);
         }
 
         public static Property of(final String name, final String label, final DataType type, final Object value,
                 final Object min, final Object max) {
-            return new Property(name, label, type, value, min, max);
+            return new Property(name, label, type, value, min, max, null);
         }
 
         public String getName() {
@@ -252,6 +271,14 @@ public class KeyValueEditor extends AnchorPane {
             return max;
         }
 
+        public Collection<Object> getDomain() {
+            return domain;
+        }
+
+        public boolean isDomainBased() {
+            return domain != null;
+        }
+
         @Override
         public String toString() {
             return "Property{" +
@@ -261,6 +288,7 @@ public class KeyValueEditor extends AnchorPane {
                     ", value=" + value +
                     ", min=" + min +
                     ", max=" + max +
+                    ", domain=" + domain +
                     '}';
         }
     }

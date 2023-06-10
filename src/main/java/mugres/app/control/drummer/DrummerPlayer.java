@@ -11,7 +11,7 @@ import mugres.live.processor.drummer.Drummer;
 import java.io.IOException;
 
 public class DrummerPlayer extends VBox {
-    private static final String FXML = "/mugres/app/control/drummer-player.fxml";
+    private static final String FXML = "/mugres/app/control/drummer/drummer-player.fxml";
     
     private Drummer drummer;
 
