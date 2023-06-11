@@ -3,11 +3,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root minHeight="800.0" minWidth="280.0" stylesheets="@arrangement-editor.css" type="javafx.scene.layout.VBox"
+<fx:root minHeight="800.0" minWidth="280.0" stylesheets="@arrangement.css" type="javafx.scene.layout.VBox"
          xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
        <Label fx:id="titleLabel" text="Arrangement" />
        <TableView fx:id="entriesTableView" minHeight="920.0">
+        <placeholder>
+            <Label text=""/>
+        </placeholder>
         <columns>
           <TableColumn fx:id="patternTableColumn" prefWidth="230.0" text="Pattern" />
           <TableColumn fx:id="repetitionsTableColumn" prefWidth="50.0" text="Reps" />

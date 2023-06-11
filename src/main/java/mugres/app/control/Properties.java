@@ -1,4 +1,4 @@
-package mugres.app.control.kveditor;
+package mugres.app.control;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -23,13 +23,12 @@ import mugres.common.Variant;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 
-public class KeyValueEditor extends AnchorPane {
-    private static final String FXML = "/mugres/app/control/kveditor/key-value-editor.fxml";
+public class Properties extends AnchorPane {
+    private static final String FXML = "/mugres/app/control/properties.fxml";
 
     private Model model;
 
@@ -39,7 +38,7 @@ public class KeyValueEditor extends AnchorPane {
     @FXML
     private GridPane propertiesGrid;
 
-    public KeyValueEditor() {
+    public Properties() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);

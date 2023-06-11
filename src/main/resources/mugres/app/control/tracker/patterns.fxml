@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import mugres.app.control.*?>
+
+<fx:root stylesheets="@patterns.css" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Properties fx:id="patternPropertiesEditor" maxHeight="220.0" minHeight="220.0" prefHeight="220.0" title="Pattern" />
+        <HBox maxHeight="32.0" minHeight="32.0">
+            <children>
+                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="83.0" text="Create" />
+                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="83.0" text="Rename" />
+                <Button layoutX="102.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="83.0" text="Delete" />
+            </children>
+        </HBox>
+    </children>
+</fx:root>

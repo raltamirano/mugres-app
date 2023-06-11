@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import mugres.app.control.*?>
+<?import mugres.app.control.tracker.*?>
+
+<fx:root minHeight="600.0" minWidth="800.0" stylesheets="@song.css" type="javafx.scene.layout.BorderPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <left>
+        <BorderPane>
+            <left>
+                <VBox layoutX="419.0" maxHeight="300.0" minHeight="250.0">
+                    <children>
+                        <Properties fx:id="songPropertiesEditor" maxHeight="300.0" minHeight="220.0" title="Song" />
+                        <Patterns fx:id="patterns" ></Patterns>
+                        <Properties fx:id="callPropertiesEditor" minHeight="500.0" title="Properties" />
+                    </children>
+                </VBox>
+            </left>
+        </BorderPane>
+    </left>
+    <right>
+        <Arrangement fx:id="arrangement" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    </right>
+    <center>
+        <Matrix fx:id="partyCallsMatrix" />
+    </center>
+    <bottom>
+
+    </bottom>
+</fx:root>

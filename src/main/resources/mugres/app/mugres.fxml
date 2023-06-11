@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import mugres.app.control.tracker.SongEditor ?>
+<?import mugres.app.control.tracker.Song ?>
 
 <AnchorPane id="mugres-main" stylesheets="@mugres.css" xmlns="http://javafx.com/javafx/10.0.2-internal"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -11,7 +11,7 @@
       <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="Tracker">
-            <SongEditor fx:id="songEditor"></SongEditor>
+            <Song fx:id="songEditor"></Song>
           </Tab>
           <Tab text="Processors">
               <fx:include source="processor/processor.fxml"></fx:include>

@@ -9,15 +9,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArrangementEditor extends VBox {
-    private static final String FXML = "/mugres/app/control/tracker/arrangement-editor.fxml";
+public class Arrangement extends VBox {
+    private static final String FXML = "/mugres/app/control/tracker/arrangement.fxml";
 
     private Model model;
 
     @FXML
     private TableView entriesTableView;
 
-    public ArrangementEditor() {
+    public Arrangement() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
