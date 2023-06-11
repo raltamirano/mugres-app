@@ -16,12 +16,12 @@
           <TableColumn fx:id="repetitionsTableColumn" prefWidth="50.0" text="Reps" />
         </columns>
       </TableView>
-      <HBox maxHeight="30.0" minHeight="30.0">
+      <HBox maxHeight="29.0" minHeight="29.0">
          <children>
-            <Button fx:id="addArrangementEntryButton" mnemonicParsing="false" prefHeight="29.0" prefWidth="70.0" text="Create" />
-            <Button fx:id="deleteArrangementEntryButton" mnemonicParsing="false" prefHeight="29.0" prefWidth="70.0" text="Delete" />
-            <Button fx:id="moveDownEntryButton" layoutX="69.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="70.0" text="Down" />
-            <Button fx:id="moveUpEntryButton" layoutX="130.0" layoutY="10.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="70.0" text="Up" />
+            <Button fx:id="addArrangementEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" text="Create" />
+            <Button fx:id="deleteArrangementEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" text="Delete" />
+            <Button fx:id="moveDownEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" text="Down" />
+            <Button fx:id="moveUpEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" text="Up" />
          </children>
       </HBox>
    </children>
