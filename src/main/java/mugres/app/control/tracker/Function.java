@@ -1,4 +1,4 @@
-package mugres.app.control.tracker.calls;
+package mugres.app.control.tracker;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 public class Function extends VBox {
-    private static final String FXML = "/mugres/app/control/tracker/calls/function.fxml";
+    private static final String FXML = "/mugres/app/control/tracker/function.fxml";
 
     @FXML
     private ComboBox<mugres.function.Function> functionComboBox;

@@ -13,7 +13,7 @@
                 <VBox layoutX="419.0" maxHeight="300.0" minHeight="250.0">
                     <children>
                         <Properties fx:id="songPropertiesEditor" maxHeight="300.0" minHeight="220.0" title="Song" />
-                        <Patterns fx:id="patterns" />
+                        <Pattern fx:id="pattern" />
                         <Properties fx:id="callPropertiesEditor" minHeight="486.0" title="Properties" />
                     </children>
                 </VBox>
@@ -28,9 +28,9 @@
     </center>
     <bottom>
         <HBox>
-            <Region HBox.hgrow="ALWAYS"></Region>
+            <Region HBox.hgrow="ALWAYS" />
             <HBox minHeight="29.0" spacing="10.0">
-                <Button fx:id="playSong" minWidth="100.0" text="Play Song" />
+                <Button fx:id="playSong" text="Play Song" />
                 <Separator orientation="VERTICAL" />
                 <Button fx:id="playPattern" minWidth="100.0" text="Play Pattern" />
                 <CheckBox fx:id="loopPattern" minHeight="29.0" text="Loop">
@@ -40,7 +40,13 @@
                 <Separator orientation="VERTICAL" />
                 <Button fx:id="stop" minWidth="100.0" text="Stop" />
             </HBox>
-            <Region HBox.hgrow="ALWAYS"></Region>
+            <Region HBox.hgrow="ALWAYS">
+            <HBox.margin>
+               <Insets />
+            </HBox.margin></Region>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
         </HBox>
     </bottom>
 </fx:root>

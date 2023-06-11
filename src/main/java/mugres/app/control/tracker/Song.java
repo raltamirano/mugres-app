@@ -23,7 +23,7 @@ public class Song extends BorderPane {
     private Properties songPropertiesEditor;
 
     @FXML
-    private Patterns patterns;
+    private Pattern pattern;
 
     @FXML
     private Arrangement arrangement;
@@ -54,7 +54,7 @@ public class Song extends BorderPane {
                                 TimeSignature.TS44)
                 );
         model.patternsModel =
-                Patterns.Model.of(
+                Pattern.Model.of(
                     Properties.Model.of(
                             Properties.Property.of("pattern", "Pattern", DataType.UNKNOWN,
                                     null, asList("A", "B", "C")),
@@ -76,13 +76,13 @@ public class Song extends BorderPane {
                 );
 
         songPropertiesEditor.setModel(model.songPropertiesModel);
-        patterns.setModel(model.patternsModel);
+        pattern.setModel(model.patternsModel);
         arrangement.setModel(model.arrangementModel);
     }
 
     public static class Model {
         private Properties.Model songPropertiesModel = null;
-        private Patterns.Model patternsModel = null;
+        private Pattern.Model patternsModel = null;
         private Arrangement.Model arrangementModel = null;
     }
 }

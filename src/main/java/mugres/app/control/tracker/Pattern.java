@@ -7,15 +7,15 @@ import mugres.app.control.Properties;
 
 import java.io.IOException;
 
-public class Patterns extends VBox {
-    private static final String FXML = "/mugres/app/control/tracker/patterns.fxml";
+public class Pattern extends VBox {
+    private static final String FXML = "/mugres/app/control/tracker/pattern.fxml";
 
     private Model model;
 
     @FXML
     private Properties patternPropertiesEditor;
 
-    public Patterns() {
+    public Pattern() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
