@@ -123,8 +123,8 @@ public class Song extends BorderPane {
                             )
                     );
 
-            arrangementModel = Arrangement.Model.of(song.arrangement().entries().stream()
-                    .map(e -> Arrangement.Model.ArrangementEntry.of(e.pattern().name(), e.repetitions()))
+            arrangementModel = Arrangement.Model.of(song, song.arrangement().entries().stream()
+                    .map(e -> Arrangement.Model.ArrangementEntry.of(e))
                     .collect(Collectors.toList()));
         }
 

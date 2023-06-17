@@ -1,16 +1,23 @@
 package mugres.app.control.tracker;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import mugres.tracker.Pattern;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -71,18 +78,24 @@ public class Arrangement extends VBox {
     }
 
     public static class Model {
+        private final mugres.tracker.Song song;
         private final ObservableList<ArrangementEntry> entries;
 
-        private Model(final List<ArrangementEntry> entries) {
+        private Model(final mugres.tracker.Song song, final List<ArrangementEntry> entries) {
+            this.song = song;
             this.entries = FXCollections.observableList(entries != null ? entries : Collections.emptyList());
         }
 
-        public static Model of() {
-            return new Model(null);
+        public static Model of(final mugres.tracker.Song song) {
+            return new Model(song, null);
         }
 
-        public static Model of(final List<ArrangementEntry> entries) {
-            return new Model(entries);
+        public static Model of(final mugres.tracker.Song song, final List<ArrangementEntry> entries) {
+            return new Model(song, entries);
+        }
+
+        public mugres.tracker.Song getSong() {
+            return song;
         }
 
         public ObservableList<ArrangementEntry> getEntries() {
@@ -97,39 +110,50 @@ public class Arrangement extends VBox {
         }
 
         public static class ArrangementEntry {
-            private SimpleStringProperty pattern;
-            private SimpleIntegerProperty repetitions;
+            private final mugres.tracker.Arrangement.Entry entry;
+            private ObjectProperty<Pattern> pattern;
+            private IntegerProperty repetitions;
 
-            private ArrangementEntry(final String pattern, final int repetitions) {
-                this.pattern = new SimpleStringProperty(pattern);
-                this.repetitions = new SimpleIntegerProperty(repetitions);
+            private ArrangementEntry(final mugres.tracker.Arrangement.Entry entry) {
+                this.entry = entry;
+                this.pattern = new SimpleObjectProperty(entry.pattern());
+                try {
+                    this.repetitions = JavaBeanIntegerPropertyBuilder.create()
+                            .bean(entry)
+                            .name("repetitions")
+                            .setter("repetitions")
+                            .getter("repetitions")
+                            .build();
+                } catch (final NoSuchMethodException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
-            public static ArrangementEntry of(final String pattern, final int repetitions) {
-                return new ArrangementEntry(pattern, repetitions);
+            public static ArrangementEntry of(final mugres.tracker.Arrangement.Entry entry) {
+                return new ArrangementEntry(entry);
             }
 
-            public String getPattern() {
+            public final Pattern getPattern() {
                 return pattern.get();
             }
 
-            public SimpleStringProperty patternProperty() {
+            public ObjectProperty patternProperty() {
                 return pattern;
             }
 
-            public void setPattern(String pattern) {
+            public final void setPattern(Pattern pattern) {
                 this.pattern.set(pattern);
             }
 
-            public int getRepetitions() {
+            public final int getRepetitions() {
                 return repetitions.get();
             }
 
-            public SimpleIntegerProperty repetitionsProperty() {
+            public IntegerProperty repetitionsProperty() {
                 return repetitions;
             }
 
-            public void setRepetitions(int repetitions) {
+            public final void setRepetitions(int repetitions) {
                 this.repetitions.set(repetitions);
             }
 
