@@ -1,6 +1,7 @@
 package mugres.app.control.tracker;
 
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
@@ -39,4 +40,20 @@ public class Matrix extends ScrollPane {
     private void onFunctionChanged(final Instrument instrument) {
 
     }
+
+    @FXML
+    protected void previousParty(final ActionEvent event) {
+
+    }
+
+    @FXML
+    protected void nextParty(final ActionEvent event) {
+
+    }
+
+    @FXML
+    protected void createParty(final ActionEvent event) {
+
+    }
+
 }

@@ -12,8 +12,8 @@
             <Label text=""/>
         </placeholder>
         <columns>
-          <TableColumn fx:id="patternTableColumn" prefWidth="230.0" text="Pattern" />
-          <TableColumn fx:id="repetitionsTableColumn" prefWidth="50.0" text="Reps" />
+          <TableColumn fx:id="patternColumn" prefWidth="230.0" text="Pattern" />
+          <TableColumn fx:id="repetitionsColumn" prefWidth="50.0" text="Reps" />
         </columns>
       </TableView>
       <HBox maxHeight="29.0" minHeight="29.0">

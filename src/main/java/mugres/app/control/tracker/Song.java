@@ -4,11 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
 import mugres.app.control.Properties;
+import mugres.app.control.tracker.storage.EditorMetadata;
+import mugres.common.Context;
 import mugres.common.DataType;
-import mugres.common.Key;
-import mugres.common.TimeSignature;
+import mugres.common.Party;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -17,10 +19,10 @@ public class Song extends BorderPane {
     private static final Object MIN_TEMPO = 1;
     private static final Object MAX_TEMPO = 10000;
 
-    private Model model = new Model();
+    private Model model;
 
     @FXML
-    private Properties songPropertiesEditor;
+    private Properties properties;
 
     @FXML
     private Pattern pattern;
@@ -39,50 +41,116 @@ public class Song extends BorderPane {
         }
     }
 
+    public Model getModel() {
+        return model;
+    }
 
-    @FXML
-    public void initialize() {
-        model.songPropertiesModel =
-                Properties.Model.of(
-                        Properties.Property.of("name", "Name", DataType.TEXT,
-                                "Untitled"),
-                        Properties.Property.of("tempo", "BPM", DataType.INTEGER,
-                                120, MIN_TEMPO, MAX_TEMPO),
-                        Properties.Property.of("key", "Key", DataType.KEY,
-                                Key.C),
-                        Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
-                                TimeSignature.TS44)
-                );
-        model.patternsModel =
-                Pattern.Model.of(
-                    Properties.Model.of(
-                            Properties.Property.of("pattern", "Pattern", DataType.UNKNOWN,
-                                    null, asList("A", "B", "C")),
-                            Properties.Property.of("tempo", "BPM", DataType.INTEGER,
-                                    120, MIN_TEMPO, MAX_TEMPO),
-                            Properties.Property.of("key", "Key", DataType.KEY,
-                                    Key.C),
-                            Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
-                                    TimeSignature.TS44),
-                            Properties.Property.of("length", "Measures", DataType.INTEGER,
-                                    1, 1, 100000),
-                            Properties.Property.of("beastSubdivision", "Beat subdivision", DataType.INTEGER,
-                                    0, 0, 128)
-                    )
-                );
-        model.arrangementModel =
-                Arrangement.Model.of(
+    public void setModel(final Model model) {
+        if (model == null)
+            throw new IllegalArgumentException("model");
+        this.model = model;
 
-                );
+        loadModel();
+    }
 
-        songPropertiesEditor.setModel(model.songPropertiesModel);
-        pattern.setModel(model.patternsModel);
-        arrangement.setModel(model.arrangementModel);
+    private void loadModel() {
+        properties.setModel(model.getSongPropertiesModel());
+        pattern.setModel(model.getPatternModel());
+        arrangement.setModel(model.getArrangementModel());
     }
 
     public static class Model {
-        private Properties.Model songPropertiesModel = null;
-        private Pattern.Model patternsModel = null;
-        private Arrangement.Model arrangementModel = null;
+        private final mugres.tracker.Song song;
+
+        private final Properties.Model songPropertiesModel;
+        private final Pattern.Model patternModel;
+        private final Arrangement.Model arrangementModel;
+        private mugres.tracker.Pattern currentPattern;
+        private mugres.common.Party currentParty;
+
+        private Model(final mugres.tracker.Song song) {
+            this.song = song;
+
+            songPropertiesModel =
+                    Properties.Model.of(
+                            Properties.Property.of("name", "Name", DataType.TEXT,
+                                    song.title()),
+                            Properties.Property.of("tempo", "BPM", DataType.INTEGER,
+                                    song.context().tempo(), MIN_TEMPO, MAX_TEMPO),
+                            Properties.Property.of("key", "Key", DataType.KEY,
+                                    song.context().key()),
+                            Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
+                                    song.context().timeSignature())
+                    );
+
+            if (!song.patterns().isEmpty())
+                currentPattern = song.patterns().iterator().next();
+
+            patternModel =
+                    Pattern.Model.of(
+                            Properties.Model.of(
+                                    Properties.Property.of("pattern", "Pattern", DataType.UNKNOWN,
+                                            currentPattern, song.patterns().stream().collect(Collectors.toList())),
+                                    Properties.Property.of("tempo", "BPM", DataType.INTEGER,
+                                            currentPattern != null ? currentPattern.context().tempo() : song.context().tempo(),
+                                            MIN_TEMPO, MAX_TEMPO),
+                                    Properties.Property.of("key", "Key", DataType.KEY,
+                                            currentPattern != null ? currentPattern.context().key() : song.context().key()),
+                                    Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
+                                            currentPattern != null ? currentPattern.context().timeSignature() :  song.context().timeSignature()),
+                                    Properties.Property.of("length", "Measures", DataType.INTEGER,
+                                            currentPattern != null ? currentPattern.measures() : 0, 1, 100000),
+                                    Properties.Property.of("beatSubdivision", "Beat subdivision", DataType.INTEGER,
+                                            currentPattern != null ? readBeatSubdivision(song, currentPattern) : 0, 0, 128)
+                            )
+                    );
+
+            arrangementModel = Arrangement.Model.of(song.arrangement().entries().stream()
+                    .map(e -> Arrangement.Model.ArrangementEntry.of(e.pattern().name(), e.repetitions()))
+                    .collect(Collectors.toList()));
+        }
+
+        public static Model forSong(final mugres.tracker.Song song) {
+            if (song == null)
+                throw new IllegalArgumentException("song");
+            return new Model(song);
+        }
+
+        public static Model forNewSong() {
+            final mugres.tracker.Song song = mugres.tracker.Song.of("Masterpiece", Context.basicContext());
+            final mugres.tracker.Pattern pattern = song.createPattern("A", 4);
+            song.arrangement().append(pattern, 1);
+            return new Model(song);
+        }
+
+        public mugres.tracker.Song getSong() {
+            return song;
+        }
+
+        public Properties.Model getSongPropertiesModel() {
+            return songPropertiesModel;
+        }
+
+        public Pattern.Model getPatternModel() {
+            return patternModel;
+        }
+
+        public Arrangement.Model getArrangementModel() {
+            return arrangementModel;
+        }
+
+        public mugres.tracker.Pattern getCurrentPattern() {
+            return currentPattern;
+        }
+
+        public Party getCurrentParty() {
+            return currentParty;
+        }
+
+        private int readBeatSubdivision(final mugres.tracker.Song song, final mugres.tracker.Pattern currentPattern) {
+            final EditorMetadata editorMetadata = song.metadataAs(EditorMetadata.class);
+            return editorMetadata != null && editorMetadata.getPatternBeatSubdivision() != null && editorMetadata.getPatternBeatSubdivision().containsKey(currentPattern.name()) ?
+                    editorMetadata.getPatternBeatSubdivision().get(currentPattern.name()) : 0;
+        }
     }
 }

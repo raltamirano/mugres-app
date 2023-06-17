@@ -1,12 +1,17 @@
 package mugres.app.control.tracker;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Arrangement extends VBox {
@@ -15,7 +20,11 @@ public class Arrangement extends VBox {
     private Model model;
 
     @FXML
-    private TableView entriesTableView;
+    private TableView<Model.ArrangementEntry> entriesTableView;
+    @FXML
+    private TableColumn<Model.ArrangementEntry, String> patternColumn;
+    @FXML
+    private TableColumn<Model.ArrangementEntry, Number> repetitionsColumn;
 
     public Arrangement() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
@@ -24,9 +33,14 @@ public class Arrangement extends VBox {
         try {
             fxmlLoader.load();
         } catch (final IOException exception) {
-            System.out.println(exception);
             throw new RuntimeException(exception);
         }
+    }
+
+    @FXML
+    public void initialize() {
+        patternColumn.setCellValueFactory(item -> item.getValue().patternProperty());
+        repetitionsColumn.setCellValueFactory(item -> item.getValue().repetitionsProperty());
     }
 
     public Model getModel() {
@@ -39,15 +53,14 @@ public class Arrangement extends VBox {
     }
 
     private void loadModel() {
-
+        entriesTableView.setItems(model.getEntries());
     }
 
     public static class Model {
-        private final List<ArrangementEntry> entries = new ArrayList<>();
+        private final ObservableList<ArrangementEntry> entries;
 
         private Model(final List<ArrangementEntry> entries) {
-            if (entries != null)
-                this.entries.addAll(entries);
+            this.entries = FXCollections.observableList(entries != null ? entries : Collections.emptyList());
         }
 
         public static Model of() {
@@ -58,17 +71,17 @@ public class Arrangement extends VBox {
             return new Model(entries);
         }
 
-        public List<ArrangementEntry> getEntries() {
+        public ObservableList<ArrangementEntry> getEntries() {
             return entries;
         }
 
         public static class ArrangementEntry {
-            private String pattern;
-            private int repetitions;
+            private SimpleStringProperty pattern;
+            private SimpleIntegerProperty repetitions;
 
             private ArrangementEntry(final String pattern, final int repetitions) {
-                this.pattern = pattern;
-                this.repetitions = repetitions;
+                this.pattern = new SimpleStringProperty(pattern);
+                this.repetitions = new SimpleIntegerProperty(repetitions);
             }
 
             public static ArrangementEntry of(final String pattern, final int repetitions) {
@@ -76,19 +89,27 @@ public class Arrangement extends VBox {
             }
 
             public String getPattern() {
+                return pattern.get();
+            }
+
+            public SimpleStringProperty patternProperty() {
                 return pattern;
             }
 
             public void setPattern(String pattern) {
-                this.pattern = pattern;
+                this.pattern.set(pattern);
             }
 
             public int getRepetitions() {
+                return repetitions.get();
+            }
+
+            public SimpleIntegerProperty repetitionsProperty() {
                 return repetitions;
             }
 
             public void setRepetitions(int repetitions) {
-                this.repetitions = repetitions;
+                this.repetitions.set(repetitions);
             }
         }
     }

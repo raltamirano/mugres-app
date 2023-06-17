@@ -12,7 +12,7 @@
             <left>
                 <VBox layoutX="419.0" maxHeight="300.0" minHeight="250.0">
                     <children>
-                        <Properties fx:id="songPropertiesEditor" maxHeight="300.0" minHeight="220.0" title="Song" />
+                        <Properties fx:id="properties" maxHeight="300.0" minHeight="220.0" title="Song" />
                         <Pattern fx:id="pattern" />
                         <Properties fx:id="callPropertiesEditor" minHeight="486.0" title="Properties" />
                     </children>

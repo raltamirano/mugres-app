@@ -10,9 +10,9 @@
             <Region HBox.hgrow="ALWAYS" />
             <HBox>
                 <children>
-                    <Button fx:id="prevParty" text="&lt;" />
-                    <Button fx:id="nextParty" text="&gt;" />
-                    <Button fx:id="createParty" text="Create" />
+                    <Button fx:id="prevParty" text="&lt;" onAction="#previousParty" />
+                    <Button fx:id="nextParty" text="&gt;" onAction="#nextParty"/>
+                    <Button fx:id="createParty" text="Create" onAction="#createParty" />
                     <Separator orientation="VERTICAL">
                         <padding>
                             <Insets left="5.0" right="5.0" />
