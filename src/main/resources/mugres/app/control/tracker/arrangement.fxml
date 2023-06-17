@@ -7,7 +7,7 @@
          xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
        <Label fx:id="titleLabel" text="Arrangement" />
-       <TableView fx:id="entriesTableView" minHeight="907.0">
+       <TableView fx:id="entriesTableView" minHeight="907.0" onKeyPressed="#onKeyPressedTableView">
         <placeholder>
             <Label text=""/>
         </placeholder>

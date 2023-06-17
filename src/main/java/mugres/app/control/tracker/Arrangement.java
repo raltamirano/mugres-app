@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -43,6 +45,18 @@ public class Arrangement extends VBox {
         repetitionsColumn.setCellValueFactory(item -> item.getValue().repetitionsProperty());
     }
 
+    @FXML
+    public void onKeyPressedTableView(final KeyEvent keyEvent) {
+        final Model.ArrangementEntry selectedArrangementEntry = entriesTableView.getSelectionModel().getSelectedItem();
+        if (keyEvent.getCode() == KeyCode.ADD) {
+            if (selectedArrangementEntry != null)
+                selectedArrangementEntry.setRepetitions(selectedArrangementEntry.getRepetitions() + 1);
+        } else if (keyEvent.getCode() == KeyCode.SUBTRACT) {
+            if (selectedArrangementEntry != null && selectedArrangementEntry.getRepetitions() > 1)
+                selectedArrangementEntry.setRepetitions(selectedArrangementEntry.getRepetitions() - 1);
+        }
+    }
+
     public Model getModel() {
         return model;
     }
@@ -73,6 +87,13 @@ public class Arrangement extends VBox {
 
         public ObservableList<ArrangementEntry> getEntries() {
             return entries;
+        }
+
+        @Override
+        public String toString() {
+            return "Model{" +
+                    "entries=" + entries +
+                    '}';
         }
 
         public static class ArrangementEntry {
@@ -110,6 +131,14 @@ public class Arrangement extends VBox {
 
             public void setRepetitions(int repetitions) {
                 this.repetitions.set(repetitions);
+            }
+
+            @Override
+            public String toString() {
+                return "ArrangementEntry{" +
+                        "pattern=" + pattern +
+                        ", repetitions=" + repetitions +
+                        '}';
             }
         }
     }

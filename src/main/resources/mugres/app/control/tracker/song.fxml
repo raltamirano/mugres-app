@@ -30,15 +30,15 @@
         <HBox>
             <Region HBox.hgrow="ALWAYS" />
             <HBox minHeight="29.0" spacing="10.0">
-                <Button fx:id="playSong" text="Play Song" />
+                <Button fx:id="playSong" text="Play Song" onAction="#playSong" />
                 <Separator orientation="VERTICAL" />
-                <Button fx:id="playPattern" minWidth="100.0" text="Play Pattern" />
+                <Button fx:id="playPattern" minWidth="100.0" text="Play Pattern" onAction="#playPattern" />
                 <CheckBox fx:id="loopPattern" minHeight="29.0" text="Loop">
                     <HBox.margin>
                         <Insets />
                     </HBox.margin></CheckBox>
                 <Separator orientation="VERTICAL" />
-                <Button fx:id="stop" minWidth="100.0" text="Stop" />
+                <Button fx:id="stop" minWidth="100.0" text="Stop" onAction="#stopPlaying" />
             </HBox>
             <Region HBox.hgrow="ALWAYS">
             <HBox.margin>

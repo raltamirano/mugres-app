@@ -1,7 +1,9 @@
 package mugres.app.control.tracker;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import mugres.app.control.Properties;
 import mugres.app.control.tracker.storage.EditorMetadata;
@@ -11,8 +13,6 @@ import mugres.common.Party;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
 
 public class Song extends BorderPane {
     private static final String FXML = "/mugres/app/control/tracker/song.fxml";
@@ -29,6 +29,9 @@ public class Song extends BorderPane {
 
     @FXML
     private Arrangement arrangement;
+
+    @FXML
+    private CheckBox loopPattern;
 
     public Song() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
@@ -51,6 +54,21 @@ public class Song extends BorderPane {
         this.model = model;
 
         loadModel();
+    }
+
+    @FXML
+    public void playSong(final ActionEvent event) {
+
+    }
+
+    @FXML
+    public void playPattern(final ActionEvent event) {
+
+    }
+
+    @FXML
+    public void stopPlaying(final ActionEvent event) {
+
     }
 
     private void loadModel() {
