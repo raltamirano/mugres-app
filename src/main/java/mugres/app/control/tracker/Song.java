@@ -1,5 +1,11 @@
 package mugres.app.control.tracker;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +25,7 @@ public class Song extends BorderPane {
     private static final Object MIN_TEMPO = 1;
     private static final Object MAX_TEMPO = 10000;
 
-    private Model model;
+    private SongModel model;
 
     @FXML
     private Properties properties;
@@ -44,11 +50,11 @@ public class Song extends BorderPane {
         }
     }
 
-    public Model getModel() {
+    public SongModel getModel() {
         return model;
     }
 
-    public void setModel(final Model model) {
+    public void setModel(final SongModel model) {
         if (model == null)
             throw new IllegalArgumentException("model");
         this.model = model;
@@ -58,7 +64,7 @@ public class Song extends BorderPane {
 
     @FXML
     public void playSong(final ActionEvent event) {
-
+        System.out.println(model.getSong());
     }
 
     @FXML
@@ -74,20 +80,25 @@ public class Song extends BorderPane {
     private void loadModel() {
         properties.setModel(model.getSongPropertiesModel());
         pattern.setModel(model.getPatternModel());
-        arrangement.setModel(model.getArrangementModel());
+        arrangement.setModel(model);
     }
 
-    public static class Model {
+    public static class SongModel {
         private final mugres.tracker.Song song;
 
         private final Properties.Model songPropertiesModel;
         private final Pattern.Model patternModel;
-        private final Arrangement.Model arrangementModel;
         private mugres.tracker.Pattern currentPattern;
+        private final ObservableList<ArrangementEntryModel> arrangementEntryModels;
         private mugres.common.Party currentParty;
 
-        private Model(final mugres.tracker.Song song) {
+        private SongModel(final mugres.tracker.Song song) {
             this.song = song;
+
+            this.arrangementEntryModels = FXCollections.observableList(song.arrangement().entries().stream()
+                    .map(e -> ArrangementEntryModel.of(e))
+                    .collect(Collectors.toList())
+            );
 
             songPropertiesModel =
                     Properties.Model.of(
@@ -122,23 +133,19 @@ public class Song extends BorderPane {
                                             currentPattern != null ? readBeatSubdivision(song, currentPattern) : 0, 0, 128)
                             )
                     );
-
-            arrangementModel = Arrangement.Model.of(song, song.arrangement().entries().stream()
-                    .map(e -> Arrangement.Model.ArrangementEntry.of(e))
-                    .collect(Collectors.toList()));
         }
 
-        public static Model forSong(final mugres.tracker.Song song) {
+        public static SongModel forSong(final mugres.tracker.Song song) {
             if (song == null)
                 throw new IllegalArgumentException("song");
-            return new Model(song);
+            return new SongModel(song);
         }
 
-        public static Model forNewSong() {
+        public static SongModel forNewSong() {
             final mugres.tracker.Song song = mugres.tracker.Song.of("Masterpiece", Context.basicContext());
             final mugres.tracker.Pattern pattern = song.createPattern("A", 4);
             song.arrangement().append(pattern, 1);
-            return new Model(song);
+            return new SongModel(song);
         }
 
         public mugres.tracker.Song getSong() {
@@ -153,10 +160,6 @@ public class Song extends BorderPane {
             return patternModel;
         }
 
-        public Arrangement.Model getArrangementModel() {
-            return arrangementModel;
-        }
-
         public mugres.tracker.Pattern getCurrentPattern() {
             return currentPattern;
         }
@@ -165,10 +168,70 @@ public class Song extends BorderPane {
             return currentParty;
         }
 
+        public ObservableList<ArrangementEntryModel> getArrangementEntryModels() {
+            return arrangementEntryModels;
+        }
+
         private int readBeatSubdivision(final mugres.tracker.Song song, final mugres.tracker.Pattern currentPattern) {
             final EditorMetadata editorMetadata = song.metadataAs(EditorMetadata.class);
             return editorMetadata != null && editorMetadata.getPatternBeatSubdivision() != null && editorMetadata.getPatternBeatSubdivision().containsKey(currentPattern.name()) ?
                     editorMetadata.getPatternBeatSubdivision().get(currentPattern.name()) : 0;
+        }
+    }
+    public static class ArrangementEntryModel {
+        private final mugres.tracker.Arrangement.Entry entry;
+        private ObjectProperty<mugres.tracker.Pattern> pattern;
+        private IntegerProperty repetitions;
+
+        private ArrangementEntryModel(final mugres.tracker.Arrangement.Entry entry) {
+            this.entry = entry;
+            this.pattern = new SimpleObjectProperty(entry.pattern());
+            try {
+                this.repetitions = JavaBeanIntegerPropertyBuilder.create()
+                        .bean(entry)
+                        .name("repetitions")
+                        .setter("repetitions")
+                        .getter("repetitions")
+                        .build();
+            } catch (final NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public static ArrangementEntryModel of(final mugres.tracker.Arrangement.Entry entry) {
+            return new ArrangementEntryModel(entry);
+        }
+
+        public final mugres.tracker.Pattern getPattern() {
+            return pattern.get();
+        }
+
+        public ObjectProperty patternProperty() {
+            return pattern;
+        }
+
+        public final void setPattern(mugres.tracker.Pattern pattern) {
+            this.pattern.set(pattern);
+        }
+
+        public final int getRepetitions() {
+            return repetitions.get();
+        }
+
+        public IntegerProperty repetitionsProperty() {
+            return repetitions;
+        }
+
+        public final void setRepetitions(int repetitions) {
+            this.repetitions.set(repetitions);
+        }
+
+        @Override
+        public String toString() {
+            return "ArrangementEntryModel{" +
+                    "pattern=" + pattern +
+                    ", repetitions=" + repetitions +
+                    '}';
         }
     }
 }
