@@ -19,6 +19,8 @@ import mugres.common.Scale;
 import mugres.common.TimeSignature;
 import mugres.common.Value;
 import mugres.common.Variant;
+import mugres.parametrizable.Parameter;
+import mugres.parametrizable.Parametrizable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -145,10 +147,10 @@ public class Properties extends VBox {
 
     private ComboBox getComboBox(final Property property, final Object[] values) {
         final ComboBox comboBox = new ComboBox(FXCollections.observableArrayList(values));
-        if (property.value != null)
-            comboBox.setValue(property.value);
+        if (property.getValue() != null)
+            comboBox.setValue(property.getValue());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(comboBox.getUserData()).value = newValue;
+            model.getProperties().get(comboBox.getUserData()).setValue(newValue);
         });
 
         return comboBox;
@@ -156,10 +158,10 @@ public class Properties extends VBox {
 
     private CheckBox getCheckBox(final Property property) {
         final CheckBox checkBox = new CheckBox();
-        if (property.value != null)
-            checkBox.setSelected(Boolean.parseBoolean(property.value.toString()));
+        if (property.getValue() != null)
+            checkBox.setSelected(Boolean.parseBoolean(property.getValue().toString()));
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(checkBox.getUserData()).value = newValue;
+            model.getProperties().get(checkBox.getUserData()).setValue(newValue);
         });
 
         return checkBox;
@@ -167,10 +169,10 @@ public class Properties extends VBox {
 
     private TextField getTextField(final Property property) {
         final TextField textField = new TextField();
-        if (property.value != null)
-            textField.setText(property.value.toString());
+        if (property.getValue() != null)
+            textField.setText(property.getValue().toString());
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            model.getProperties().get(textField.getUserData()).value = newValue;
+            model.getProperties().get(textField.getUserData()).setValue(newValue);
         });
         return textField;
     }
@@ -178,11 +180,11 @@ public class Properties extends VBox {
     private Spinner getIntegerSpinner(final Property property) {
         final int min = property.min instanceof Integer ? (int)property.min : Integer.MIN_VALUE;
         final int max = property.max instanceof Integer ? (int)property.max : Integer.MAX_VALUE;
-        final int initial = property.value instanceof Integer ? (int)property.value :
+        final int initial = property.getValue() instanceof Integer ? (int)property.getValue() :
                 (0 >= min && 0 <= max) ? 0 : min;
         final Spinner spinner = new Spinner(min, max, initial);
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(spinner.getUserData()).value = newValue;
+            model.getProperties().get(spinner.getUserData()).setValue(newValue);
         });
         return spinner;
     }
@@ -193,10 +195,15 @@ public class Properties extends VBox {
         private Model() {
         }
 
+        public static Model of(final Parametrizable parametrizable) {
+            final Model model = new Model();
+            parametrizable.parameters().forEach(p -> model.properties.put(p.name(), Property.of(parametrizable, p)));
+            return model;
+        }
+
         public static Model of(final Collection<Property> properties) {
             final Model model = new Model();
-            for(Property p : properties)
-                model.properties.put(p.name, p);
+            properties.forEach(p -> model.properties.put(p.name, p));
             return model;
         }
 
@@ -221,12 +228,14 @@ public class Properties extends VBox {
         private final String label;
         private final DataType type;
         private Object value;
-        private Object min;
-        private Object max;
-        private Collection<Object> domain;
+        private final Object min;
+        private final Object max;
+        private final Collection<Object> domain;
+        private final Parametrizable parametrizable;
 
         private Property(final String name, final String label, final DataType type, final Object value,
-                         final Object min, final Object max, final Collection<Object> domain) {
+                         final Object min, final Object max, final Collection<Object> domain,
+                         final Parametrizable parametrizable) {
             this.name = name;
             this.label = label;
             this.type = type;
@@ -234,20 +243,29 @@ public class Properties extends VBox {
             this.min = min;
             this.max = max;
             this.domain = domain;
+            this.parametrizable = parametrizable;
         }
 
         public static Property of(final String name, final String label, final DataType type,
                                       final Object value, final Collection<Object> domain) {
-            return new Property(name, label, type, value, null, null, domain);
+            return new Property(name, label, type, value, null, null, domain, null);
         }
 
         public static Property of(final String name, final String label, final DataType type, final Object value) {
-            return new Property(name, label, type, value, null, null, null);
+            return new Property(name, label, type, value, null, null, null, null);
         }
 
         public static Property of(final String name, final String label, final DataType type, final Object value,
                 final Object min, final Object max) {
-            return new Property(name, label, type, value, min, max, null);
+            return new Property(name, label, type, value, min, max, null, null);
+        }
+
+        public static Property of(final Parametrizable parametrizable, final Parameter parameter) {
+            if (parametrizable == null)
+                throw new IllegalArgumentException("parametrizable");
+
+            return new Property(parameter.name(), parameter.name(), parameter.dataType(), parameter.defaultValue(),
+                    parameter.min(), parameter.max(), parameter.domain(), parametrizable);
         }
 
         public String getName() {
@@ -263,11 +281,17 @@ public class Properties extends VBox {
         }
 
         public Object getValue() {
-            return value;
+            if (parametrizable != null)
+                return parametrizable.parameterValue(name);
+            else
+                return value;
         }
 
         public void setValue(final Object value) {
-            this.value = value;
+            if (parametrizable != null)
+                parametrizable.parameterValue(name, value);
+            else
+                this.value = value;
         }
 
         public Object getMin() {

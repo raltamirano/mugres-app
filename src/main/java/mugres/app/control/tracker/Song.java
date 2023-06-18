@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 
 public class Song extends BorderPane {
     private static final String FXML = "/mugres/app/control/tracker/song.fxml";
-    private static final Object MIN_TEMPO = 1;
-    private static final Object MAX_TEMPO = 10000;
 
     private Model model;
 
@@ -99,17 +97,7 @@ public class Song extends BorderPane {
                     .collect(Collectors.toList())
             );
 
-            songPropertiesModel =
-                    Properties.Model.of(
-                            Properties.Property.of("name", "Name", DataType.TEXT,
-                                    song.title()),
-                            Properties.Property.of("tempo", "BPM", DataType.INTEGER,
-                                    song.context().tempo(), MIN_TEMPO, MAX_TEMPO),
-                            Properties.Property.of("key", "Key", DataType.KEY,
-                                    song.context().key()),
-                            Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
-                                    song.context().timeSignature())
-                    );
+            songPropertiesModel = Properties.Model.of(song);
 
             if (!song.patterns().isEmpty())
                 currentPattern = song.patterns().iterator().next();
@@ -120,7 +108,7 @@ public class Song extends BorderPane {
                                     currentPattern != null ? currentPattern.name() : "Untitled"),
                             Properties.Property.of("tempo", "BPM", DataType.INTEGER,
                                     currentPattern != null ? currentPattern.context().tempo() : song.context().tempo(),
-                                    MIN_TEMPO, MAX_TEMPO),
+                                    1, 10000),
                             Properties.Property.of("key", "Key", DataType.KEY,
                                     currentPattern != null ? currentPattern.context().key() : song.context().key()),
                             Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
