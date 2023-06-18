@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import mugres.app.control.Properties;
 import mugres.app.control.tracker.Song.Model;
 
@@ -36,6 +37,16 @@ public class Pattern extends VBox {
     @FXML
     public void initialize() {
         patternPropertiesEditor.setTitleVisible(false);
+        patternSelectorComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(mugres.tracker.Pattern pattern) {
+                return pattern.name();
+            }
+            @Override
+            public mugres.tracker.Pattern fromString(String string) {
+                return null;
+            }
+        });
     }
 
     public Model getModel() {

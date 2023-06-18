@@ -2,6 +2,7 @@ package mugres.app.control.tracker;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.collections.FXCollections;
@@ -14,7 +15,6 @@ import javafx.scene.layout.BorderPane;
 import mugres.app.control.Properties;
 import mugres.app.control.tracker.storage.EditorMetadata;
 import mugres.common.Context;
-import mugres.common.DataType;
 import mugres.common.Party;
 
 import java.io.IOException;
@@ -102,22 +102,7 @@ public class Song extends BorderPane {
             if (!song.patterns().isEmpty())
                 currentPattern = song.patterns().iterator().next();
 
-            patternPropertiesModel =
-                    Properties.Model.of(
-                            Properties.Property.of("name", "Name", DataType.TEXT,
-                                    currentPattern != null ? currentPattern.name() : "Untitled"),
-                            Properties.Property.of("tempo", "BPM", DataType.INTEGER,
-                                    currentPattern != null ? currentPattern.context().tempo() : song.context().tempo(),
-                                    1, 10000),
-                            Properties.Property.of("key", "Key", DataType.KEY,
-                                    currentPattern != null ? currentPattern.context().key() : song.context().key()),
-                            Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
-                                    currentPattern != null ? currentPattern.context().timeSignature() :  song.context().timeSignature()),
-                            Properties.Property.of("length", "Measures", DataType.INTEGER,
-                                    currentPattern != null ? currentPattern.measures() : 0, 1, 100000),
-                            Properties.Property.of("beatSubdivision", "Beat subdivision", DataType.INTEGER,
-                                    currentPattern != null ? readBeatSubdivision(song, currentPattern) : 0, 0, 128)
-                    );
+            patternPropertiesModel = Properties.Model.of(currentPattern);
         }
 
         public static Model forSong(final mugres.tracker.Song song) {

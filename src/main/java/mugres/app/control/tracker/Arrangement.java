@@ -1,5 +1,6 @@
 package mugres.app.control.tracker;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
@@ -37,7 +38,11 @@ public class Arrangement extends VBox {
 
     @FXML
     public void initialize() {
-        patternColumn.setCellValueFactory(item -> item.getValue().patternProperty());
+        patternColumn.setCellValueFactory(item ->
+                Bindings.createStringBinding(() ->
+                                item.getValue().getPattern() != null ? item.getValue().getPattern().name() : "",
+                                item.getValue().patternProperty())
+        );
         repetitionsColumn.setCellValueFactory(item -> item.getValue().repetitionsProperty());
     }
 
