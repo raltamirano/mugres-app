@@ -9,8 +9,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import mugres.common.DataType;
 import mugres.common.DrumKit;
 import mugres.common.Key;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 
-public class Properties extends AnchorPane {
+public class Properties extends VBox {
     private static final String FXML = "/mugres/app/control/properties.fxml";
 
     private Model model;
@@ -82,6 +82,7 @@ public class Properties extends AnchorPane {
 
     public void setTitleVisible(final boolean value) {
         titleLabel.setVisible(value);
+        titleLabel.setManaged(value);
     }
 
     private void loadModel() {

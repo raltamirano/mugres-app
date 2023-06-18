@@ -3,16 +3,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root minHeight="150.0" minWidth="250.0" stylesheets="@properties.css" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-      <Label fx:id="titleLabel" text="Properties" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-   <ScrollPane hbarPolicy="NEVER" layoutY="24.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="24.0">
-      <content>
-         <GridPane fx:id="propertiesGrid">
-           <columnConstraints>
-             <ColumnConstraints fx:id="keyColumn" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-             <ColumnConstraints fx:id="valueColumn" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-           </columnConstraints>
-         </GridPane>
-      </content>
-   </ScrollPane>
+<fx:root minHeight="150.0" minWidth="250.0" stylesheets="@properties.css" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label fx:id="titleLabel" text="Properties" />
+        <ScrollPane hbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+            <content>
+                <GridPane fx:id="propertiesGrid">
+                    <columnConstraints>
+                        <ColumnConstraints fx:id="keyColumn" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints fx:id="valueColumn" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                </GridPane>
+            </content>
+        </ScrollPane>
+    </children>
 </fx:root>

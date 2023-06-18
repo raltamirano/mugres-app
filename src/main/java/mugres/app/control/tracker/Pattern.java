@@ -1,16 +1,23 @@
 package mugres.app.control.tracker;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 import mugres.app.control.Properties;
+import mugres.app.control.tracker.Song.SongModel;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class Pattern extends VBox {
     private static final String FXML = "/mugres/app/control/tracker/pattern.fxml";
 
-    private Model model;
+    private SongModel model;
+
+    @FXML
+    private ComboBox<mugres.tracker.Pattern> patternSelectorComboBox;
 
     @FXML
     private Properties patternPropertiesEditor;
@@ -26,32 +33,23 @@ public class Pattern extends VBox {
         }
     }
 
-    public Model getModel() {
+    @FXML
+    public void initialize() {
+        patternPropertiesEditor.setTitleVisible(false);
+    }
+
+    public SongModel getModel() {
         return model;
     }
 
-    public void setModel(final Model model) {
+    public void setModel(final SongModel model) {
         this.model = model;
         loadModel();
     }
 
     private void loadModel() {
+        patternSelectorComboBox.setItems(FXCollections.observableList(model.getSong().patterns().stream().collect(Collectors.toList())));
+        patternSelectorComboBox.setValue(model.getCurrentPattern());
         patternPropertiesEditor.setModel(model.getPatternPropertiesModel());
-    }
-
-    public static class Model {
-        private final Properties.Model patternPropertiesModel;
-
-        private Model(final Properties.Model patternPropertiesModel) {
-            this.patternPropertiesModel = patternPropertiesModel;
-        }
-
-        public static Model of(final Properties.Model patternProperties) {
-            return new Model(patternProperties);
-        }
-
-        public Properties.Model getPatternPropertiesModel() {
-            return patternPropertiesModel;
-        }
     }
 }

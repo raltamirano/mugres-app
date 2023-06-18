@@ -79,7 +79,7 @@ public class Song extends BorderPane {
 
     private void loadModel() {
         properties.setModel(model.getSongPropertiesModel());
-        pattern.setModel(model.getPatternModel());
+        pattern.setModel(model);
         arrangement.setModel(model);
     }
 
@@ -87,7 +87,7 @@ public class Song extends BorderPane {
         private final mugres.tracker.Song song;
 
         private final Properties.Model songPropertiesModel;
-        private final Pattern.Model patternModel;
+        private final Properties.Model patternPropertiesModel;
         private mugres.tracker.Pattern currentPattern;
         private final ObservableList<ArrangementEntryModel> arrangementEntryModels;
         private mugres.common.Party currentParty;
@@ -115,23 +115,21 @@ public class Song extends BorderPane {
             if (!song.patterns().isEmpty())
                 currentPattern = song.patterns().iterator().next();
 
-            patternModel =
-                    Pattern.Model.of(
-                            Properties.Model.of(
-                                    Properties.Property.of("pattern", "Pattern", DataType.UNKNOWN,
-                                            currentPattern, song.patterns().stream().collect(Collectors.toList())),
-                                    Properties.Property.of("tempo", "BPM", DataType.INTEGER,
-                                            currentPattern != null ? currentPattern.context().tempo() : song.context().tempo(),
-                                            MIN_TEMPO, MAX_TEMPO),
-                                    Properties.Property.of("key", "Key", DataType.KEY,
-                                            currentPattern != null ? currentPattern.context().key() : song.context().key()),
-                                    Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
-                                            currentPattern != null ? currentPattern.context().timeSignature() :  song.context().timeSignature()),
-                                    Properties.Property.of("length", "Measures", DataType.INTEGER,
-                                            currentPattern != null ? currentPattern.measures() : 0, 1, 100000),
-                                    Properties.Property.of("beatSubdivision", "Beat subdivision", DataType.INTEGER,
-                                            currentPattern != null ? readBeatSubdivision(song, currentPattern) : 0, 0, 128)
-                            )
+            patternPropertiesModel =
+                    Properties.Model.of(
+                            Properties.Property.of("name", "Name", DataType.TEXT,
+                                    currentPattern != null ? currentPattern.name() : "Untitled"),
+                            Properties.Property.of("tempo", "BPM", DataType.INTEGER,
+                                    currentPattern != null ? currentPattern.context().tempo() : song.context().tempo(),
+                                    MIN_TEMPO, MAX_TEMPO),
+                            Properties.Property.of("key", "Key", DataType.KEY,
+                                    currentPattern != null ? currentPattern.context().key() : song.context().key()),
+                            Properties.Property.of("timeSignature", "Time Sig.", DataType.TIME_SIGNATURE,
+                                    currentPattern != null ? currentPattern.context().timeSignature() :  song.context().timeSignature()),
+                            Properties.Property.of("length", "Measures", DataType.INTEGER,
+                                    currentPattern != null ? currentPattern.measures() : 0, 1, 100000),
+                            Properties.Property.of("beatSubdivision", "Beat subdivision", DataType.INTEGER,
+                                    currentPattern != null ? readBeatSubdivision(song, currentPattern) : 0, 0, 128)
                     );
         }
 
@@ -156,8 +154,8 @@ public class Song extends BorderPane {
             return songPropertiesModel;
         }
 
-        public Pattern.Model getPatternModel() {
-            return patternModel;
+        public Properties.Model getPatternPropertiesModel() {
+            return patternPropertiesModel;
         }
 
         public mugres.tracker.Pattern getCurrentPattern() {
@@ -178,6 +176,7 @@ public class Song extends BorderPane {
                     editorMetadata.getPatternBeatSubdivision().get(currentPattern.name()) : 0;
         }
     }
+
     public static class ArrangementEntryModel {
         private final mugres.tracker.Arrangement.Entry entry;
         private ObjectProperty<mugres.tracker.Pattern> pattern;
