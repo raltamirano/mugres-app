@@ -6,7 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 import mugres.app.control.Properties;
-import mugres.app.control.tracker.Song.SongModel;
+import mugres.app.control.tracker.Song.Model;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class Pattern extends VBox {
     private static final String FXML = "/mugres/app/control/tracker/pattern.fxml";
 
-    private SongModel model;
+    private Model model;
 
     @FXML
     private ComboBox<mugres.tracker.Pattern> patternSelectorComboBox;
@@ -38,11 +38,11 @@ public class Pattern extends VBox {
         patternPropertiesEditor.setTitleVisible(false);
     }
 
-    public SongModel getModel() {
+    public Model getModel() {
         return model;
     }
 
-    public void setModel(final SongModel model) {
+    public void setModel(final Model model) {
         this.model = model;
         loadModel();
     }

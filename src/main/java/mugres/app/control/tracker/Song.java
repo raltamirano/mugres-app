@@ -25,7 +25,7 @@ public class Song extends BorderPane {
     private static final Object MIN_TEMPO = 1;
     private static final Object MAX_TEMPO = 10000;
 
-    private SongModel model;
+    private Model model;
 
     @FXML
     private Properties properties;
@@ -50,11 +50,11 @@ public class Song extends BorderPane {
         }
     }
 
-    public SongModel getModel() {
+    public Model getModel() {
         return model;
     }
 
-    public void setModel(final SongModel model) {
+    public void setModel(final Model model) {
         if (model == null)
             throw new IllegalArgumentException("model");
         this.model = model;
@@ -83,16 +83,15 @@ public class Song extends BorderPane {
         arrangement.setModel(model);
     }
 
-    public static class SongModel {
+    public static class Model {
         private final mugres.tracker.Song song;
-
         private final Properties.Model songPropertiesModel;
         private final Properties.Model patternPropertiesModel;
         private mugres.tracker.Pattern currentPattern;
         private final ObservableList<ArrangementEntryModel> arrangementEntryModels;
         private mugres.common.Party currentParty;
 
-        private SongModel(final mugres.tracker.Song song) {
+        private Model(final mugres.tracker.Song song) {
             this.song = song;
 
             this.arrangementEntryModels = FXCollections.observableList(song.arrangement().entries().stream()
@@ -133,17 +132,17 @@ public class Song extends BorderPane {
                     );
         }
 
-        public static SongModel forSong(final mugres.tracker.Song song) {
+        public static Model forSong(final mugres.tracker.Song song) {
             if (song == null)
                 throw new IllegalArgumentException("song");
-            return new SongModel(song);
+            return new Model(song);
         }
 
-        public static SongModel forNewSong() {
+        public static Model forNewSong() {
             final mugres.tracker.Song song = mugres.tracker.Song.of("Masterpiece", Context.basicContext());
             final mugres.tracker.Pattern pattern = song.createPattern("A", 4);
             song.arrangement().append(pattern, 1);
-            return new SongModel(song);
+            return new Model(song);
         }
 
         public mugres.tracker.Song getSong() {

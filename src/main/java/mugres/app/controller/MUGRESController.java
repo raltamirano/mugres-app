@@ -2,7 +2,7 @@ package mugres.app.controller;
 
 import javafx.fxml.FXML;
 import mugres.app.control.tracker.Song;
-import mugres.app.control.tracker.Song.SongModel;
+import mugres.app.control.tracker.Song.Model;
 
 public class MUGRESController {
     @FXML
@@ -10,6 +10,6 @@ public class MUGRESController {
 
     @FXML
     public void initialize() {
-        songEditor.setModel(SongModel.forNewSong());
+        songEditor.setModel(Model.forNewSong());
     }
 }

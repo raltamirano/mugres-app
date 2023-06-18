@@ -8,14 +8,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mugres.app.control.tracker.Song.ArrangementEntryModel;
-import mugres.app.control.tracker.Song.SongModel;
+import mugres.app.control.tracker.Song.Model;
 
 import java.io.IOException;
 
 public class Arrangement extends VBox {
     private static final String FXML = "/mugres/app/control/tracker/arrangement.fxml";
 
-    private SongModel model;
+    private Model model;
 
     @FXML
     private TableView<ArrangementEntryModel> entriesTableView;
@@ -53,11 +53,11 @@ public class Arrangement extends VBox {
         }
     }
 
-    public SongModel getModel() {
+    public Model getModel() {
         return model;
     }
 
-    public void setModel(final SongModel model) {
+    public void setModel(final Model model) {
         this.model = model;
         loadModel();
     }
