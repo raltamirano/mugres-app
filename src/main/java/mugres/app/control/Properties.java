@@ -1,6 +1,5 @@
 package mugres.app.control;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -138,8 +137,13 @@ public class Properties extends VBox {
             }
             editor.setUserData(p.name);
             editor.minWidth(200.0);
-
-            propertiesGrid.addRow(rowIndex++, new Label(p.label), editor);
+            if (p.hasParametrizable()) {
+                final Overridable overridable = new Overridable();
+                overridable.setEditControl(editor, p);
+                propertiesGrid.addRow(rowIndex++, new Label(p.label), overridable);
+            } else {
+                propertiesGrid.addRow(rowIndex++, new Label(p.label), editor);
+            }
         }
     }
 

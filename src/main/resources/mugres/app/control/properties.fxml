@@ -10,8 +10,8 @@
             <content>
                 <GridPane fx:id="propertiesGrid">
                     <columnConstraints>
-                        <ColumnConstraints fx:id="keyColumn" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints fx:id="valueColumn" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints fx:id="keyColumn" prefWidth="100.0" />
+                        <ColumnConstraints fx:id="valueColumn"  />
                     </columnConstraints>
                 </GridPane>
             </content>
