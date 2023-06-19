@@ -40,7 +40,8 @@ public class Function extends VBox {
     private void onFunctionChanged(final mugres.function.Function<?> function) {
         functionParametersEditor.setModel(Properties.Model.of(
                 function.parameters().stream()
-                        .map(fp -> Properties.Property.of(fp.name(), fp.name(), fp.dataType(), fp.defaultValue()))
+                        .map(fp -> Properties.PropertyModel.of(fp.name(), fp.label(), fp.order(), fp.dataType(),
+                                fp.defaultValue()))
                         .collect(Collectors.toList())));
     }
 }
