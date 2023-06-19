@@ -1,5 +1,6 @@
 package mugres.app.control;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -317,6 +318,14 @@ public class Properties extends VBox {
 
         public boolean isDomainBased() {
             return domain != null;
+        }
+
+        public Parametrizable getParametrizable() {
+            return parametrizable;
+        }
+
+        public boolean hasParametrizable() {
+            return parametrizable != null;
         }
 
         @Override
