@@ -239,10 +239,11 @@ public class Properties extends VBox {
         private final Object max;
         private final Collection<Object> domain;
         private final Parametrizable parametrizable;
+        private final boolean overridable;
 
         private PropertyModel(final String name, final String label, final int order, final DataType type,
                               final Object value, final Object min, final Object max, final Collection<Object> domain,
-                              final Parametrizable parametrizable) {
+                              final Parametrizable parametrizable, final boolean overridable) {
             this.name = name;
             this.label = label;
             this.order = order;
@@ -252,22 +253,25 @@ public class Properties extends VBox {
             this.max = max;
             this.domain = domain;
             this.parametrizable = parametrizable;
+            this.overridable = overridable;
         }
 
         public static PropertyModel of(final String name, final String label, final int order, final DataType type,
                                        final Object value, final Collection<Object> domain) {
-            return new PropertyModel(name, label, order,  type, value, null, null, domain, null);
+            return new PropertyModel(name, label, order,  type, value, null, null, domain, null,
+                    false);
         }
 
         public static PropertyModel of(final String name, final String label, final int order, final DataType type,
                                        final Object value) {
             return new PropertyModel(name, label, order, type, value, null, null, null,
-                    null);
+                    null, false);
         }
 
         public static PropertyModel of(final String name, final String label, final int order, final DataType type,
                                        final Object value, final Object min, final Object max) {
-            return new PropertyModel(name, label, order, type, value, min, max, null, null);
+            return new PropertyModel(name, label, order, type, value, min, max, null, null,
+                    false);
         }
 
         public static PropertyModel of(final Parametrizable parametrizable, final Parameter parameter) {
@@ -275,7 +279,8 @@ public class Properties extends VBox {
                 throw new IllegalArgumentException("parametrizable");
 
             return new PropertyModel(parameter.name(), parameter.label(), parameter.order(), parameter.dataType(),
-                    parameter.defaultValue(), parameter.min(), parameter.max(), parameter.domain(), parametrizable);
+                    parameter.defaultValue(), parameter.min(), parameter.max(), parameter.domain(), parametrizable,
+                    parameter.isOverridable());
         }
 
         public String getName() {
@@ -332,6 +337,10 @@ public class Properties extends VBox {
             return parametrizable != null;
         }
 
+        public boolean isOverridable() {
+            return overridable;
+        }
+
         @Override
         public String toString() {
             return "Property{" +
@@ -343,6 +352,7 @@ public class Properties extends VBox {
                     ", min=" + min +
                     ", max=" + max +
                     ", domain=" + domain +
+                    ", overridable=" + overridable +
                     '}';
         }
 

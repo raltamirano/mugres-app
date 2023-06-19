@@ -69,7 +69,7 @@ public class Overridable extends HBox {
         this.editorControl = editorControl;
         this.propertyModel = propertyModel;
 
-        overridable = propertyModel.getParametrizable().hasParentParameterValueSource();
+        overridable = propertyModel.isOverridable() && propertyModel.getParametrizable().hasParentParameterValueSource();
         overridden = overridable ? propertyModel.getParametrizable().hasParameterValue(propertyModel.getName()) : false;
         editControlSet = true;
         propertyModel.getParametrizable().addPropertyChangeListener(propertyChangeListener);
