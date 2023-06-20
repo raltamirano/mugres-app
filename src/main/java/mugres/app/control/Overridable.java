@@ -5,6 +5,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -50,17 +53,16 @@ public class Overridable extends HBox {
         if (!overridable)
             return;
 
-        if (overridden) {
-//            propertyModel.getParametrizable().undoOverride(propertyModel.getName());
-        } else {
-
-        }
+        if (overridden)
+            propertyModel.getParametrizable().undoOverride(propertyModel.getName());
+        else
+            propertyModel.getParametrizable().makeOverride(propertyModel.getName());
 
         overridden = !overridden;
         updateControlsFromOverrideState();
     }
 
-    public void setEditControl(final Node editorControl, final Properties.PropertyModel propertyModel) {
+    public void setEditorControl(final Node editorControl, final Properties.PropertyModel propertyModel) {
         if (editControlSet)
             throw new RuntimeException("Edit control already set!");
         if (!propertyModel.hasParametrizable())
@@ -70,7 +72,7 @@ public class Overridable extends HBox {
         this.propertyModel = propertyModel;
 
         overridable = propertyModel.isOverridable() && propertyModel.getParametrizable().hasParentParameterValueSource();
-        overridden = overridable ? propertyModel.getParametrizable().hasParameterValue(propertyModel.getName()) : false;
+        overridden = overridable ? propertyModel.getParametrizable().overrides(propertyModel.getName()) : false;
         editControlSet = true;
         propertyModel.getParametrizable().addPropertyChangeListener(propertyChangeListener);
 
@@ -79,21 +81,13 @@ public class Overridable extends HBox {
     }
 
     private void updateControlsFromOverrideState() {
-        if (propertyModel.getName().equals(Context.TIME_SIGNATURE)) {
-            System.out.println(overridable);
-            System.out.println(overridden);
-            System.out.println(propertyModel);
-        }
         if (overridable) {
             editorControl.setVisible(overridden);
             editorControl.setManaged(overridden);
             parentValueText.setVisible(!overridden);
             parentValueText.setManaged(!overridden);
-            this.prefHeight(30.0);
-            this.maxHeight(30.0);
-            parentValueText.prefHeight(30.0);
-            parentValueText.maxHeight(30.0);
-            parentValueText.setText(!overridden ? (propertyModel.getValue() != null ? String.valueOf(propertyModel.getValue()) : "") : "");
+            final Object value = propertyModel.getParametrizable().parameterValue(propertyModel.getName());
+            parentValueText.setText(value != null ? String.valueOf(value) : "");
             toggleOverrideButton.setText(overridden ? "R" : "O");
             toggleOverrideButton.setTooltip(new Tooltip(overridden ? "Reset (clear override)" : "Override"));
         } else {
@@ -116,10 +110,23 @@ public class Overridable extends HBox {
                 if (changedValue.fromParent())
                     parentValueText.setText(changedValue.value() != null ? String.valueOf(changedValue.value()) : "");
                 else
-                    System.out.println("TODO: Set EditorControl to: " + changedValue.value());
+                    setEditorControlValue(changedValue.value());
             } else {
-                System.out.println("TODO: Set EditorControl to: " + e.getNewValue());
+                setEditorControlValue(e.getNewValue());
             }
         };
+    }
+
+    private void setEditorControlValue(final Object newValue) {
+        if (editorControl instanceof TextField)
+            ((TextField)editorControl).setText(newValue != null ? newValue.toString() : null);
+        else if (editorControl instanceof ComboBox)
+            ((ComboBox)editorControl).setValue(newValue);
+        else if (editorControl instanceof CheckBox)
+            ((CheckBox)editorControl).setSelected(newValue != null ? Boolean.valueOf(newValue.toString()) : false);
+        else if (editorControl instanceof Spinner)
+            ((Spinner)editorControl).getValueFactory().setValue(newValue);
+        else
+            throw new IllegalStateException("Unknown editor control type: " + editorControl.getClass().getSimpleName());
     }
 }

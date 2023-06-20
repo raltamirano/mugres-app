@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static mugres.parametrizable.ParametrizableSupport.ChangedValue.unwrap;
 
 public class Properties extends VBox {
     private static final String FXML = "/mugres/app/control/properties.fxml";
@@ -139,7 +140,7 @@ public class Properties extends VBox {
             editor.minWidth(200.0);
             if (p.hasParametrizable()) {
                 final Overridable overridable = new Overridable();
-                overridable.setEditControl(editor, p);
+                overridable.setEditorControl(editor, p);
                 propertiesGrid.addRow(rowIndex++, new Label(p.label), overridable);
             } else {
                 propertiesGrid.addRow(rowIndex++, new Label(p.label), editor);
@@ -156,7 +157,7 @@ public class Properties extends VBox {
         if (propertyModel.getValue() != null)
             comboBox.setValue(propertyModel.getValue());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(comboBox.getUserData()).setValue(newValue);
+            model.getProperties().get(comboBox.getUserData()).setValue(unwrap(newValue));
         });
 
         return comboBox;
@@ -167,7 +168,7 @@ public class Properties extends VBox {
         if (propertyModel.getValue() != null)
             checkBox.setSelected(Boolean.parseBoolean(propertyModel.getValue().toString()));
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(checkBox.getUserData()).setValue(newValue);
+            model.getProperties().get(checkBox.getUserData()).setValue(unwrap(newValue));
         });
 
         return checkBox;
@@ -178,7 +179,7 @@ public class Properties extends VBox {
         if (propertyModel.getValue() != null)
             textField.setText(propertyModel.getValue().toString());
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            model.getProperties().get(textField.getUserData()).setValue(newValue);
+            model.getProperties().get(textField.getUserData()).setValue(unwrap(newValue));
         });
         return textField;
     }
@@ -190,7 +191,7 @@ public class Properties extends VBox {
                 (0 >= min && 0 <= max) ? 0 : min;
         final Spinner spinner = new Spinner(min, max, initial);
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(spinner.getUserData()).setValue(newValue);
+            model.getProperties().get(spinner.getUserData()).setValue(unwrap(newValue));
         });
         return spinner;
     }
