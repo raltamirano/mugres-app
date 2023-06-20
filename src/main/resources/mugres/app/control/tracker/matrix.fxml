@@ -12,31 +12,17 @@
                 <children>
                     <Button fx:id="prevParty" text="&lt;" onAction="#previousParty" />
                     <Button fx:id="nextParty" text="&gt;" onAction="#nextParty"/>
-                    <Button fx:id="createParty" text="Create" onAction="#createParty" />
                     <Separator orientation="VERTICAL">
                         <padding>
                             <Insets left="5.0" right="5.0" />
                         </padding>
                     </Separator>
-                    <Label fx:id="partyNameLabel" minHeight="29.0" text="Party">
-                        <padding>
-                            <Insets right="5.0" />
-                        </padding></Label>
-                    <TextField fx:id="partyName" disable="true" />
-                    <Separator orientation="VERTICAL">
-                        <padding>
-                            <Insets left="5.0" right="5.0" />
-                        </padding>
-                        <HBox.margin>
-                            <Insets />
-                        </HBox.margin>
-                    </Separator>
-
                     <Label fx:id="instrumentLabel" minHeight="29.0" text="Instrument">
                         <padding>
                             <Insets right="5.0" />
                         </padding></Label>
                     <ComboBox fx:id="instrumentComboBox" />
+                    <Button fx:id="createParty" text="Create" onAction="#createParty" />
 
                 </children>
             </HBox>

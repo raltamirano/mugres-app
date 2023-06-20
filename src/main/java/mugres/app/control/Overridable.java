@@ -11,11 +11,8 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
-import mugres.common.Context;
-import mugres.parametrizable.ParametrizableSupport;
 import mugres.parametrizable.ParametrizableSupport.ChangedValue;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
@@ -74,7 +71,7 @@ public class Overridable extends HBox {
         overridable = propertyModel.isOverridable() && propertyModel.getParametrizable().hasParentParameterValueSource();
         overridden = overridable ? propertyModel.getParametrizable().overrides(propertyModel.getName()) : false;
         editControlSet = true;
-        propertyModel.getParametrizable().addPropertyChangeListener(propertyChangeListener);
+        propertyModel.getParametrizable().addParameterValueChangeListener(propertyChangeListener);
 
         getChildren().add(0, editorControl);
         updateControlsFromOverrideState();

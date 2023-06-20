@@ -13,8 +13,10 @@
         <Properties fx:id="patternPropertiesEditor" minHeight="220.0" />
         <HBox maxHeight="29.0" minHeight="29.0">
             <children>
-                <Button id="createPatternButton" maxWidth="1.7976931348623157E308" text="Create" HBox.hgrow="ALWAYS" />
-                <Button id="deletePatternButton" maxWidth="1.7976931348623157E308" text="Delete" HBox.hgrow="ALWAYS" />
+                <Button id="createPatternButton" maxWidth="1.7976931348623157E308" text="Create" HBox.hgrow="ALWAYS"
+                        onAction="#createPattern" />
+                <Button id="deletePatternButton" maxWidth="1.7976931348623157E308" text="Delete" HBox.hgrow="ALWAYS"
+                        onAction="#deletePattern" />
             </children>
         </HBox>
     </children>

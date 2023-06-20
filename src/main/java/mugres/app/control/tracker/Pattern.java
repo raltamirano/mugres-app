@@ -1,6 +1,7 @@
 package mugres.app.control.tracker;
 
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
@@ -10,10 +11,10 @@ import mugres.app.control.Properties;
 import mugres.app.control.tracker.Song.Model;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 public class Pattern extends VBox {
     private static final String FXML = "/mugres/app/control/tracker/pattern.fxml";
+    public static final int DEFAULT_PATTERN_MEASURES = 4;
 
     private Model model;
 
@@ -40,13 +41,26 @@ public class Pattern extends VBox {
         patternSelectorComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(mugres.tracker.Pattern pattern) {
-                return pattern.name();
+                return pattern != null ? pattern.name() : null;
             }
             @Override
             public mugres.tracker.Pattern fromString(String string) {
                 return null;
             }
         });
+    }
+
+    @FXML
+    public void createPattern(final ActionEvent event) {
+        final mugres.tracker.Pattern created = model.getSong().createPattern(DEFAULT_PATTERN_MEASURES);
+        model.setCurrentPattern(created);
+    }
+
+    @FXML
+    public void deletePattern(final ActionEvent event) {
+        final mugres.tracker.Pattern currentPattern = model.getCurrentPattern();
+        if (currentPattern != null)
+            model.getSong().deletePattern(currentPattern.name());
     }
 
     public Model getModel() {
@@ -59,8 +73,8 @@ public class Pattern extends VBox {
     }
 
     private void loadModel() {
-        patternSelectorComboBox.setItems(FXCollections.observableList(model.getSong().patterns().stream().collect(Collectors.toList())));
-        patternSelectorComboBox.setValue(model.getCurrentPattern());
-        patternPropertiesEditor.setModel(model.getPatternPropertiesModel());
+        patternSelectorComboBox.setItems(model.patterns());
+        patternSelectorComboBox.valueProperty().bindBidirectional(model.currentPatternProperty());
+        patternPropertiesEditor.modelProperty().bind(model.patternPropertiesModelProperty());
     }
 }

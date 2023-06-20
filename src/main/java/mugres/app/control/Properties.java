@@ -1,5 +1,7 @@
 package mugres.app.control;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,7 +36,7 @@ import static mugres.parametrizable.ParametrizableSupport.ChangedValue.unwrap;
 public class Properties extends VBox {
     private static final String FXML = "/mugres/app/control/properties.fxml";
 
-    private Model model;
+    private final ObjectProperty<Model> model;
 
     @FXML
     private Label titleLabel;
@@ -51,15 +53,21 @@ public class Properties extends VBox {
         } catch (final IOException exception) {
             throw new RuntimeException(exception);
         }
+
+        model = new SimpleObjectProperty<>();
+        model.addListener((source, oldValue, newValue) -> loadModel());
     }
 
     public Model getModel() {
+        return model.get();
+    }
+
+    public ObjectProperty<Model> modelProperty() {
         return model;
     }
 
     public void setModel(final Model model) {
-        this.model = model;
-        loadModel();
+        this.model.set(model);
     }
 
     public String getTitle() {
@@ -90,8 +98,14 @@ public class Properties extends VBox {
     }
 
     private void loadModel() {
+        propertiesGrid.getChildren().clear();
+
+        final Model currentModel = getModel();
+        if (currentModel == null)
+            return;
+
         int rowIndex = 0;
-        for(PropertyModel p : model.properties.values().stream().sorted().collect(Collectors.toList())) {
+        for(PropertyModel p : currentModel.properties.values().stream().sorted().collect(Collectors.toList())) {
             Node editor = null;
             switch (p.type) {
                 case VALUE:
@@ -157,7 +171,7 @@ public class Properties extends VBox {
         if (propertyModel.getValue() != null)
             comboBox.setValue(propertyModel.getValue());
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(comboBox.getUserData()).setValue(unwrap(newValue));
+            getModel().getProperties().get(comboBox.getUserData()).setValue(unwrap(newValue));
         });
 
         return comboBox;
@@ -168,7 +182,7 @@ public class Properties extends VBox {
         if (propertyModel.getValue() != null)
             checkBox.setSelected(Boolean.parseBoolean(propertyModel.getValue().toString()));
         checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(checkBox.getUserData()).setValue(unwrap(newValue));
+            getModel().getProperties().get(checkBox.getUserData()).setValue(unwrap(newValue));
         });
 
         return checkBox;
@@ -179,7 +193,7 @@ public class Properties extends VBox {
         if (propertyModel.getValue() != null)
             textField.setText(propertyModel.getValue().toString());
         textField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            model.getProperties().get(textField.getUserData()).setValue(unwrap(newValue));
+            getModel().getProperties().get(textField.getUserData()).setValue(unwrap(newValue));
         });
         return textField;
     }
@@ -191,7 +205,7 @@ public class Properties extends VBox {
                 (0 >= min && 0 <= max) ? 0 : min;
         final Spinner spinner = new Spinner(min, max, initial);
         spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            model.getProperties().get(spinner.getUserData()).setValue(unwrap(newValue));
+            getModel().getProperties().get(spinner.getUserData()).setValue(unwrap(newValue));
         });
         return spinner;
     }

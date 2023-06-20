@@ -18,10 +18,14 @@
       </TableView>
       <HBox maxHeight="29.0" minHeight="29.0">
          <children>
-            <Button fx:id="addArrangementEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" text="Create" />
-            <Button fx:id="deleteArrangementEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" text="Delete" />
-            <Button fx:id="moveDownEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" text="Down" />
-            <Button fx:id="moveUpEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" text="Up" />
+            <Button fx:id="addArrangementEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"
+                    text="Create" onAction="#createEntry" />
+            <Button fx:id="deleteArrangementEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"
+                    text="Delete" onAction="#deleteEntry" />
+            <Button fx:id="moveDownEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"
+                    text="Down" onAction="#moveEntryDown" />
+            <Button fx:id="moveUpEntryButton" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS"
+                    text="Up" onAction="#moveEntryUp" />
          </children>
       </HBox>
    </children>
