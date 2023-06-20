@@ -12,7 +12,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import mugres.app.control.Properties;
-import mugres.app.control.tracker.storage.EditorMetadata;
 import mugres.common.Context;
 import mugres.common.Party;
 
@@ -139,12 +138,6 @@ public class Song extends BorderPane {
 
         public ObservableList<ArrangementEntryModel> getArrangementEntryModels() {
             return arrangementEntryModels;
-        }
-
-        private int readBeatSubdivision(final mugres.tracker.Song song, final mugres.tracker.Pattern currentPattern) {
-            final EditorMetadata editorMetadata = song.metadataAs(EditorMetadata.class);
-            return editorMetadata != null && editorMetadata.getPatternBeatSubdivision() != null && editorMetadata.getPatternBeatSubdivision().containsKey(currentPattern.name()) ?
-                    editorMetadata.getPatternBeatSubdivision().get(currentPattern.name()) : 0;
         }
     }
 
