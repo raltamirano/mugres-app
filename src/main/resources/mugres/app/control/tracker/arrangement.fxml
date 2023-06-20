@@ -3,17 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root minHeight="800.0" minWidth="280.0" stylesheets="@arrangement.css" type="javafx.scene.layout.VBox"
+<fx:root fx:id="arrangementRoot" minWidth="350.0" stylesheets="@arrangement.css" type="javafx.scene.layout.VBox"
          xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
        <Label fx:id="titleLabel" text="Arrangement" />
-       <TableView fx:id="entriesTableView" minHeight="907.0" onKeyPressed="#onKeyPressedTableView">
+       <TableView fx:id="entriesTableView" minHeight="500.0" onKeyPressed="#onKeyPressedTableView">
         <placeholder>
             <Label text=""/>
         </placeholder>
         <columns>
-          <TableColumn fx:id="patternColumn" prefWidth="230.0" text="Pattern" />
-          <TableColumn fx:id="repetitionsColumn" prefWidth="50.0" text="Reps" />
+          <TableColumn fx:id="patternColumn" prefWidth="265.0" text="Pattern" />
+          <TableColumn fx:id="repetitionsColumn" prefWidth="80.0" text="Repetitions" />
         </columns>
       </TableView>
       <HBox maxHeight="29.0" minHeight="29.0">

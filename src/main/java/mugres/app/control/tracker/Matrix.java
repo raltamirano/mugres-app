@@ -1,24 +1,30 @@
 package mugres.app.control.tracker;
 
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
-import mugres.common.Instrument;
+import javafx.util.StringConverter;
+import mugres.common.Party;
+import mugres.function.Function;
 
 import java.io.IOException;
 
 public class Matrix extends ScrollPane {
     private static final String FXML = "/mugres/app/control/tracker/matrix.fxml";
 
-    @FXML
-    private GridPane callsMatrix;
+    private Song.Model model;
 
     @FXML
-    private ComboBox<Instrument> instrumentComboBox;
+    private GridPane matrix;
+
+    @FXML
+    private ComboBox<Party> trackComboBox;
+
+    @FXML
+    private ComboBox<Function.EventsFunction> functionComboBox;
 
     public Matrix() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
@@ -33,27 +39,45 @@ public class Matrix extends ScrollPane {
 
     @FXML
     public void initialize() {
-        instrumentComboBox.setItems(FXCollections.observableArrayList(mugres.common.Instrument.values()).sorted());
-        instrumentComboBox.valueProperty().addListener((observable, oldValue, newValue) -> onFunctionChanged(newValue));
+        trackComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(final Party party) {
+                return party != null ? party.name() : "";
+            }
+
+            @Override
+            public Party fromString(final String string) {
+                return null;
+            }
+        });
     }
 
-    private void onFunctionChanged(final Instrument instrument) {
+    public Song.Model getModel() {
+        return model;
+    }
 
+    public void setModel(final Song.Model model) {
+        this.model = model;
+        loadModel();
+    }
+
+
+    @FXML
+    protected void setCall(final ActionEvent event) {
+        final Party currentTrack = model.getCurrentTrack();
+        if (currentTrack == null)
+            return;
     }
 
     @FXML
-    protected void previousParty(final ActionEvent event) {
-
+    protected void clearCall(final ActionEvent event) {
+        final Party currentTrack = model.getCurrentTrack();
+        if (currentTrack == null)
+            return;
     }
 
-    @FXML
-    protected void nextParty(final ActionEvent event) {
-
+    private void loadModel() {
+        trackComboBox.setItems(model.tracks());
+        functionComboBox.setItems(model.eventsFunctions());
     }
-
-    @FXML
-    protected void createParty(final ActionEvent event) {
-
-    }
-
 }

@@ -21,10 +21,15 @@
         </BorderPane>
     </left>
     <right>
-        <Arrangement fx:id="arrangement" AnchorPane.bottomAnchor="350.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <VBox>
+            <children>
+                <Arrangement fx:id="arrangement" VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" />
+                <Tracks fx:id="tracks" VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" />
+            </children>
+        </VBox>
     </right>
     <center>
-        <Matrix fx:id="partyCallsMatrix" />
+        <Matrix fx:id="matrix" />
     </center>
     <bottom>
         <HBox>
@@ -40,13 +45,7 @@
                 <Separator orientation="VERTICAL" />
                 <Button fx:id="stop" minWidth="100.0" text="Stop" onAction="#stopPlaying" />
             </HBox>
-            <Region HBox.hgrow="ALWAYS">
-            <HBox.margin>
-               <Insets />
-            </HBox.margin></Region>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
+            <Region HBox.hgrow="ALWAYS" />
         </HBox>
     </bottom>
 </fx:root>

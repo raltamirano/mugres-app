@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root fx:id="tracksRoot" minWidth="350.0" stylesheets="@tracks.css" type="javafx.scene.layout.VBox"
+         xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+       <Label fx:id="titleLabel" text="Tracks" />
+       <TableView fx:id="tracksTableView" minHeight="100.0">
+        <placeholder>
+            <Label text="" />
+        </placeholder>
+        <columns>
+          <TableColumn fx:id="nameColumn" prefWidth="125.0" text="Name" />
+          <TableColumn fx:id="instrumentColumn" prefWidth="160.0" text="Instrument" />
+          <TableColumn fx:id="channelColumn" prefWidth="65.0" text="MIDI Ch." />
+        </columns>
+      </TableView>
+      <HBox>
+         <children>
+             <VBox HBox.hgrow="ALWAYS">
+                <children>
+                    <ComboBox fx:id="instrumentComboBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                    <HBox>
+                        <Button fx:id="createTrackButton" maxWidth="1.7976931348623157E308" onAction="#createTrack"
+                                text="Create" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="deleteTrackButton" maxWidth="1.7976931348623157E308" onAction="#deleteTrack"
+                                text="Delete" HBox.hgrow="ALWAYS" />
+                    </HBox>
+                </children>
+             </VBox>
+         </children>
+      </HBox>
+   </children>
+</fx:root>

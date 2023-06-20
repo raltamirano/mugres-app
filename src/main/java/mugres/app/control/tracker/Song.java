@@ -1,6 +1,5 @@
 package mugres.app.control.tracker;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -15,13 +14,16 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
 import mugres.app.control.Properties;
 import mugres.common.Context;
+import mugres.common.Instrument;
 import mugres.common.Party;
+import mugres.function.Function;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static mugres.app.control.tracker.Pattern.DEFAULT_PATTERN_MEASURES;
 
 public class Song extends BorderPane {
@@ -39,7 +41,13 @@ public class Song extends BorderPane {
     private Arrangement arrangement;
 
     @FXML
+    private Tracks tracks;
+
+    @FXML
     private CheckBox loopPattern;
+
+    @FXML
+    private Matrix matrix;
 
     public Song() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
@@ -83,6 +91,8 @@ public class Song extends BorderPane {
         properties.setModel(model.getSongPropertiesModel());
         pattern.setModel(model);
         arrangement.setModel(model);
+        tracks.setModel(model);
+        matrix.setModel(model);
     }
 
     public static class Model {
@@ -92,18 +102,27 @@ public class Song extends BorderPane {
         private final ObjectProperty<Properties.Model> patternPropertiesModel;
         private final ObjectProperty<mugres.tracker.Pattern> currentPattern;
         private final ObservableList<ArrangementEntryModel> arrangementEntryModels;
-        private mugres.common.Party currentParty;
+        private final ObjectProperty<mugres.common.Party> currentTrack;
+        private final ObservableList<Function.EventsFunction> eventsFunctions;
+        private final ObservableList<Instrument> instruments;
+        private final ObservableList<Party> tracks;
 
         private Model(final mugres.tracker.Song song) {
             this.song = song;
 
-            this.patterns = FXCollections.observableList(song.patterns().stream().collect(Collectors.toList()));
-            this.arrangementEntryModels = FXCollections.observableList(mapArrangementEntries());
             this.songPropertiesModel = Properties.Model.of(song);
+            this.patterns = FXCollections.observableList(song.patterns().stream().sorted().collect(Collectors.toList()));
             this.currentPattern = new SimpleObjectProperty<>();
             this.currentPattern.addListener(createCurrentPatternChangeListener());
             this.patternPropertiesModel = new SimpleObjectProperty<>();
-
+            if (!patterns().isEmpty()) setCurrentPattern(patterns().get(0));
+            this.arrangementEntryModels = FXCollections.observableList(mapArrangementEntries());
+            this.currentTrack = new SimpleObjectProperty<>();
+            this.eventsFunctions = FXCollections.unmodifiableObservableList(FXCollections.observableList(
+                    mugres.function.Function.allEventsFunctions().stream().collect(Collectors.toList())).sorted());
+            this.instruments = FXCollections.unmodifiableObservableList(FXCollections.observableList(
+                    asList(mugres.common.Instrument.values())).sorted());
+            this.tracks = FXCollections.observableList(song.parties().stream().collect(Collectors.toList()));
             this.song.addPropertyChangeListener(createSongPropertyChangeListener());
         }
 
@@ -158,12 +177,32 @@ public class Song extends BorderPane {
             this.currentPattern.set(currentPattern);
         }
 
-        public Party getCurrentParty() {
-            return currentParty;
+        public Party getCurrentTrack() {
+            return currentTrack.get();
+        }
+
+        public ObjectProperty<Party> currentTrackProperty() {
+            return currentTrack;
+        }
+
+        public void setCurrentTrack(Party currentTrack) {
+            this.currentTrack.set(currentTrack);
         }
 
         public ObservableList<ArrangementEntryModel> getArrangementEntryModels() {
             return arrangementEntryModels;
+        }
+
+        public ObservableList<Function.EventsFunction> eventsFunctions() {
+            return eventsFunctions;
+        }
+
+        public ObservableList<Instrument> instruments() {
+            return instruments;
+        }
+
+        public ObservableList<Party> tracks() {
+            return tracks;
         }
 
         private List<ArrangementEntryModel> mapArrangementEntries() {
@@ -176,12 +215,20 @@ public class Song extends BorderPane {
             return e -> {
                 switch (e.getPropertyName()) {
                     case mugres.tracker.Song.PATTERNS:
-                        patterns.setAll(song.patterns().stream().collect(Collectors.toList()));
+                        patterns.setAll(song.patterns().stream().sorted().collect(Collectors.toList()));
                         final mugres.tracker.Pattern theCurrentPattern = getCurrentPattern();
                         if (patterns.contains(theCurrentPattern))
                             setCurrentPattern(theCurrentPattern);
                         else
                             setCurrentPattern(patterns().stream().findFirst().orElse(null));
+                        break;
+                    case mugres.tracker.Song.PARTIES:
+                        tracks.setAll(song.parties().stream().sorted().collect(Collectors.toList()));
+                        final Party theCurrentTrack = getCurrentTrack();
+                        if (tracks.contains(theCurrentTrack))
+                            setCurrentTrack(theCurrentTrack);
+                        else
+                            setCurrentTrack(tracks.stream().findFirst().orElse(null));
                         break;
                     case mugres.tracker.Song.ARRANGEMENT:
                         arrangementEntryModels.setAll(mapArrangementEntries());

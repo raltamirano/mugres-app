@@ -8,27 +8,19 @@
     <VBox maxWidth="1.7976931348623157E308">
         <HBox>
             <Region HBox.hgrow="ALWAYS" />
-            <HBox>
+            <HBox spacing="5">
                 <children>
-                    <Button fx:id="prevParty" text="&lt;" onAction="#previousParty" />
-                    <Button fx:id="nextParty" text="&gt;" onAction="#nextParty"/>
-                    <Separator orientation="VERTICAL">
-                        <padding>
-                            <Insets left="5.0" right="5.0" />
-                        </padding>
-                    </Separator>
-                    <Label fx:id="instrumentLabel" minHeight="29.0" text="Instrument">
-                        <padding>
-                            <Insets right="5.0" />
-                        </padding></Label>
-                    <ComboBox fx:id="instrumentComboBox" />
-                    <Button fx:id="createParty" text="Create" onAction="#createParty" />
-
+                    <Label fx:id="trackLabel" minHeight="29.0" text="Track" />
+                    <ComboBox fx:id="trackComboBox" />
+                    <Label fx:id="functionLabel" minHeight="29.0" text="Function" />
+                    <ComboBox fx:id="functionComboBox" />
+                    <Button fx:id="setCallButton" text="Set" onAction="#setCall" />
+                    <Button fx:id="clearCallButton" text="Clear" onAction="#clearCall" />
                 </children>
             </HBox>
             <Region HBox.hgrow="ALWAYS" />
         </HBox>
-        <GridPane fx:id="callsMatrix">
+        <GridPane fx:id="matrix">
             <children>
             </children>
         </GridPane>
