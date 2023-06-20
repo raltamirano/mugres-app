@@ -52,9 +52,9 @@
 						<id>debug</id>
 						<configuration>
 							<options>
-								<option>-agentlib:jdwp=transport=dt_socket,server=n,address=localhost:8000,suspend=y</option>
+								<option>-agentlib:jdwp=transport=dt_socket,server=y,address=localhost:8000,suspend=y</option>
 							</options>
-							<mainClass>org.waninge.test.JFXTest</mainClass>
+							<mainClass>mugres.app.EntryPoint</mainClass>
 						</configuration>
 					</execution>
 				</executions>
