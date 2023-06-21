@@ -1,22 +1,16 @@
 package mugres.app.control.tracker;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
-import mugres.app.control.tracker.Song.ArrangementEntryModel;
 import mugres.app.control.tracker.Song.Model;
 import mugres.common.Instrument;
-import mugres.common.Party;
+import mugres.tracker.Track;
 
 import java.io.IOException;
 
@@ -28,13 +22,13 @@ public class Tracks extends VBox {
     private Model model;
 
     @FXML
-    private TableView<Party> tracksTableView;
+    private TableView<Track> tracksTableView;
     @FXML
-    private TableColumn<Party, String> nameColumn;
+    private TableColumn<Track, String> nameColumn;
     @FXML
-    private TableColumn<Party, Instrument> instrumentColumn;
+    private TableColumn<Track, Instrument> instrumentColumn;
     @FXML
-    private TableColumn<Party, Integer> channelColumn;
+    private TableColumn<Track, Integer> channelColumn;
     @FXML
     private ComboBox<Instrument> instrumentComboBox;
 
@@ -61,16 +55,16 @@ public class Tracks extends VBox {
 
     @FXML
     public void createTrack(final ActionEvent event) {
-        model.getSong().createParty(instrumentComboBox.getSelectionModel().getSelectedItem());
+        model.getSong().createTrack(instrumentComboBox.getSelectionModel().getSelectedItem());
     }
 
     @FXML
     public void deleteTrack(final ActionEvent event) {
-        final Party selectedItem = tracksTableView.getSelectionModel().getSelectedItem();
+        final Track selectedItem = tracksTableView.getSelectionModel().getSelectedItem();
         if (selectedItem == null)
             return;
 
-        model.getSong().removeParty(selectedItem);
+        model.getSong().removeTrack(selectedItem);
     }
 
     public Model getModel() {

@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
-import mugres.common.Party;
+import mugres.tracker.Track;
 import mugres.function.Function;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class Matrix extends ScrollPane {
     private GridPane matrix;
 
     @FXML
-    private ComboBox<Party> trackComboBox;
+    private ComboBox<Track> trackComboBox;
 
     @FXML
     private ComboBox<Function.EventsFunction> functionComboBox;
@@ -41,12 +41,12 @@ public class Matrix extends ScrollPane {
     public void initialize() {
         trackComboBox.setConverter(new StringConverter<>() {
             @Override
-            public String toString(final Party party) {
-                return party != null ? party.name() : "";
+            public String toString(final Track Track) {
+                return Track != null ? Track.name() : "";
             }
 
             @Override
-            public Party fromString(final String string) {
+            public Track fromString(final String string) {
                 return null;
             }
         });
@@ -64,14 +64,14 @@ public class Matrix extends ScrollPane {
 
     @FXML
     protected void setCall(final ActionEvent event) {
-        final Party currentTrack = model.getCurrentTrack();
+        final Track currentTrack = model.getCurrentTrack();
         if (currentTrack == null)
             return;
     }
 
     @FXML
     protected void clearCall(final ActionEvent event) {
-        final Party currentTrack = model.getCurrentTrack();
+        final Track currentTrack = model.getCurrentTrack();
         if (currentTrack == null)
             return;
     }
