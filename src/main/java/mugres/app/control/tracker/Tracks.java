@@ -15,6 +15,7 @@ import mugres.tracker.Track;
 import java.io.IOException;
 
 import static mugres.common.MIDI.DEFAULT_CHANNEL;
+import static mugres.tracker.Track.MIN_BEAT_SUBDIVISION;
 
 public class Tracks extends VBox {
     private static final String FXML = "/mugres/app/control/tracker/tracks.fxml";
@@ -29,6 +30,8 @@ public class Tracks extends VBox {
     private TableColumn<Track, Instrument> instrumentColumn;
     @FXML
     private TableColumn<Track, Integer> channelColumn;
+    @FXML
+    private TableColumn<Track, Integer> subDivisionColumn;
     @FXML
     private ComboBox<Instrument> instrumentComboBox;
 
@@ -51,6 +54,8 @@ public class Tracks extends VBox {
                 new SimpleObjectProperty(item.getValue() != null ? item.getValue().instrument() : null));
         channelColumn.setCellValueFactory(item ->
                 new SimpleObjectProperty(item.getValue() != null ? item.getValue().channel() : DEFAULT_CHANNEL));
+        subDivisionColumn.setCellValueFactory(item ->
+                new SimpleObjectProperty(item.getValue() != null ? item.getValue().beatSubdivision() : MIN_BEAT_SUBDIVISION));
     }
 
     @FXML

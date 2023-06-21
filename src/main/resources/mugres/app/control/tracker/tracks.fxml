@@ -12,9 +12,10 @@
             <Label text="" />
         </placeholder>
         <columns>
-          <TableColumn fx:id="nameColumn" prefWidth="125.0" text="Name" />
-          <TableColumn fx:id="instrumentColumn" prefWidth="160.0" text="Instrument" />
+          <TableColumn fx:id="nameColumn" prefWidth="100.0" text="Name" />
+          <TableColumn fx:id="instrumentColumn" prefWidth="140.0" text="Instrument" />
           <TableColumn fx:id="channelColumn" prefWidth="65.0" text="MIDI Ch." />
+          <TableColumn fx:id="subDivisionColumn" prefWidth="65.0" text="Subdiv." />
         </columns>
       </TableView>
       <HBox>
