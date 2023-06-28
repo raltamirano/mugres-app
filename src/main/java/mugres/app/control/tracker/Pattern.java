@@ -59,7 +59,7 @@ public class Pattern extends VBox {
     public void deletePattern(final ActionEvent event) {
         final mugres.tracker.Pattern currentPattern = model.getCurrentPattern();
         if (currentPattern != null)
-            model.getSong().deletePattern(currentPattern.name());
+            model.getSong().deletePattern(currentPattern);
     }
 
     public Model getModel() {
