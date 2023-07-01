@@ -1,6 +1,5 @@
 package mugres.app.control.tracker;
 
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,11 +17,8 @@ import mugres.tracker.Track;
 
 import java.io.IOException;
 
-import static mugres.common.MIDI.DEFAULT_CHANNEL;
 import static mugres.common.MIDI.MAX_CHANNEL;
 import static mugres.common.MIDI.MIN_CHANNEL;
-import static mugres.tracker.Track.MAX_BEAT_SUBDIVISION;
-import static mugres.tracker.Track.MIN_BEAT_SUBDIVISION;
 
 public class Tracks extends VBox {
     private static final String FXML = "/mugres/app/control/tracker/tracks.fxml";
@@ -37,8 +33,6 @@ public class Tracks extends VBox {
     private TableColumn<Track, Instrument> instrumentColumn;
     @FXML
     private TableColumn<Track, Number> channelColumn;
-    @FXML
-    private TableColumn<Track, Number> subDivisionColumn;
     @FXML
     private ComboBox<Instrument> instrumentComboBox;
 
@@ -94,8 +88,5 @@ public class Tracks extends VBox {
 
         channelColumn.setCellValueFactory(item -> Parametrizables.createIntegerProperty(item.getValue(), "channel"));
         channelColumn.setCellFactory(c -> new IntegerSpinnerCell<>(MIN_CHANNEL, MAX_CHANNEL));
-
-        subDivisionColumn.setCellValueFactory(item -> Parametrizables.createIntegerProperty(item.getValue(), "beatSubdivision"));
-        subDivisionColumn.setCellFactory(c -> new IntegerSpinnerCell<>(MIN_BEAT_SUBDIVISION, MAX_BEAT_SUBDIVISION));
     }
 }

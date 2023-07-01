@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <fx:root stylesheets="@arrangement.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
     <VBox maxWidth="1.7976931348623157E308">
-        <HBox>
-            <Region HBox.hgrow="ALWAYS" />
-            <HBox spacing="5">
-                <children>
-                    <Label fx:id="trackLabel" minHeight="29.0" text="Track" />
-                    <ComboBox fx:id="trackComboBox" />
-                    <Label fx:id="functionLabel" minHeight="29.0" text="Function" />
-                    <ComboBox fx:id="functionComboBox" />
-                    <Button fx:id="setCallButton" text="Set" onAction="#setCall" />
-                    <Button fx:id="clearCallButton" text="Clear" onAction="#clearCall" />
-                </children>
-            </HBox>
-            <Region HBox.hgrow="ALWAYS" />
-        </HBox>
         <GridPane fx:id="matrix">
             <children>
             </children>
