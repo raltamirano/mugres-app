@@ -29,7 +29,9 @@
         </VBox>
     </right>
     <center>
-        <Matrix fx:id="matrix" />
+        <VBox>
+            <Matrix fx:id="matrix" VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" />
+        </VBox>
     </center>
     <bottom>
         <HBox>
