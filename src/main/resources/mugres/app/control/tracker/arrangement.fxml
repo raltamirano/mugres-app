@@ -7,13 +7,13 @@
          xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
        <Label fx:id="titleLabel" text="Arrangement" />
-       <TableView fx:id="entriesTableView" minHeight="500.0" onKeyPressed="#onKeyPressedTableView">
+       <TableView fx:id="entriesTableView" minHeight="500.0">
         <placeholder>
             <Label text=""/>
         </placeholder>
         <columns>
-          <TableColumn fx:id="patternColumn" prefWidth="265.0" text="Pattern" />
-          <TableColumn fx:id="repetitionsColumn" prefWidth="80.0" text="Repetitions" />
+          <TableColumn fx:id="patternColumn" prefWidth="290.0" text="Pattern" />
+          <TableColumn fx:id="repetitionsColumn" prefWidth="75.0" text="Reps." />
         </columns>
       </TableView>
       <HBox maxHeight="29.0" minHeight="29.0">

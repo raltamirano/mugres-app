@@ -6,9 +6,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import mugres.app.control.misc.IntegerSpinnerCell;
 import mugres.app.control.tracker.Song.ArrangementEntryModel;
 import mugres.app.control.tracker.Song.Model;
 import mugres.tracker.Pattern;
@@ -46,6 +45,7 @@ public class Arrangement extends VBox {
                                 item.getValue().patternProperty())
         );
         repetitionsColumn.setCellValueFactory(item -> item.getValue().repetitionsProperty());
+        repetitionsColumn.setCellFactory(c -> new IntegerSpinnerCell<>(1, Integer.MAX_VALUE));
     }
 
     @FXML
@@ -80,18 +80,6 @@ public class Arrangement extends VBox {
             return;
 
         model.getSong().arrangement().moveBack(selectedIndex);
-    }
-
-    @FXML
-    public void onKeyPressedTableView(final KeyEvent keyEvent) {
-        final ArrangementEntryModel selectedArrangementEntry = entriesTableView.getSelectionModel().getSelectedItem();
-        if (keyEvent.getCode() == KeyCode.ADD) {
-            if (selectedArrangementEntry != null)
-                selectedArrangementEntry.setRepetitions(selectedArrangementEntry.getRepetitions() + 1);
-        } else if (keyEvent.getCode() == KeyCode.SUBTRACT) {
-            if (selectedArrangementEntry != null && selectedArrangementEntry.getRepetitions() > 1)
-                selectedArrangementEntry.setRepetitions(selectedArrangementEntry.getRepetitions() - 1);
-        }
     }
 
     public Model getModel() {
