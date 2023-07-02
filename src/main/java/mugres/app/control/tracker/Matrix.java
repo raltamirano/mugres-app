@@ -74,10 +74,6 @@ public class Matrix extends ScrollPane {
     }
 
     private void doDefineTracks() {
-        setFixedRowsCols();
-    }
-
-    private void setFixedRowsCols() {
         matrix.getColumns().clear();
         matrix.getColumns().add(createFixedColumn());
         matrix.getColumns().add(createChordEventColumn());
@@ -101,16 +97,16 @@ public class Matrix extends ScrollPane {
             final Map<String, Call> trackCalls = new HashMap<>();
             if (row == 0) {
                 for(final Track track : getModel().tracks()) {
-                    final List<Call<List<Event>>> calls = pattern.matrix().get(track);
-                    if (calls != null && !calls.isEmpty())
-                    trackCalls.put(track.name(), calls.get(0));
+                    final Call<List<Event>> call = pattern.matrix(track);
+                    if (call!= null)
+                        trackCalls.put(track.name(), call);
                 }
             }
             items.add(new RowModel(row + 1, trackCalls));
         }
     }
 
-    private static TableColumn<RowModel, String> createFixedColumn() {
+    private TableColumn<RowModel, String> createFixedColumn() {
         final TableColumn<RowModel, String> rowNumberColumn = new TableColumn<>();
         rowNumberColumn.setText("#");
         rowNumberColumn.setMinWidth(40.0);
@@ -123,7 +119,7 @@ public class Matrix extends ScrollPane {
         return rowNumberColumn;
     }
 
-    private static TableColumn<RowModel, Void> createChordEventColumn() {
+    private TableColumn<RowModel, Void> createChordEventColumn() {
         final TableColumn<RowModel, Void> chordEventColumn = new TableColumn<>();
         chordEventColumn.setText("Chords");
         chordEventColumn.setMinWidth(60.0);
@@ -136,7 +132,7 @@ public class Matrix extends ScrollPane {
         return chordEventColumn;
     }
 
-    private static TableColumn<RowModel, Object> createTrackColumn(final Track track) {
+    private TableColumn<RowModel, Object> createTrackColumn(final Track track) {
         final TableColumn<RowModel, Object> column = new TableColumn<>();
         column.setText(track.name());
         column.setMinWidth(200.0);
