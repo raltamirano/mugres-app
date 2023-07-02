@@ -37,6 +37,9 @@ public class Call extends VBox {
     public void initialize() {
         functionComboBox.setItems(FXCollections.observableArrayList(mugres.function.Function.allFunctions()).sorted());
         functionComboBox.valueProperty().addListener((observable, oldValue, newValue) -> onFunctionChanged(newValue));
+        functionComboBox.maxWidthProperty().bind(this.maxWidthProperty());
+        functionComboBox.minWidthProperty().bind(this.minWidthProperty());
+        functionComboBox.prefWidthProperty().bind(this.prefWidthProperty());
     }
 
     public Model getModel() {

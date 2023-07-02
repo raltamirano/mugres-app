@@ -2,16 +2,20 @@ package mugres.app.control.tracker;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import mugres.app.control.misc.ButtonCell;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import mugres.common.TimeSignature;
 import mugres.function.Call;
 import mugres.function.builtin.literal.Literal;
@@ -25,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static javafx.geometry.Pos.CENTER;
 import static mugres.utils.Maths.lcm;
 
 public class Matrix extends ScrollPane {
@@ -34,7 +39,7 @@ public class Matrix extends ScrollPane {
     private final ObjectProperty<Song.Model> model;
     private final ObservableList<RowModel> items = FXCollections.observableList(new ArrayList<>());
     @FXML
-    private TableView<RowModel> matrix;
+    private HBox tracks;
 
     public Matrix() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
@@ -74,16 +79,14 @@ public class Matrix extends ScrollPane {
     }
 
     private void doDefineTracks() {
-        matrix.getColumns().clear();
-        matrix.getColumns().add(createFixedColumn());
-        matrix.getColumns().add(createChordEventColumn());
+        refreshItems();
+
+        tracks.getChildren().clear();
+        tracks.getChildren().add(createRowNumberColumn());
+        tracks.getChildren().add(createChordEventColumn());
 
         for(final Track track : getModel().tracks())
-            matrix.getColumns().add(createTrackColumn(track));
-
-        refreshItems();
-        matrix.setItems(items);
-        matrix.setPrefHeight(ROW_HEIGHT * items.size());
+            tracks.getChildren().add(createTrackColumn(track));
     }
 
     private void refreshItems() {
@@ -106,39 +109,110 @@ public class Matrix extends ScrollPane {
         }
     }
 
-    private TableColumn<RowModel, String> createFixedColumn() {
-        final TableColumn<RowModel, String> rowNumberColumn = new TableColumn<>();
-        rowNumberColumn.setText("#");
-        rowNumberColumn.setMinWidth(40.0);
-        rowNumberColumn.setMaxWidth(40.0);
-        rowNumberColumn.setPrefWidth(40.0);
+    private Node createRowNumberColumn() {
+        final VBox rowNumberColumn = new VBox();
+        final double width = 32.0;
+        rowNumberColumn.setPrefWidth(width);
+        rowNumberColumn.setMaxWidth(width);
+        rowNumberColumn.setPrefWidth(width);
 
-        rowNumberColumn.setCellValueFactory(item -> new SimpleStringProperty(
-                String.format("%04d", item.getValue().row())));
+        rowNumberColumn.getChildren().add(createHeader("#", width));
+        rowNumberColumn.getChildren().add(spacer());
+
+        items.forEach(item -> {
+            final TextField text = new TextField(String.format("%04d", item.row()));
+            text.setDisable(true);
+            text.setPadding(new Insets(3.0, 0.0, 3.0, 1.0));
+            text.minWidth(width);
+            text.maxWidth(width);
+            text.prefWidth(width);
+            text.minHeight(rowHeight());
+            text.maxHeight(rowHeight());
+            text.prefHeight(rowHeight());
+            rowNumberColumn.getChildren().add(text);
+        });
 
         return rowNumberColumn;
     }
 
-    private TableColumn<RowModel, Void> createChordEventColumn() {
-        final TableColumn<RowModel, Void> chordEventColumn = new TableColumn<>();
-        chordEventColumn.setText("Chords");
-        chordEventColumn.setMinWidth(60.0);
-        chordEventColumn.setMaxWidth(60.0);
-        chordEventColumn.setPrefWidth(60.0);
+    private Node createChordEventColumn() {
+        final VBox chordEventColumn = new VBox();
+        final double width = 60.0;
+        chordEventColumn.setMinWidth(width);
+        chordEventColumn.setMaxWidth(width);
+        chordEventColumn.setPrefWidth(width);
 
-        chordEventColumn.setCellFactory(item -> new ButtonCell<>("...",
-                e -> System.out.println(e.row())));
+        chordEventColumn.getChildren().add(createHeader("Chords", width));
+        chordEventColumn.getChildren().add(spacer());
+
+        items.forEach(item -> {
+            final Button button = new Button("...");
+            button.setMinWidth(width);
+            button.setMaxWidth(width);
+            button.setPrefWidth(width);
+            button.setMinHeight(rowHeight());
+            button.setMaxHeight(rowHeight());
+            button.setPrefHeight(rowHeight());
+            button.setUserData(item);
+            button.setOnAction(this::onChordEventAction);
+            chordEventColumn.getChildren().add(button);
+        });
 
         return chordEventColumn;
     }
 
-    private TableColumn<RowModel, Object> createTrackColumn(final Track track) {
-        final TableColumn<RowModel, Object> column = new TableColumn<>();
-        column.setText(track.name());
-        column.setMinWidth(200.0);
-        column.setMaxWidth(200.0);
-        column.setPrefWidth(200.0);
-        return column;
+    private Node spacer() {
+        final ComboBox comboBox = new ComboBox();
+        comboBox.setVisible(false);
+        comboBox.setManaged(true);
+        comboBox.setMinWidth(1.0);
+        comboBox.setMaxWidth(1.0);
+        comboBox.setPrefWidth(1.0);
+        return comboBox;
+    }
+
+
+    private Node createTrackColumn(final Track track) {
+        final VBox trackColumn = new VBox();
+        final double width = 200.0;
+
+        trackColumn.getChildren().add(createHeader(track.name(), width));
+
+        final mugres.app.control.tracker.call.Call callEditor = new mugres.app.control.tracker.call.Call();
+        final double editorHeight = rowHeight() * items.size();
+
+        callEditor.setMinWidth(width);
+        callEditor.setMaxWidth(width);
+        callEditor.setPrefWidth(width);
+        callEditor.setMinHeight(editorHeight);
+        callEditor.setMaxHeight(editorHeight);
+        callEditor.setPrefHeight(editorHeight);
+
+        trackColumn.getChildren().add(callEditor);
+
+        return trackColumn;
+    }
+
+    private TextField createHeader(final String title, final double width) {
+        final TextField textField = new TextField(title);
+        textField.setDisable(true);
+        textField.setAlignment(CENTER);
+        textField.minWidth(width);
+        textField.maxWidth(width);
+        textField.prefWidth(width);
+        textField.minHeight(rowHeight());
+        textField.maxHeight(rowHeight());
+        textField.prefHeight(rowHeight());
+        return textField;
+    }
+
+    private void onChordEventAction(final ActionEvent actionEvent) {
+        final RowModel row = (RowModel) ((Node) actionEvent.getSource()).getUserData();
+        System.out.println("ChordEvent for " + row.row());
+    }
+
+    private double rowHeight() {
+        return 25.0;
     }
 
     private int lcmLiteralsSubdivisions() {
