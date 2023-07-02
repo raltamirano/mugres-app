@@ -1,6 +1,8 @@
 package mugres.app.control;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -44,6 +46,8 @@ public class Properties extends VBox {
     @FXML
     private GridPane propertiesGrid;
 
+    private final BooleanProperty readOnly = new SimpleBooleanProperty(false);
+
     public Properties() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
         fxmlLoader.setRoot(this);
@@ -78,18 +82,16 @@ public class Properties extends VBox {
         titleLabel.setText(title);
     }
 
-    public String getKeyHeader() {
-        return "";
+    public boolean isReadOnly() {
+        return readOnly.get();
     }
 
-    public void setKeyHeader(final String text) {
+    public BooleanProperty readOnlyProperty() {
+        return readOnly;
     }
 
-    public String getValueHeader() {
-        return "";
-    }
-
-    public void setValueHeader(final String text) {
+    public void setReadOnly(final boolean readOnly) {
+        this.readOnly.set(readOnly);
     }
 
     public void setTitleVisible(final boolean value) {
@@ -104,61 +106,89 @@ public class Properties extends VBox {
         if (currentModel == null)
             return;
 
+        final boolean readOnlyMode = isReadOnly();
         int rowIndex = 0;
-        for(PropertyModel p : currentModel.properties.values().stream().sorted().collect(Collectors.toList())) {
-            Node editor = null;
-            switch (p.type) {
-                case VALUE:
-                    editor = getComboBox(p, Value.values());
-                    break;
-                case NOTE:
-                    editor = getComboBox(p, Note.values());
-                    break;
-                case SCALE:
-                    editor = getComboBox(p, Scale.values());
-                    break;
-                case KEY:
-                    editor = getComboBox(p, Key.values());
-                    break;
-                case TIME_SIGNATURE:
-                    editor = getComboBox(p, TimeSignature.commonTimeSignatures());
-                    break;
-                case TEXT:
-                    editor = getTextField(p);
-                    break;
-                case INTEGER:
-                    editor = getIntegerSpinner(p);
-                    break;
-                case DRUM_KIT:
-                    editor = getComboBox(p, DrumKit.values());
-                    break;
-                case VARIANT:
-                    editor = getComboBox(p, Variant.values());
-                    break;
-                case BOOLEAN:
-                    editor = getCheckBox(p);
-                    break;
-                case UNKNOWN:
-                    if (p.isDomainBased())
-                        editor = getComboBox(p, p.domain);
-                    else
-                        throw new IllegalArgumentException("No editor for data type: " + p.type);
-                    break;
-                case PITCH:
-                case LENGTH:
-                case EUCLIDEAN_PATTERN:
-                default:
-                    throw new IllegalArgumentException("No editor for data type: " + p.type);
-            }
-            editor.setUserData(p.name);
-            editor.minWidth(200.0);
-            if (p.hasParametrizable()) {
-                final Overridable overridable = new Overridable();
-                overridable.setEditorControl(editor, p);
-                propertiesGrid.addRow(rowIndex++, new Label(p.label), overridable);
-            } else {
-                propertiesGrid.addRow(rowIndex++, new Label(p.label), editor);
-            }
+        for(PropertyModel property : currentModel.properties.values().stream().sorted().collect(Collectors.toList())) {
+            if (readOnlyMode)
+                createViewer(rowIndex, property);
+            else
+                createEditor(rowIndex, property);
+            rowIndex++;
+        }
+    }
+
+    private void createViewer(final int rowIndex, final PropertyModel property) {
+        final Label viewer = new Label();
+        final Object value;
+        if (property.hasParametrizable()) {
+            value = property.getParametrizable().parameterValue(property.getName());
+            property.getParametrizable().addParameterValueChangeListener(e -> {
+                if (e.getPropertyName().equals(property.getName()))
+                    viewer.setText(e.getNewValue() != null ? e.getNewValue().toString() : "");
+            });
+        } else {
+            value = property.getValue();
+        }
+
+        viewer.setText(value != null ? value.toString() : "");
+        viewer.setUserData(property.name);
+        viewer.minWidth(200.0);
+        propertiesGrid.addRow(rowIndex, new Label(property.label), viewer);
+    }
+
+    private void createEditor(final int rowIndex, final PropertyModel property) {
+        Node editor = null;
+        switch (property.type) {
+            case VALUE:
+                editor = getComboBox(property, Value.values());
+                break;
+            case NOTE:
+                editor = getComboBox(property, Note.values());
+                break;
+            case SCALE:
+                editor = getComboBox(property, Scale.values());
+                break;
+            case KEY:
+                editor = getComboBox(property, Key.values());
+                break;
+            case TIME_SIGNATURE:
+                editor = getComboBox(property, TimeSignature.commonTimeSignatures());
+                break;
+            case TEXT:
+                editor = getTextField(property);
+                break;
+            case INTEGER:
+                editor = getIntegerSpinner(property);
+                break;
+            case DRUM_KIT:
+                editor = getComboBox(property, DrumKit.values());
+                break;
+            case VARIANT:
+                editor = getComboBox(property, Variant.values());
+                break;
+            case BOOLEAN:
+                editor = getCheckBox(property);
+                break;
+            case UNKNOWN:
+                if (property.isDomainBased())
+                    editor = getComboBox(property, property.domain);
+                else
+                    throw new IllegalArgumentException("No editor for data type: " + property.type);
+                break;
+            case PITCH:
+            case LENGTH:
+            case EUCLIDEAN_PATTERN:
+            default:
+                throw new IllegalArgumentException("No editor for data type: " + property.type);
+        }
+        editor.setUserData(property.name);
+        editor.minWidth(200.0);
+        if (property.hasParametrizable()) {
+            final Overridable overridable = new Overridable();
+            overridable.setEditorControl(editor, property);
+            propertiesGrid.addRow(rowIndex, new Label(property.label), overridable);
+        } else {
+            propertiesGrid.addRow(rowIndex, new Label(property.label), editor);
         }
     }
 
