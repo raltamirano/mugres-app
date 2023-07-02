@@ -28,11 +28,13 @@ import mugres.parametrizable.Parametrizable;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableMap;
 import static mugres.parametrizable.ParametrizableSupport.ChangedValue.unwrap;
 
 public class Properties extends VBox {
@@ -241,6 +243,7 @@ public class Properties extends VBox {
     }
 
     public static class Model {
+        public static final Model EMPTY = new Model();
         private final Map<String, PropertyModel> properties = new HashMap<>();
 
         private Model() {
@@ -263,7 +266,7 @@ public class Properties extends VBox {
         }
 
         public Map<String, PropertyModel> getProperties() {
-            return properties;
+            return unmodifiableMap(properties);
         }
 
         @Override

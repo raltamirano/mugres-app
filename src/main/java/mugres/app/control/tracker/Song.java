@@ -18,6 +18,7 @@ import mugres.common.Instrument;
 import mugres.tracker.Track;
 import mugres.function.Function;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static mugres.app.control.tracker.Pattern.DEFAULT_PATTERN_MEASURES;
+import static mugres.common.Context.PATTERN_LENGTH;
 
 public class Song extends BorderPane {
     private static final String FXML = "/mugres/app/control/tracker/song.fxml";
@@ -75,6 +77,7 @@ public class Song extends BorderPane {
     @FXML
     public void playSong(final ActionEvent event) {
         System.out.println(model.getSong());
+        model.getSong().play();
     }
 
     @FXML
@@ -128,7 +131,13 @@ public class Song extends BorderPane {
 
         private ChangeListener<mugres.tracker.Pattern> createCurrentPatternChangeListener() {
             return (source, oldValue, newValue) -> {
-                patternPropertiesModel.setValue(newValue != null ? Properties.Model.of(newValue) : null);
+                if (newValue != null) {
+                    patternPropertiesModel.setValue(Properties.Model.of(newValue));
+                    newValue.addPropertyChangeListener(this::onPatternPropertyChangeListener);
+                } else {
+                    patternPropertiesModel.setValue(null);
+                }
+
             };
         }
 
@@ -235,6 +244,20 @@ public class Song extends BorderPane {
                         break;
                 }
             };
+        }
+
+        private void onPatternPropertyChangeListener(final PropertyChangeEvent propertyChangeEvent) {
+            switch (propertyChangeEvent.getPropertyName()) {
+                case PATTERN_LENGTH:
+                    final int newLengthInMeasures = (int) propertyChangeEvent.getNewValue();
+                    getCurrentPattern().matrix().values()
+                            .forEach(l -> l.forEach(c ->
+                                    c.parameterValue(Function.LENGTH_PARAMETER.name(), newLengthInMeasures)));
+                    break;
+                default:
+                    // do nothing
+                    break;
+            }
         }
     }
 

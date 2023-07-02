@@ -179,6 +179,7 @@ public class Matrix extends ScrollPane {
         trackColumn.getChildren().add(createHeader(track.name(), width));
 
         final mugres.app.control.tracker.call.Call callEditor = new mugres.app.control.tracker.call.Call();
+        callEditor.setModel(mugres.app.control.tracker.call.Call.Model.of(getModel().getCurrentPattern(), track));
         final double editorHeight = rowHeight() * items.size();
 
         callEditor.setMinWidth(width);
@@ -219,7 +220,7 @@ public class Matrix extends ScrollPane {
         final int[] allSubdivisions = getModel().getCurrentPattern().matrix().values()
                 .stream()
                 .flatMap(List::stream)
-                .filter(e -> e.getFunction() instanceof Literal)
+                .filter(e -> e.getFunction().literal())
                 .mapToInt(e -> (int)e.parameterValue("beatSubdivision"))
                 .toArray();
         return lcm(allSubdivisions);

@@ -5,19 +5,22 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
-import mugres.app.control.Properties;
 import mugres.tracker.Event;
 import mugres.tracker.Pattern;
 import mugres.tracker.Track;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+
+import static mugres.function.Function.LENGTH_PARAMETER;
 
 public class Call extends VBox {
     private static final String FXML = "/mugres/app/control/tracker/call/call.fxml";
 
     private Model model;
+
+    private FunctionControl functionControl;
 
     @FXML
     private ComboBox<mugres.function.Function> functionComboBox;
@@ -56,15 +59,40 @@ public class Call extends VBox {
 
     private void loadModel() {
         final mugres.function.Call<List<Event>> call = model.pattern().matrix(model.track());
-        if (call != null)
+        if (call != null) {
             functionComboBox.getSelectionModel().select(call.getFunction());
+            if (functionControl != null)
+                functionControl.setCall(call);
+        }
         else
             functionComboBox.getSelectionModel().clearSelection();
     }
 
     private void onFunctionChanged(final mugres.function.Function<?> function) {
-
+        removeCurrentFunctionControl();
+        final Pattern pattern = getModel().pattern();
+        functionControl = createFunctionControl(function);
+        final mugres.function.Call<List<Event>> call = mugres.function.Call.of(function,
+                Map.of(LENGTH_PARAMETER.name(), pattern.measures()));
+        pattern.matrix(getModel().track(), call);
+        functionControl.setCall(call);
     }
+
+    private void removeCurrentFunctionControl() {
+        if (functionControl != null)
+            getChildren().remove(functionControl);
+        functionControl = null;
+    }
+
+    private FunctionControl createFunctionControl(final mugres.function.Function<?> function) {
+        if (function instanceof mugres.function.builtin.literal.Literal)
+            return new mugres.app.control.tracker.call.Literal();
+
+        // If no ad-hoc control for the given function, handle with the
+        // generic function control
+        return new mugres.app.control.tracker.call.Generic();
+    }
+
 
     public static class Model {
         private final Pattern pattern;
