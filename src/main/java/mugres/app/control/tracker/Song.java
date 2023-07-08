@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static mugres.app.control.tracker.Pattern.DEFAULT_PATTERN_MEASURES;
-import static mugres.common.Context.PATTERN_LENGTH;
+import static mugres.common.Context.MEASURES;
 
 public class Song extends BorderPane {
     private static final String FXML = "/mugres/app/control/tracker/song.fxml";
@@ -248,7 +248,7 @@ public class Song extends BorderPane {
 
         private void onPatternPropertyChangeListener(final PropertyChangeEvent propertyChangeEvent) {
             switch (propertyChangeEvent.getPropertyName()) {
-                case PATTERN_LENGTH:
+                case MEASURES:
                     final int newLengthInMeasures = (int) propertyChangeEvent.getNewValue();
                     getCurrentPattern().matrix().values()
                             .forEach(l -> l.forEach(c ->

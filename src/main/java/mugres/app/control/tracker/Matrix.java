@@ -2,6 +2,7 @@ package mugres.app.control.tracker;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -18,11 +19,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mugres.common.TimeSignature;
 import mugres.function.Call;
-import mugres.function.builtin.literal.Literal;
 import mugres.tracker.Event;
 import mugres.tracker.Pattern;
 import mugres.tracker.Track;
 
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 import static javafx.geometry.Pos.CENTER;
+import static mugres.common.Context.MEASURES;
+import static mugres.common.Context.TIME_SIGNATURE;
 import static mugres.utils.Maths.lcm;
 
 public class Matrix extends ScrollPane {
@@ -38,6 +41,8 @@ public class Matrix extends ScrollPane {
 
     private final ObjectProperty<Song.Model> model;
     private final ObservableList<RowModel> items = FXCollections.observableList(new ArrayList<>());
+    private final PropertyChangeListener patternPropertyChangeListener;
+    private final ChangeListener patternChangeListener;
     @FXML
     private HBox tracks;
 
@@ -53,6 +58,8 @@ public class Matrix extends ScrollPane {
 
         model = new SimpleObjectProperty<>();
         model.addListener((source, oldValue, newValue) -> loadModel());
+        patternChangeListener = createPatternChangeListener();
+        patternPropertyChangeListener = createPatternPropertyChangeListener();
     }
 
     @FXML
@@ -73,15 +80,24 @@ public class Matrix extends ScrollPane {
     }
 
     private void loadModel() {
+        final Pattern pattern = getModel().getCurrentPattern();
+        if (pattern != null)
+            pattern.addPropertyChangeListener(patternPropertyChangeListener);
+
         getModel().tracks().addListener((ListChangeListener<? super Track>) c -> doDefineTracks());
-        getModel().currentPatternProperty().addListener(c -> doDefineTracks());
+        getModel().currentPatternProperty().addListener(patternChangeListener);
         doDefineTracks();
     }
 
     private void doDefineTracks() {
+        tracks.getChildren().clear();
+
+        final Pattern pattern = getModel().getCurrentPattern();
+        if (pattern == null)
+            return;
+
         refreshItems();
 
-        tracks.getChildren().clear();
         tracks.getChildren().add(createRowNumberColumn());
         tracks.getChildren().add(createChordEventColumn());
 
@@ -224,6 +240,28 @@ public class Matrix extends ScrollPane {
                 .mapToInt(e -> (int)e.parameterValue("beatSubdivision"))
                 .toArray();
         return lcm(allSubdivisions);
+    }
+
+    private ChangeListener createPatternChangeListener() {
+        return (observable, oldValue, newValue) -> {
+            final Pattern pattern = (Pattern) newValue;
+            if (pattern != null)
+                pattern.addPropertyChangeListener(patternPropertyChangeListener);
+            doDefineTracks();
+        };
+    }
+
+    private PropertyChangeListener createPatternPropertyChangeListener() {
+        return e -> {
+            switch(e.getPropertyName()) {
+                case MEASURES:
+                case TIME_SIGNATURE:
+                    doDefineTracks();
+                    break;
+                default:
+                    break;
+            }
+        };
     }
 
     private static class RowModel {
