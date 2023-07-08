@@ -3,6 +3,7 @@ package mugres.app.control.tracker.call;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.VBox;
 import mugres.tracker.Event;
@@ -76,6 +77,7 @@ public class Call extends VBox {
                 Map.of(LENGTH_PARAMETER.name(), pattern.measures()));
         pattern.matrix(getModel().track(), call);
         functionControl.setCall(call);
+        getChildren().add((Node)functionControl);
     }
 
     private void removeCurrentFunctionControl() {

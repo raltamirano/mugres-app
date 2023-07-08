@@ -6,7 +6,8 @@
 <fx:root xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          type="javafx.scene.layout.VBox"
-         stylesheets="@call.css">
+         stylesheets="@call.css"
+         VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308">
     <children>
         <ComboBox fx:id="functionComboBox"></ComboBox>
     </children>

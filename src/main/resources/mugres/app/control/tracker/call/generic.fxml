@@ -6,8 +6,9 @@
 <fx:root xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
          type="javafx.scene.layout.VBox"
-         stylesheets="@generic.css">
+         stylesheets="@generic.css"
+         VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308">
     <children>
-        <Properties fx:id="functionParameters"></Properties>
+        <Properties fx:id="functionParameters" VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308"></Properties>
     </children>
 </fx:root>

@@ -190,20 +190,16 @@ public class Matrix extends ScrollPane {
 
     private Node createTrackColumn(final Track track) {
         final VBox trackColumn = new VBox();
-        final double width = 200.0;
+        final double width = 250.0;
 
         trackColumn.getChildren().add(createHeader(track.name(), width));
 
         final mugres.app.control.tracker.call.Call callEditor = new mugres.app.control.tracker.call.Call();
         callEditor.setModel(mugres.app.control.tracker.call.Call.Model.of(getModel().getCurrentPattern(), track));
-        final double editorHeight = rowHeight() * items.size();
 
         callEditor.setMinWidth(width);
         callEditor.setMaxWidth(width);
         callEditor.setPrefWidth(width);
-        callEditor.setMinHeight(editorHeight);
-        callEditor.setMaxHeight(editorHeight);
-        callEditor.setPrefHeight(editorHeight);
 
         trackColumn.getChildren().add(callEditor);
 
