@@ -10,6 +10,9 @@ import mugres.tracker.Event;
 import java.io.IOException;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static mugres.function.Function.LENGTH_PARAMETER;
+
 public class Generic extends VBox implements FunctionControl {
     private static final String FXML = "/mugres/app/control/tracker/call/generic.fxml";
 
@@ -30,7 +33,6 @@ public class Generic extends VBox implements FunctionControl {
     @FXML
     public void initialize() {
         functionParameters.setTitleVisible(false);
-        functionParameters.setReadOnly(true);
     }
 
     @Override
@@ -38,7 +40,7 @@ public class Generic extends VBox implements FunctionControl {
         if (call == null) {
             functionParameters.setModel(Properties.Model.EMPTY);
         } else {
-            functionParameters.setModel(Properties.Model.of(call));
+            functionParameters.setModel(Properties.Model.of(call, asList(LENGTH_PARAMETER.name())));
         }
     }
 }

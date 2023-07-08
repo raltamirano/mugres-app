@@ -14,7 +14,6 @@
                     <children>
                         <Properties fx:id="properties" maxHeight="220.0" minHeight="220.0" title="Song" />
                         <Pattern fx:id="pattern" />
-                        <Properties fx:id="callPropertiesEditor" minHeight="457.0" title="Properties" />
                     </children>
                 </VBox>
             </left>

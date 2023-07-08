@@ -187,10 +187,9 @@ public class Matrix extends ScrollPane {
         return comboBox;
     }
 
-
     private Node createTrackColumn(final Track track) {
         final VBox trackColumn = new VBox();
-        final double width = 250.0;
+        final double width = 268.0;
 
         trackColumn.getChildren().add(createHeader(track.name(), width));
 

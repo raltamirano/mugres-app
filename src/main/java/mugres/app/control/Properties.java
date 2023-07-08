@@ -30,11 +30,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static mugres.parametrizable.ParametrizableSupport.ChangedValue.unwrap;
 
 public class Properties extends VBox {
@@ -110,12 +114,15 @@ public class Properties extends VBox {
 
         final boolean readOnlyMode = isReadOnly();
         int rowIndex = 0;
-        for(PropertyModel property : currentModel.properties.values().stream().sorted().collect(Collectors.toList())) {
-            if (readOnlyMode)
-                createViewer(rowIndex, property);
-            else
-                createEditor(rowIndex, property);
-            rowIndex++;
+        for(PropertyModel property : currentModel.properties.values().stream().sorted()
+                .collect(Collectors.toList())) {
+            if (!currentModel.hiddenProperties.contains(property.name)) {
+                if (readOnlyMode)
+                    createViewer(rowIndex, property);
+                else
+                    createEditor(rowIndex, property);
+                rowIndex++;
+            }
         }
     }
 
@@ -177,14 +184,13 @@ public class Properties extends VBox {
                 else
                     throw new IllegalArgumentException("No editor for data type: " + property.type);
                 break;
-            case PITCH:
-            case LENGTH:
-            case EUCLIDEAN_PATTERN:
             default:
                 throw new IllegalArgumentException("No editor for data type: " + property.type);
         }
         editor.setUserData(property.name);
         editor.minWidth(200.0);
+        editor.prefWidth(200.0);
+        editor.maxWidth(200.0);
         if (property.hasParametrizable()) {
             final Overridable overridable = new Overridable();
             overridable.setEditorControl(editor, property);
@@ -245,13 +251,20 @@ public class Properties extends VBox {
     public static class Model {
         public static final Model EMPTY = new Model();
         private final Map<String, PropertyModel> properties = new HashMap<>();
+        private final Set<String> hiddenProperties = new HashSet<>();
 
         private Model() {
         }
 
         public static Model of(final Parametrizable parametrizable) {
+            return of(parametrizable, emptyList());
+        }
+
+        public static Model of(final Parametrizable parametrizable, final Collection<String> hiddenProperties) {
             final Model model = new Model();
             parametrizable.parameters().forEach(p -> model.properties.put(p.name(), PropertyModel.of(parametrizable, p)));
+            if (hiddenProperties != null)
+                hiddenProperties.forEach(p -> model.hiddenProperties.add(p));
             return model;
         }
 
@@ -269,10 +282,15 @@ public class Properties extends VBox {
             return unmodifiableMap(properties);
         }
 
+        public Set<String> getHiddenProperties() {
+            return unmodifiableSet(hiddenProperties);
+        }
+
         @Override
         public String toString() {
             return "Model{" +
                     "properties=" + properties +
+                    ", hiddenProperties=" + hiddenProperties +
                     '}';
         }
     }
