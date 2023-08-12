@@ -5,15 +5,19 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<BorderPane fx:controller="mugres.app.controller.ProcessorController"
-            xmlns:fx="http://javafx.com/fxml"
-            stylesheets="@processor.css"
-            fx:id="root">
 
-    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+<fx:root fx:id="processorRoot" stylesheets="@processor.css" type="javafx.scene.layout.BorderPane"
+         xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
 
     <top>
         <AnchorPane>
+            <HBox>
+                <Button fx:id="startProcessorButton"
+                        onAction="#startProcessor">Start</Button>
+                <Button fx:id="stopProcessorButton"
+                        onAction="#stopProcessor">Stop</Button>
+                <CheckBox fx:id="processorRunningCheckBox" text="Running" disable="true"></CheckBox>
+            </HBox>
             <HBox fx:id="configurationControls">
                 <ComboBox fx:id="configurationsCombo"
                           onAction="#onConfigurationSelected"></ComboBox>
@@ -41,4 +45,4 @@
                     maxWidth="Infinity" maxHeight="Infinity" styleClass="mainButton"/>
         </HBox>
     </bottom>
-</BorderPane>
+</fx:root>

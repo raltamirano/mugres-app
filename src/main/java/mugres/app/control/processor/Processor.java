@@ -1,10 +1,17 @@
-package mugres.app.controller;
+package mugres.app.control.processor;
 
+import javafx.beans.Observable;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Tooltip;
@@ -35,7 +42,7 @@ import mugres.common.io.ProxyOutput;
 import mugres.live.Signal;
 import mugres.function.Function;
 import mugres.function.builtin.drums.PreRecordedDrums;
-import mugres.live.processor.Processor;
+import mugres.live.processor.Status;
 import mugres.live.processor.drummer.Drummer;
 import mugres.live.processor.drummer.commands.Finish;
 import mugres.live.processor.drummer.commands.Hit;
@@ -47,19 +54,27 @@ import mugres.live.processor.transformer.Transformer;
 import mugres.live.signaler.Signaler;
 import mugres.live.signaler.config.Configuration;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static mugres.app.config.ProcessorConfig.Processor.SPIROGRAPHONE;
+import static mugres.app.config.ProcessorConfig.Processor.*;
 
 
-public class ProcessorController
-    implements DrummerEditor.Listener {
+public class Processor extends BorderPane implements DrummerEditor.Listener {
+    private static final String FXML = "/mugres/app/control/processor/processor.fxml";
+
     @FXML
-    private BorderPane root;
+    private Button startProcessorButton;
+
+    @FXML
+    private Button stopProcessorButton;
+
+    @FXML
+    private CheckBox processorRunningCheckBox;
 
     @FXML
     private Button mainButton1;
@@ -77,7 +92,7 @@ public class ProcessorController
     private Button mainButton5;
 
     @FXML
-    private ComboBox configurationsCombo;
+    private ComboBox<ProcessorConfig> configurationsCombo;
 
     @FXML
     private Button editConfigurationButton;
@@ -88,13 +103,35 @@ public class ProcessorController
     @FXML
     private HBox configurationControls;
 
-    private Processor processor;
+    private final ObjectProperty<mugres.live.processor.Processor> processor = new SimpleObjectProperty<>();
 
     private final Map<Integer, Pitch> buttonPitches = new HashMap<>();
 
     private int midiChannel = 1;
 
     private int velocity = 100;
+
+    private final ProcessorConfig.Processor processorType;
+
+    private final StringProperty selectedConfigurationName = new SimpleStringProperty();
+    private final mugres.live.processor.Processor.StatusListener processorStatusListener;
+
+    public Processor(final ProcessorConfig.Processor processorType) {
+        if (processorType == null)
+            throw new IllegalArgumentException("processorType");
+
+        this.processorType = processorType;
+        processorStatusListener = status -> {};
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(FXML));
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+        try {
+            fxmlLoader.load();
+        } catch (final IOException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
     @FXML
     public void initialize() {
@@ -103,6 +140,11 @@ public class ProcessorController
         HBox.setHgrow(mainButton3, Priority.ALWAYS);
         HBox.setHgrow(mainButton4, Priority.ALWAYS);
         HBox.setHgrow(mainButton5, Priority.ALWAYS);
+
+        processor.addListener(this::onProcessorChange);
+
+        configurationsCombo.valueProperty()
+                .addListener((o, s, n) -> selectedConfigurationNameProperty().set(n != null ? n.getName() : ""));
 
         AnchorPane.setRightAnchor(configurationControls, 1.0);
 
@@ -120,14 +162,33 @@ public class ProcessorController
         loadConfigurations(null);
     }
 
+    private void onProcessorChange(final Observable observable,
+                                   final mugres.live.processor.Processor oldValue,
+                                   final mugres.live.processor.Processor newValue) {
+        if (oldValue != null)
+            oldValue.removeStatusListener(processorStatusListener);
+        if (newValue != null)
+            newValue.addStatusListener(processorStatusListener);
+    }
+
+    public String getSelectedConfigurationName() {
+        return selectedConfigurationName.get();
+    }
+
+    public StringProperty selectedConfigurationNameProperty() {
+        return selectedConfigurationName;
+    }
+
     private void loadConfigurations(final String selectedConfiguration) {
         final List<ProcessorConfig> processorConfigs = EntryPoint.MUGRESApp()
-                .getConfig().getProcessors();
+                .getConfig().getProcessors()
+                .stream().filter(p -> p.getProcessor() == processorType)
+                .collect(Collectors.toList());
 
         editConfigurationButton.setDisable(true);
         deleteConfigurationButton.setDisable(true);
         clearButtonsTooltips();
-        processor = null;
+        processor.set(null);
 
         configurationsCombo.getItems().clear();
         configurationsCombo.getItems().addAll(processorConfigs);
@@ -151,11 +212,11 @@ public class ProcessorController
         editConfigurationButton.setDisable(false);
         deleteConfigurationButton.setDisable(false);
 
-        if (processor != null)
-            processor.stop();
+        if (processor.get() != null)
+            processor.get().stop();
 
-        processor = null;
-        root.setCenter(null);
+        processor.set(null);
+        setCenter(null);
         clearButtonsTooltips();
 
         final Context context = Context.basicContext();
@@ -224,11 +285,11 @@ public class ProcessorController
                     createProcessorOutput(processorConfig),
                     config);
 
-            processor = drummer;
+            processor.set(drummer);
 
             final DrummerPlayer drummerPlayer = new DrummerPlayer();
             drummerPlayer.setDrummer(drummer);
-            root.setCenter(drummerPlayer);
+            setCenter(drummerPlayer);
         } else if (processorConfig.getProcessor() == ProcessorConfig.Processor.TRANSFORMER) {
             final mugres.live.processor.transformer.config.Configuration config =
                     new mugres.live.processor.transformer.config.Configuration();
@@ -262,10 +323,10 @@ public class ProcessorController
                 }
             }
 
-            processor = new Transformer(playContext,
+            processor.set(new Transformer(playContext,
                     createProcessorInput(processorConfig),
                     createProcessorOutput(processorConfig),
-                    config);
+                    config));
         } else if (processorConfig.getProcessor() == SPIROGRAPHONE) {
             final mugres.live.processor.spirographone.config.Configuration config =
                     new mugres.live.processor.spirographone.config.Configuration();
@@ -288,16 +349,17 @@ public class ProcessorController
                     processorConfig.getSpirographone().getScale() : playContext.key().defaultScale();
             config.setScale(scale);
 
-            processor = new Spirographone(playContext,
+            processor.set(new Spirographone(playContext,
                     createProcessorInput(processorConfig),
                     createProcessorOutput(processorConfig),
-                    config);
+                    config));
         } else {
             throw new RuntimeException("Not implemented!");
         }
 
         configureControls();
-        processor.start();
+        processor.get().start();
+        processorRunningCheckBox.setSelected(true);
     }
 
     private Input createProcessorInput(final ProcessorConfig processorConfig) {
@@ -410,6 +472,24 @@ public class ProcessorController
     }
 
     @FXML
+    protected void startProcessor(final ActionEvent event) {
+        final mugres.live.processor.Processor theProcessor = processor.get();
+        if (theProcessor != null) {
+            theProcessor.start();
+            processorRunningCheckBox.setSelected(true);
+        }
+    }
+
+    @FXML
+    protected void stopProcessor(final ActionEvent event) {
+        final mugres.live.processor.Processor theProcessor = processor.get();
+        if (theProcessor != null) {
+            theProcessor.stop();
+            processorRunningCheckBox.setSelected(false);
+        }
+    }
+
+    @FXML
     protected void onConfigurationSelected(final ActionEvent event) {
         final ProcessorConfig processorConfiguration =
                 (ProcessorConfig)configurationsCombo.getValue();
@@ -422,7 +502,7 @@ public class ProcessorController
     protected void onNewConfiguration(final ActionEvent event) {
         final DrummerEditor editor = new DrummerEditor();
         editor.addListener(this);
-        root.setCenter(editor);
+        setCenter(editor);
         configurationControls.setVisible(false);
     }
 
@@ -434,7 +514,7 @@ public class ProcessorController
         final DrummerEditor editor = new DrummerEditor();
         editor.addListener(this);
         editor.setModel(processorConfiguration);
-        root.setCenter(editor);
+        setCenter(editor);
         configurationControls.setVisible(false);
     }
 
@@ -486,7 +566,7 @@ public class ProcessorController
 
     @Override
     public void onDrummerEditorCreate(final DrummerEditor editor) {
-        root.setCenter(null);
+        setCenter(null);
         configurationControls.setVisible(true);
 
         final MUGRESConfig config = EntryPoint.MUGRESApp().getConfig();
@@ -499,7 +579,7 @@ public class ProcessorController
 
     @Override
     public void onDrummerEditorUpdate(final DrummerEditor editor) {
-        root.setCenter(null);
+        setCenter(null);
         configurationControls.setVisible(true);
 
         final MUGRESConfig config = EntryPoint.MUGRESApp().getConfig();
@@ -512,10 +592,17 @@ public class ProcessorController
 
     @Override
     public void onDrummerEditorCancel(final DrummerEditor editor) {
-        root.setCenter(null);
+        setCenter(null);
         configurationControls.setVisible(true);
 
         if (editor.isEditing())
             loadConfiguration((ProcessorConfig) configurationsCombo.getValue());
+    }
+
+    public void destroy() {
+        final mugres.live.processor.Processor theProcessor = processor.get();
+        if (theProcessor != null)
+            theProcessor.stop();
+        processor.set(null);
     }
 }

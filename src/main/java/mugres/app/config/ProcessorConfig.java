@@ -84,8 +84,18 @@ public class ProcessorConfig implements Cloneable {
     }
 
     public enum Processor {
-        DRUMMER,
-        TRANSFORMER,
-        SPIROGRAPHONE
+        DRUMMER("Drummer"),
+        TRANSFORMER("Transformer"),
+        SPIROGRAPHONE("Spirographone");
+
+        private final String label;
+
+        Processor(final String label) {
+            this.label = label;
+        }
+
+        public String label() {
+            return label;
+        }
     }
 }
