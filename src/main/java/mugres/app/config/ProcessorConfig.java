@@ -13,6 +13,7 @@ public class ProcessorConfig implements Cloneable {
     private TransformerConfig transformer;
     private SpirographoneConfig spirographone;
     private transient MUGRESConfig mugresConfig;
+    private List<ControlAssignment> controls;
 
     public String getName() {
         return name;
@@ -70,6 +71,14 @@ public class ProcessorConfig implements Cloneable {
         this.spirographone = spirographone;
     }
 
+    public List<ControlAssignment> getControls() {
+        return controls;
+    }
+
+    public void setControls(List<ControlAssignment> controls) {
+        this.controls = controls;
+    }
+
     public MUGRESConfig getMUGRESConfig() {
         return mugresConfig;
     }
@@ -96,6 +105,27 @@ public class ProcessorConfig implements Cloneable {
 
         public String label() {
             return label;
+        }
+    }
+
+    public static class ControlAssignment {
+        private int controlChange;
+        private String parameter;
+
+        public int getControlChange() {
+            return controlChange;
+        }
+
+        public void setControlChange(int controlChange) {
+            this.controlChange = controlChange;
+        }
+
+        public String getParameter() {
+            return parameter;
+        }
+
+        public void setParameter(String parameter) {
+            this.parameter = parameter;
         }
     }
 }

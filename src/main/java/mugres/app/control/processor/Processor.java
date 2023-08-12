@@ -42,7 +42,6 @@ import mugres.common.io.ProxyOutput;
 import mugres.live.Signal;
 import mugres.function.Function;
 import mugres.function.builtin.drums.PreRecordedDrums;
-import mugres.live.processor.Status;
 import mugres.live.processor.drummer.Drummer;
 import mugres.live.processor.drummer.commands.Finish;
 import mugres.live.processor.drummer.commands.Hit;
@@ -357,7 +356,7 @@ public class Processor extends BorderPane implements DrummerEditor.Listener {
             throw new RuntimeException("Not implemented!");
         }
 
-        configureControls();
+        configureControls(processorConfig);
         processor.get().start();
         processorRunningCheckBox.setSelected(true);
     }
@@ -380,8 +379,12 @@ public class Processor extends BorderPane implements DrummerEditor.Listener {
         return ProxyOutput.of(MUGRES.output(), filters);
     }
 
-    private void configureControls() {
-        
+    private void configureControls(final ProcessorConfig processorConfig) {
+        if (processorConfig.getControls() == null)
+            return;
+
+        processorConfig.getControls()
+                .forEach(c -> processor.get().mapParameterToControlChange(c.getParameter(), c.getControlChange()));
     }
 
     private void overrideWithContextConfig(final Context baseContext, final ContextConfig contextConfig) {
